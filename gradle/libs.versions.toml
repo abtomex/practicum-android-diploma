@@ -50,6 +50,7 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
 
+
 # AndroidX
 androidX-core = "androidx.core:core-ktx:1.18.0"
 androidX-appCompat = "androidx.appcompat:appcompat:1.7.1"
