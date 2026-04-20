@@ -9,7 +9,7 @@ data class VacancyCardEntity(
     val id: String,
     val name: String,
     val company: String,
-    val city: String,
-    val salaryId: String?,
     val logo: String,
+    val city: String,
+    val salaryId: String?
 )

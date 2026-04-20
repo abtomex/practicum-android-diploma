@@ -8,5 +8,7 @@ data class EmployerEntity(
     @PrimaryKey
     val id: String,
     val name: String,
-    val logo: String
+    val logo: String,
+    val contactName: String?,
+    val contactEmail: String?
 )

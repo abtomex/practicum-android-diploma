@@ -9,5 +9,5 @@ data class VacancyCardWithSalary(
     @Embedded
     val vacancyCard: VacancyCardEntity,
     @Relation(parentColumn = "salaryId", entityColumn = "id")
-    val salary: SalaryEntity
+    val salary: SalaryEntity?
 )

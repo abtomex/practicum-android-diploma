@@ -9,14 +9,14 @@ data class VacancyDetailEntity(
     val id: String,
     val name: String,
     val description: String, // HTML
+    val experience: String?,
+    val schedule: String?,
+    val employment: String?,
+    val skillsList: List<String>,
+    val area: String,
+    val url: String,
+    val industry: String,
     val salaryId: String?,
     val addressId: String?,
-    val experienceId: String?,
-    val scheduleId: String?,
-    val employmentId: String?,
-    val contactsId: String?,
-    val employerId: String,
-    val areaId: Int,
-    val url: String,
-    val industryId: String
+    val employerId: String
 )
