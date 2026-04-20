@@ -1,7 +1,7 @@
 # IntelliJ
 *.iml
 /.idea/
-
+/.kotlin/
 # Gradle files
 .gradle/
 build/

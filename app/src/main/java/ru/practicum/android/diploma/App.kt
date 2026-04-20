@@ -8,12 +8,12 @@ import ru.practicum.android.diploma.di.interactorModule
 import ru.practicum.android.diploma.di.repositoryModule
 import ru.practicum.android.diploma.di.viewModelModule
 
-class DvdJobApp : Application() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            androidContext(this@DvdJobApp)
+            androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
 
         }
