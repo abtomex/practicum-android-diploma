@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.dto.vacancy_details
+package ru.practicum.android.diploma.data.dto.vacancydetails
 
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.areas.AreaDto

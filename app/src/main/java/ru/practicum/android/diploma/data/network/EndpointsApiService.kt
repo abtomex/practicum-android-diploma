@@ -6,7 +6,7 @@ import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.data.dto.areas.AreasResponseDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesResponseDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacancyResponseDto
-import ru.practicum.android.diploma.data.dto.vacancy_details.VacancyDetailsResponseDto
+import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsResponseDto
 
 interface EndpointsApiService {
 

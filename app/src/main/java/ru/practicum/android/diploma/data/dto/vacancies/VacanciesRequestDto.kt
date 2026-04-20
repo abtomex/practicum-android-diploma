@@ -2,7 +2,7 @@ package ru.practicum.android.diploma.data.dto.vacancies
 
 import ru.practicum.android.diploma.data.dto.Request
 
-data class VacanciesRequestDto (
+class VacanciesRequestDto(
     val area: Int? = null,
     val industry: Int? = null,
     val text: String? = null,

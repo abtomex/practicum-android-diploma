@@ -9,7 +9,7 @@ import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
-import ru.practicum.android.diploma.data.dto.vacancy_details.VacancyDetailsRequestDto
+import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -21,7 +21,6 @@ class RetrofitNetworkClient(
 ) : NetworkClient {
 
     override suspend fun doRequest(dto: Request): Response {
-
         if (!isConnected()) {
             return Response().apply { resultCode = STATUS_NETWORK_ERROR }
         }
@@ -46,9 +45,8 @@ class RetrofitNetworkClient(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T: Response> executeCall (call : Call<T>) : T {
+    private fun <T : Response> executeCall(call: Call<T>): T {
         return try {
-
             val resp = call.execute()
             val body = resp.body() ?: Response() as T
             return body.apply { resultCode = resp.code() }
@@ -73,7 +71,8 @@ class RetrofitNetworkClient(
     }
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            Context.CONNECTIVITY_SERVICE
+        ) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             when {
