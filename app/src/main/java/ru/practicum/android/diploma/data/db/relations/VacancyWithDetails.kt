@@ -11,10 +11,10 @@ data class VacancyWithDetails(
     @Embedded
     val vacancy: VacancyDetailEntity,
 
-    @Relation(parentColumn = "salaryId", entityColumn = "id")
+    @Relation(parentColumn = "id", entityColumn = "vacancyId")
     val salary: SalaryEntity?,
 
-    @Relation(parentColumn = "addressId", entityColumn = "id")
+    @Relation(parentColumn = "id", entityColumn = "vacancyId")
     val address: AddressEntity?,
 
     @Relation(entity = EmployerEntity::class, parentColumn = "employerId", entityColumn = "id")

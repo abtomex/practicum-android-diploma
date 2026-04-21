@@ -11,5 +11,7 @@ data class VacancyCardEntity(
     val company: String,
     val logo: String,
     val city: String,
-    val salaryId: String?
+    val salaryFrom: Int?,
+    val salaryTo: Int?,
+    val salaryCurrency: String?
 )
