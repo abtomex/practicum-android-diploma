@@ -12,4 +12,3 @@ data class SalaryEntity(
     val to: Int?,
     val currency: String?
 )
-

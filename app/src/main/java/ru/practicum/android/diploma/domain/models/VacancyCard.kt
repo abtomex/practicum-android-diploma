@@ -2,7 +2,7 @@ package ru.practicum.android.diploma.domain.models
 
 import ru.practicum.android.diploma.data.dto.vacancies.VacancyCardSalaryDto
 
-data class VacancyCard (
+data class VacancyCard(
     val id: String,
     val name: String,
     val company: String?,

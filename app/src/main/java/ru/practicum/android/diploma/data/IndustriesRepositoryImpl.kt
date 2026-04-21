@@ -7,10 +7,10 @@ import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.IndustriesRepository
 import ru.practicum.android.diploma.domain.models.Industry
 
-class IndustriesRepositoryImpl (
+class IndustriesRepositoryImpl(
     val networkClient: NetworkClient,
     val apiConverter: IndustriesApiConverter
-): IndustriesRepository {
+) : IndustriesRepository {
 
     override suspend fun getAllFromApi(): List<Industry> {
         return (networkClient.doRequest(IndustriesRequestDto()) as IndustriesResponseDto)
