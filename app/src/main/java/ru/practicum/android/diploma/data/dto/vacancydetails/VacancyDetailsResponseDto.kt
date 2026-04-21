@@ -4,7 +4,7 @@ import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.areas.AreaDto
 import ru.practicum.android.diploma.data.dto.industries.IndustryDto
 
-class VacancyDetailsResponseDto(
+data class VacancyDetailsResponseDto(
     val id: String,
     val name: String,
     val description: String,
