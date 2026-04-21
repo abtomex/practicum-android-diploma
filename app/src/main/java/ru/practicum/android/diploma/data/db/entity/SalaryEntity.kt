@@ -12,7 +12,8 @@ import java.util.UUID
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE
-    )])
+    )]
+)
 data class SalaryEntity(
     @PrimaryKey
     val id: String = UUID.randomUUID().toString(),
@@ -21,4 +22,3 @@ data class SalaryEntity(
     val to: Int?,
     val currency: String?
 )
-

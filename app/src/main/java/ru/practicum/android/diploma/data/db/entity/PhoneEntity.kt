@@ -12,7 +12,8 @@ import androidx.room.PrimaryKey
         parentColumns = ["id"],
         childColumns = ["employerId"],
         onDelete = ForeignKey.CASCADE
-    )])
+    )]
+)
 data class PhoneEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,

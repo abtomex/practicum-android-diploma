@@ -11,7 +11,8 @@ import androidx.room.PrimaryKey
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE
-    )])
+    )]
+)
 data class AddressEntity(
     @PrimaryKey
     val id: String,
