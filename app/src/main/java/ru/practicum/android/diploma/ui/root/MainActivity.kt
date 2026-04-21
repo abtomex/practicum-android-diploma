@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation
+package ru.practicum.android.diploma.ui.root
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,11 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.presentation.components.BottomNavigationBar
-import ru.practicum.android.diploma.presentation.navigation.Screen
-import ru.practicum.android.diploma.presentation.screens.FavoritesScreen
-import ru.practicum.android.diploma.presentation.screens.FilterScreen
-import ru.practicum.android.diploma.presentation.screens.SearchScreen
-import ru.practicum.android.diploma.presentation.screens.TeamScreen
+import ru.practicum.android.diploma.presentation.navigation.Destination
+import ru.practicum.android.diploma.presentation.ui.favorites.FavoritesScreen
+import ru.practicum.android.diploma.presentation.ui.filter.FilterScreen
+import ru.practicum.android.diploma.presentation.ui.search.SearchScreen
+import ru.practicum.android.diploma.presentation.ui.team.TeamScreen
 import ru.practicum.android.diploma.presentation.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +37,7 @@ fun MainScreen() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val shouldShowBottomBar = currentRoute != Screen.Filter.route
+    val shouldShowBottomBar = currentRoute != Destination.Filter.route
 
     Scaffold(
         bottomBar = {
@@ -48,19 +48,19 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Search.route,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = Destination.Search.route,
+            modifier = Modifier.Companion.padding(innerPadding)
         ) {
-            composable(Screen.Search.route) {
+            composable(Destination.Search.route) {
                 SearchScreen(navController = navController)
             }
-            composable(Screen.Favorites.route) {
+            composable(Destination.Favorites.route) {
                 FavoritesScreen()
             }
-            composable(Screen.Team.route) {
+            composable(Destination.Team.route) {
                 TeamScreen()
             }
-            composable(Screen.Filter.route) {
+            composable(Destination.Filter.route) {
                 FilterScreen(navController = navController)
             }
         }

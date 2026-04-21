@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation.screens
+package ru.practicum.android.diploma.presentation.ui.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.presentation.navigation.Screen
+import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
@@ -38,13 +38,13 @@ fun SearchScreen(navController: NavHostController) {
                 actions = {
                     IconButton(
                         onClick = {
-                            navController.navigate(Screen.Filter.route)
+                            navController.navigate(Destination.Filter.route)
                         }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_filter),
                             contentDescription = null,
-                            modifier = Modifier.size(IconSizeDefault),
+                            modifier = Modifier.Companion.size(IconSizeDefault),
                             tint = BlackPrimary
                         )
                     }
@@ -53,7 +53,7 @@ fun SearchScreen(navController: NavHostController) {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
