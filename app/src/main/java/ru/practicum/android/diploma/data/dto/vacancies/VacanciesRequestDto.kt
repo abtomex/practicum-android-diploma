@@ -1,0 +1,23 @@
+package ru.practicum.android.diploma.data.dto.vacancies
+
+import ru.practicum.android.diploma.data.dto.Request
+
+class VacanciesRequestDto(
+    val area: Int? = null,
+    val industry: Int? = null,
+    val text: String? = null,
+    val salary: Int? = null,
+    val page: Int? = null,
+    val onlyWithSalary: Boolean = false
+) : Request() {
+    fun toQueryMap(): Map<String, String> {
+        return buildMap {
+            area?.let { put("area", it.toString()) }
+            industry?.let { put("industry", it.toString()) }
+            text?.let { put("text", it) }
+            salary?.let { put("salary", it.toString()) }
+            page?.let { put("page", it.toString()) }
+            put("only_with_salary", onlyWithSalary.toString())
+        }
+    }
+}
