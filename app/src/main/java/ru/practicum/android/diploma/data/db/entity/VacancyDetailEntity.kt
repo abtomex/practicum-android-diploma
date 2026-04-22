@@ -16,7 +16,5 @@ data class VacancyDetailEntity(
     val area: String,
     val url: String,
     val industry: String,
-    val salaryId: String?,
-    val addressId: String?,
     val employerId: String
 )
