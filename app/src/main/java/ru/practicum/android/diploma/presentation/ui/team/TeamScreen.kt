@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation.screens
+package ru.practicum.android.diploma.presentation.ui.team
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +33,7 @@ fun TeamScreen() {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
@@ -44,7 +44,7 @@ fun TeamScreen() {
             )
             Text(
                 text = stringResource(R.string.team_member_anna),
-                modifier = Modifier.padding(top = PaddingSmall)
+                modifier = Modifier.Companion.padding(top = PaddingSmall)
             )
             Text(text = stringResource(R.string.team_member_olga))
             Text(text = stringResource(R.string.team_member_veniamin))

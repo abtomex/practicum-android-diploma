@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation.screens
+package ru.practicum.android.diploma.presentation.ui.filter
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +44,7 @@ fun FilterScreen(navController: NavHostController) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = null,
-                            modifier = Modifier.size(IconSizeDefault),
+                            modifier = Modifier.Companion.size(IconSizeDefault),
                             tint = BlackPrimary
                         )
                     }
@@ -53,7 +53,7 @@ fun FilterScreen(navController: NavHostController) {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
@@ -61,22 +61,22 @@ fun FilterScreen(navController: NavHostController) {
             Text(
                 text = stringResource(R.string.filter_title),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = PaddingMedium)
+                modifier = Modifier.Companion.padding(bottom = PaddingMedium)
             )
             Text(
                 text = stringResource(R.string.filter_place),
                 fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = PaddingSmall)
+                modifier = Modifier.Companion.padding(bottom = PaddingSmall)
             )
             Text(
                 text = stringResource(R.string.filter_industries),
                 fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = PaddingSmall)
+                modifier = Modifier.Companion.padding(bottom = PaddingSmall)
             )
             Text(
                 text = stringResource(R.string.filter_no_salary),
                 fontSize = 16.sp,
-                modifier = Modifier.padding(top = PaddingSmall)
+                modifier = Modifier.Companion.padding(top = PaddingSmall)
             )
         }
     }

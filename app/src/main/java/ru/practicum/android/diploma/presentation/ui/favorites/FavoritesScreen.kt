@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation.screens
+package ru.practicum.android.diploma.presentation.ui.favorites
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +32,7 @@ fun FavoritesScreen() {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
