@@ -12,9 +12,9 @@ class VacancyCardApiConverter : ApiConverter<VacancyCardDto, VacancyCard> {
             company = dto.company,
             city = dto.city,
             salary = Salary(
-                dto.salary?.from,
-                dto.salary?.to,
-                dto.salary?.currency
+                from = dto.salary?.from,
+                to = dto.salary?.to,
+                currency = dto.salary?.currency
             ),
             logo = dto.logo
         )
