@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.data.network
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
+import ru.practicum.android.diploma.data.dto.areas.AreaDto
 import ru.practicum.android.diploma.data.dto.areas.AreasResponseDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesResponseDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacancyResponseDto
@@ -11,7 +12,7 @@ import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRespon
 interface EndpointsApiService {
 
     @GET("/areas")
-    fun areas(): Call<AreasResponseDto>
+    fun areas(): Call<List<AreaDto>>
 
     @GET("/industries")
     fun industries(): Call<IndustriesResponseDto>

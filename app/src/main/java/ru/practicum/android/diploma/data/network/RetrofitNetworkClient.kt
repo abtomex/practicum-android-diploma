@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import retrofit2.Call
 import ru.practicum.android.diploma.data.dto.Request
 import ru.practicum.android.diploma.data.dto.Response
@@ -22,7 +23,7 @@ class RetrofitNetworkClient(
 
     override suspend fun doRequest(dto: Request): Response {
         if (!isConnected()) {
-            return Response().apply { resultCode = STATUS_NETWORK_ERROR }
+            return Response(STATUS_NETWORK_ERROR)
         }
 
         when (dto) {
@@ -45,11 +46,13 @@ class RetrofitNetworkClient(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Response> executeCall(call: Call<T>): T {
+    private fun <D, T: Response<D>> executeCall(call: Call<D>): T {
         return try {
             val resp = call.execute()
-            val body = resp.body() ?: Response() as T
-            return body.apply { resultCode = resp.code() }
+            val body: D = resp.body()
+            return Response
+//            return body.apply { resultCode = resp.code() }
+//            return (Response() as T)
 
         } catch (_: UnknownHostException) {
             createErrorResponse(STATUS_NO_INTERNET)
@@ -57,7 +60,8 @@ class RetrofitNetworkClient(
             createErrorResponse(STATUS_TIMEOUT_ERROR)
         } catch (_: IOException) {
             createErrorResponse(STATUS_NETWORK_ERROR)
-        } catch (_: Exception) {
+        } catch (exc: Exception) {
+            Log.e("unknown_error", exc.message, exc)
             createErrorResponse(STATUS_UNKNOWN_ERROR)
         }
 
