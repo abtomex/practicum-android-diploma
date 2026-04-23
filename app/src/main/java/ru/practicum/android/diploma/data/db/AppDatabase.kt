@@ -7,6 +7,7 @@ import ru.practicum.android.diploma.data.converters.StringListConverter
 import ru.practicum.android.diploma.data.db.dao.VacancyCardDao
 import ru.practicum.android.diploma.data.db.dao.VacancyDetailDao
 import ru.practicum.android.diploma.data.db.entity.AddressEntity
+import ru.practicum.android.diploma.data.db.entity.ContactsEntity
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
@@ -17,6 +18,7 @@ import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
     entities = [
         AddressEntity::class,
         EmployerEntity::class,
+        ContactsEntity::class,
         PhoneEntity::class,
         SalaryEntity::class,
         VacancyCardEntity::class,
