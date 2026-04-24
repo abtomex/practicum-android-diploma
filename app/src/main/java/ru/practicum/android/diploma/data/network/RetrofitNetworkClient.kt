@@ -7,6 +7,7 @@ import retrofit2.Call
 import ru.practicum.android.diploma.data.dto.Request
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
+import ru.practicum.android.diploma.data.dto.areas.AreasResponseDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
@@ -20,15 +21,28 @@ class RetrofitNetworkClient(
 
 ) : NetworkClient {
 
+    override suspend fun doRequestList(dto: AreasRequestDto): Response {
+        val resp = endpointsApiService.areas().execute()
+        val body = resp.body()
+        if (body != null) {
+            val resp = AreasResponseDto(body)
+            resp.resultCode = SUCCESS
+            return resp
+        }
+        val errResp = Response()
+        errResp.resultCode = STATUS_UNKNOWN_ERROR
+        return errResp
+    }
+
     override suspend fun doRequest(dto: Request): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = STATUS_NETWORK_ERROR }
         }
 
         when (dto) {
-            is AreasRequestDto -> {
-                return executeCall(endpointsApiService.areas())
-            }
+//            is AreasRequestDto -> {
+//                return executeCall(endpointsApiService.areas())
+//            }
             is IndustriesRequestDto -> {
                 return executeCall(endpointsApiService.industries())
 
@@ -85,6 +99,8 @@ class RetrofitNetworkClient(
     }
 
     companion object {
+
+        private const val SUCCESS = 200
         private const val STATUS_NETWORK_ERROR = -1
         private const val STATUS_TIMEOUT_ERROR = -2
         private const val STATUS_UNKNOWN_ERROR = -3
