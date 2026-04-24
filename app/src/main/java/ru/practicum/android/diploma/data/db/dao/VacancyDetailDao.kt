@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.data.db.entity.AddressEntity
+import ru.practicum.android.diploma.data.db.entity.ContactsEntity
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
@@ -37,19 +38,23 @@ interface VacancyDetailDao {
     suspend fun insertEmployer(employer: EmployerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertContacts(contacts: ContactsEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhones(phones: List<PhoneEntity>)
     // endregion
 
     @Transaction
     suspend fun insertFullVacancy(vacancyWithDetails: VacancyWithDetails) {
         insertVacancy(vacancyWithDetails.vacancy)
+        insertEmployer(vacancyWithDetails.employer)
 
         vacancyWithDetails.salary?.let { insertSalary(it) }
         vacancyWithDetails.address?.let { insertAddress(it) }
 
-        vacancyWithDetails.employerWithPhones.let { employerWithPhones ->
-            insertEmployer(employerWithPhones.employer)
-            insertPhones(employerWithPhones.phones)
+        vacancyWithDetails.contactsWithPhones.let { contacts ->
+            insertContacts(contacts.contacts)
+            insertPhones(contacts.phones)
         }
     }
 }

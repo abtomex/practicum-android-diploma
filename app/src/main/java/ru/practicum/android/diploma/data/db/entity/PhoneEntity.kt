@@ -4,20 +4,20 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-// Employer: один-ко-многим
+// Contacts: один-ко-многим
 @Entity(
     tableName = "phones",
     foreignKeys = [ForeignKey(
-        entity = EmployerEntity::class,
+        entity = ContactsEntity::class,
         parentColumns = ["id"],
-        childColumns = ["employerId"],
+        childColumns = ["contactsId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class PhoneEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val employerId: String,
+    val contactsId: String,
     val comment: String?,
     val formatted: String
 )
