@@ -21,6 +21,6 @@ data class VacancyWithDetails(
     @Relation(parentColumn = "id", entityColumn = "vacancyId")
     val employer: EmployerEntity,
 
-    @Relation(entity = ContactsEntity::class, parentColumn = "contactsId", entityColumn = "id")
+    @Relation(entity = ContactsEntity::class, parentColumn = "id", entityColumn = "vacancyId")
     val contactsWithPhones: ContactsWithPhones
 )
