@@ -12,7 +12,7 @@ class IndustriesRepositoryImpl(
     val apiConverter: IndustriesApiConverter
 ) : IndustriesRepository {
 
-    override suspend fun getAllFromApi(): List<Industry>? {
+    override suspend fun getAllFromApi(): List<Industry?>? {
         return (networkClient.doRequest(IndustriesRequestDto()) as Response.IndustriesResponse)
             .body?.map { industryDto -> apiConverter.map(industryDto) }
     }

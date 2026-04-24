@@ -14,7 +14,7 @@ class VacanciesRepositoryImpl(
     val apiConverter: VacancyCardApiConverter
 ) : VacanciesRepository {
 
-    override suspend fun getAllFromApi(): List<VacancyCard>? {
+    override suspend fun getAllFromApi(): List<VacancyCard?>? {
         return (networkClient.doRequest(VacanciesRequestDto()) as Response.VacanciesResponse)
             .body?.items?. map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
     }

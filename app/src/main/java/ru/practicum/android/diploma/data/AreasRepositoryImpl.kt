@@ -12,7 +12,7 @@ class AreasRepositoryImpl(
     val apiConverter: AreasApiConverter
 ) : AreasRepository {
 
-    override suspend fun getAllFromApi(): List<Area>? {
+    override suspend fun getAllFromApi(): List<Area?>? {
         return (networkClient.doRequest(AreasRequestDto()) as Response.AreasResponse)
             .body?.map { areaDto -> apiConverter.map(areaDto) }
     }
