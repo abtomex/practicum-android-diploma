@@ -8,9 +8,9 @@ data class VacancyCardEntity(
     @PrimaryKey
     val id: String,
     val name: String,
-    val company: String,
-    val logo: String,
-    val city: String,
+    val company: String?,
+    val logo: String?,
+    val city: String?,
     val salaryFrom: Int?,
     val salaryTo: Int?,
     val salaryCurrency: String?

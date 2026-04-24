@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "employer",
     foreignKeys = [ForeignKey(
-        entity = VacancyDetailEntity::class,
+        entity = VacancyDetailsEntity::class,
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE

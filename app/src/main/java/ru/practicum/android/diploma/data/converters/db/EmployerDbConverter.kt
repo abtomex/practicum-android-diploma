@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.converters.db_entities
+package ru.practicum.android.diploma.data.converters.db
 
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.domain.models.Employer

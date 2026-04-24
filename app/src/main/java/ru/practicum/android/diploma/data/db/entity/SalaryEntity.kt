@@ -8,7 +8,7 @@ import java.util.UUID
 @Entity(
     tableName = "salary",
     foreignKeys = [ForeignKey(
-        entity = VacancyDetailEntity::class,
+        entity = VacancyDetailsEntity::class,
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE

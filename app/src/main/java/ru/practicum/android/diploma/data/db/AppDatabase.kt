@@ -12,7 +12,7 @@ import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
 import ru.practicum.android.diploma.data.db.entity.VacancyCardEntity
-import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
+import ru.practicum.android.diploma.data.db.entity.VacancyDetailsEntity
 
 @Database(
     entities = [
@@ -22,7 +22,7 @@ import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
         PhoneEntity::class,
         SalaryEntity::class,
         VacancyCardEntity::class,
-        VacancyDetailEntity::class
+        VacancyDetailsEntity::class
     ],
     version = 1,
     exportSchema = false

@@ -6,11 +6,11 @@ import ru.practicum.android.diploma.data.db.entity.AddressEntity
 import ru.practicum.android.diploma.data.db.entity.ContactsEntity
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
-import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
+import ru.practicum.android.diploma.data.db.entity.VacancyDetailsEntity
 
 data class VacancyWithDetails(
     @Embedded
-    val vacancy: VacancyDetailEntity,
+    val vacancy: VacancyDetailsEntity,
 
     @Relation(parentColumn = "id", entityColumn = "vacancyId")
     val salary: SalaryEntity?,
@@ -22,5 +22,5 @@ data class VacancyWithDetails(
     val employer: EmployerEntity,
 
     @Relation(entity = ContactsEntity::class, parentColumn = "id", entityColumn = "vacancyId")
-    val contactsWithPhones: ContactsWithPhones
+    val contactsWithPhones: ContactsWithPhones?
 )
