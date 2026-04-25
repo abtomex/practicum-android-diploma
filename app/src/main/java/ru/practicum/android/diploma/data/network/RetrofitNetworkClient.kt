@@ -18,7 +18,7 @@ class RetrofitNetworkClient(
 
     override suspend fun doRequest(dto: Request): Response<out Any> {
         if (!isConnected()) {
-            return Response.ErrorResponse( errorCode = Response.STATUS_NETWORK_ERROR )
+            return Response.ErrorResponse(errorCode = Response.STATUS_NETWORK_ERROR)
         }
 
         when (dto) {

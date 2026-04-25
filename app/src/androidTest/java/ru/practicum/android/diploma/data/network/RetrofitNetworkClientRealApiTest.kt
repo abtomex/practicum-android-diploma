@@ -23,10 +23,8 @@ class RetrofitNetworkClientRealApiTest {
 
     private lateinit var networkClient: NetworkClient
 
-
     @Before
     fun setUp() {
-
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(BuildConfig.API_ACCESS_TOKEN))
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -48,7 +46,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetAreasApiMethodTest() = runBlocking {
-
         val request = AreasRequestDto()
         val response = networkClient.doRequest(request)
 
@@ -62,7 +59,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetIndustriesApiMethodTest() = runBlocking {
-
         val request = IndustriesRequestDto()
         val response = networkClient.doRequest(request)
 
@@ -100,7 +96,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacanciesWithFiltersApiMethodTest() = runBlocking {
-
         val request = VacanciesRequestDto(
             area = 1,
             text = "kotlin",
@@ -120,9 +115,7 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacancyDetailsApiMethodTest() {
-
         runBlocking {
-
             val request = VacancyDetailsRequestDto(id = "0000258d-fb45-3152-bfeb-250a4c547384")
             val response = networkClient.doRequest(request)
 
@@ -145,7 +138,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacanciesEmptySearchApiMethodTest() {
-
         runBlocking {
             val request = VacanciesRequestDto(
                 text = "sdkjfhskjdhfkjsdhfkjsdhf", // несуществующий запрос
