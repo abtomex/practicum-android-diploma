@@ -1,10 +1,9 @@
 package ru.practicum.android.diploma.data.dto.vacancydetails
 
-import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.areas.AreaDto
 import ru.practicum.android.diploma.data.dto.industries.IndustryDto
 
-data class VacancyDetailsResponseDto(
+data class VacancyDetailsDto(
     val id: String,
     val name: String,
     val description: String,
@@ -19,4 +18,4 @@ data class VacancyDetailsResponseDto(
     val skills: List<String>,
     val url: String,
     val industry: IndustryDto,
-) : Response()
+)
