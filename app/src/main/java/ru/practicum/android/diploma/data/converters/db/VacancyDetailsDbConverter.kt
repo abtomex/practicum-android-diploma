@@ -25,7 +25,7 @@ class VacancyDetailsDbConverter(
             employment = vacancyDetails.employment?.name,
             skillsList = vacancyDetails.skills,
             area = vacancyDetails.area.name,
-            industry = vacancyDetails.area.name,
+            industry = vacancyDetails.industry.name,
             url = vacancyDetails.url
         )
 
