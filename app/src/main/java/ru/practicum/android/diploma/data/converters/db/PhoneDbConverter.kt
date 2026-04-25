@@ -4,10 +4,10 @@ import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.domain.models.Phone
 
 class PhoneDbConverter {
-    fun phoneToEntity(phone: Phone): PhoneEntity =
+    fun phoneToEntity(phone: Phone, contactsId: String = ""): PhoneEntity =
         PhoneEntity(
             id = 0,
-            contactsId = "",
+            contactsId = contactsId,
             comment = phone.comment,
             formatted = phone.formatted
         )

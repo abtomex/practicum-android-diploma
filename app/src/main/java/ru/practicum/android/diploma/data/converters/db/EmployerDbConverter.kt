@@ -4,10 +4,10 @@ import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.domain.models.Employer
 
 class EmployerDbConverter {
-    fun employerToEntity(employer: Employer): EmployerEntity =
+    fun employerToEntity(employer: Employer, vacancyId: String = ""): EmployerEntity =
         EmployerEntity(
             id = employer.id,
-            vacancyId = "",
+            vacancyId = vacancyId,
             name = employer.name,
             logo = employer.logo
         )

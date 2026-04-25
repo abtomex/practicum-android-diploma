@@ -4,10 +4,10 @@ import ru.practicum.android.diploma.data.db.entity.AddressEntity
 import ru.practicum.android.diploma.domain.models.Address
 
 class AddressDbConverter {
-    fun addressToEntity(address: Address): AddressEntity =
+    fun addressToEntity(address: Address, vacancyId: String = ""): AddressEntity =
         AddressEntity(
             id = address.id,
-            vacancyId = "",
+            vacancyId = vacancyId,
             city = address.city,
             street = address.street,
             building = address.building,

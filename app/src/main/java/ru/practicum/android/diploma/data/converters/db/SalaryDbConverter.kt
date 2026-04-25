@@ -4,9 +4,9 @@ import ru.practicum.android.diploma.data.db.entity.SalaryEntity
 import ru.practicum.android.diploma.domain.models.Salary
 
 class SalaryDbConverter {
-    fun salaryToEntity(salary: Salary): SalaryEntity =
+    fun salaryToEntity(salary: Salary, vacancyId: String = ""): SalaryEntity =
         SalaryEntity(
-            vacancyId = "",
+            vacancyId = vacancyId,
             from = salary.from,
             to = salary.to,
             currency = salary.currency

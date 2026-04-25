@@ -10,10 +10,10 @@ import ru.practicum.android.diploma.domain.models.Schedule
 import ru.practicum.android.diploma.domain.models.VacancyDetails
 
 class VacancyDetailsDbConverter(
-    val salaryDbConverter: SalaryDbConverter,
-    val addressDbConverter: AddressDbConverter,
-    val employerDbConverter: EmployerDbConverter,
-    val contactsDbConverter: ContactsDbConverter
+    private val salaryDbConverter: SalaryDbConverter,
+    private val addressDbConverter: AddressDbConverter,
+    private val employerDbConverter: EmployerDbConverter,
+    private val contactsDbConverter: ContactsDbConverter
 ) {
     fun vacancyDetailsToBareEntity(vacancyDetails: VacancyDetails): VacancyDetailsEntity =
         VacancyDetailsEntity(
@@ -30,12 +30,14 @@ class VacancyDetailsDbConverter(
         )
 
     fun vacancyDetailsToFullEntity(vacancyDetails: VacancyDetails): VacancyWithDetails {
-        val vacancyEntity = vacancyDetailsToBareEntity(vacancyDetails)
-        val employerEntity = employerDbConverter.employerToEntity(vacancyDetails.employer)
+        val vacancyId = vacancyDetails.id
 
-        val salaryEntity = vacancyDetails.salary?.let { salaryDbConverter.salaryToEntity(it) }
-        val addressEntity = vacancyDetails.address?.let { addressDbConverter.addressToEntity(it) }
-        val contactsFullEntity = vacancyDetails.contacts?.let { contactsDbConverter.contactsToFullEntity(it) }
+        val vacancyEntity = vacancyDetailsToBareEntity(vacancyDetails)
+        val employerEntity = employerDbConverter.employerToEntity(vacancyDetails.employer, vacancyId)
+
+        val salaryEntity = vacancyDetails.salary?.let { salaryDbConverter.salaryToEntity(it, vacancyId) }
+        val addressEntity = vacancyDetails.address?.let { addressDbConverter.addressToEntity(it, vacancyId) }
+        val contactsFullEntity = vacancyDetails.contacts?.let { contactsDbConverter.contactsToFullEntity(it, vacancyId) }
 
         return VacancyWithDetails(
             vacancy = vacancyEntity,

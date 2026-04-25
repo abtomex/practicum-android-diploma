@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.data.converters.db
 import ru.practicum.android.diploma.data.db.entity.VacancyCardEntity
 import ru.practicum.android.diploma.domain.models.Salary
 import ru.practicum.android.diploma.domain.models.VacancyCard
+import ru.practicum.android.diploma.domain.models.VacancyDetails
 
 class VacancyCardDbConverter {
     fun vacancyCardToEntity(vacancyCard: VacancyCard): VacancyCardEntity =
@@ -33,4 +34,14 @@ class VacancyCardDbConverter {
             salary = salary
         )
     }
+
+    fun vacancyDetailsToVacancyCard(vacancyDetails: VacancyDetails): VacancyCard =
+        VacancyCard(
+            id = vacancyDetails.id,
+            name = vacancyDetails.name,
+            company = vacancyDetails.employer.name,
+            logo = vacancyDetails.employer.logo,
+            city = vacancyDetails.address?.city,
+            salary = vacancyDetails.salary
+        )
 }

@@ -29,7 +29,7 @@ val repositoryModule = module {
     }
 
     single<VacanciesRepository> {
-        VacanciesRepositoryImpl(get(), get())
+        VacanciesRepositoryImpl(get(), get(), get(), get(), get())
     }
 
 }
