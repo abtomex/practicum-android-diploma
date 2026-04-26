@@ -1,11 +1,15 @@
 package ru.practicum.android.diploma.di
 
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import androidx.room.Room
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.data.network.AuthInterceptor
 import ru.practicum.android.diploma.data.converters.db.AddressDbConverter
 import ru.practicum.android.diploma.data.converters.db.ContactsDbConverter
 import ru.practicum.android.diploma.data.converters.db.EmployerDbConverter
@@ -20,9 +24,18 @@ import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 
 val dataModule = module {
 
+    single<OkHttpClient> {
+        val token: String = BuildConfig.API_ACCESS_TOKEN
+        OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(token))
+            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+            .build()
+    }
+
     single<EndpointsApiService> {
         Retrofit.Builder()
-            .baseUrl("https://android-diploma.education-services.ru")
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(EndpointsApiService::class.java)
@@ -33,25 +46,25 @@ val dataModule = module {
     }
 
     // region Converters
-    factory {
+    single {
         AddressDbConverter()
     }
-    factory {
+    single {
         ContactsDbConverter(get())
     }
-    factory {
+    single {
         EmployerDbConverter()
     }
-    factory {
+    single {
         PhoneDbConverter()
     }
-    factory {
+    single {
         SalaryDbConverter()
     }
-    factory {
+    single {
         VacancyCardDbConverter()
     }
-    factory {
+    single {
         VacancyDetailsDbConverter(get(), get(), get(), get())
     }
     // endregion
