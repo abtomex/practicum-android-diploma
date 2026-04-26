@@ -14,8 +14,8 @@ import androidx.room.PrimaryKey
     )]
 )
 data class ContactsEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
     val vacancyId: String,
     val name: String,
     val email: String

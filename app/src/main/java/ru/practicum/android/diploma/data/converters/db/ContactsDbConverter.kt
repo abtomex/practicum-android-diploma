@@ -9,30 +9,22 @@ class ContactsDbConverter(
 ) {
     fun contactsToBareEntity(contacts: Contacts, vacancyId: String = ""): ContactsEntity =
         ContactsEntity(
-            id = contacts.id,
+            id = 0,
             vacancyId = vacancyId,
             name = contacts.name,
             email = contacts.email
         )
 
-    fun bareEntityToContacts(contactsEntity: ContactsEntity): Contacts =
-        Contacts(
-            id = contactsEntity.id,
-            name = contactsEntity.name,
-            email = contactsEntity.email,
-            phones = emptyList()
-        )
-
     fun fullEntityToContacts(contactsWithPhones: ContactsWithPhones): Contacts =
         Contacts(
-            id = contactsWithPhones.contacts.id,
+            id = contactsWithPhones.contacts.id.toString(),
             name = contactsWithPhones.contacts.name,
             email = contactsWithPhones.contacts.email,
             phones = contactsWithPhones.phones.map { phoneDbConverter.entityToPhone(it) }
         )
 
     fun contactsToFullEntity(contacts: Contacts, vacancyId: String = ""): ContactsWithPhones {
-        val contactsId = contacts.id
+        val contactsId = 0L
 
         val contactsEntity = contactsToBareEntity(contacts, vacancyId)
         val phonesEntities = contacts.phones.map { phoneDbConverter.phoneToEntity(it, contactsId) }

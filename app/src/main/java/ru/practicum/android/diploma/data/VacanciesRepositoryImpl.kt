@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data
 
+import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -53,13 +54,17 @@ class VacanciesRepositoryImpl(
         val vacancyCardEntity = vacancyCardDbConverter.vacancyCardToEntity(newVacancyCard)
         val vacancyDetailsEntity = vacancyDetailsDbConverter.vacancyDetailsToFullEntity(vacancy)
 
-        appDatabase.vacancyCardDao().insertVacancyCard(vacancyCardEntity)
-        appDatabase.vacancyDetailDao().insertFullVacancy(vacancyDetailsEntity)
+        appDatabase.withTransaction {
+            appDatabase.vacancyCardDao().insertVacancyCard(vacancyCardEntity)
+            appDatabase.vacancyDetailDao().insertFullVacancy(vacancyDetailsEntity)
+        }
     }
 
     override suspend fun removeVacancyFromFavorites(vacancyId: String) {
-        appDatabase.vacancyCardDao().deleteVacancyCard(vacancyId)
-        appDatabase.vacancyDetailDao().deleteVacancy(vacancyId)
+        appDatabase.withTransaction {
+            appDatabase.vacancyCardDao().deleteVacancyCard(vacancyId)
+            appDatabase.vacancyDetailDao().deleteVacancy(vacancyId)
+        }
     }
 
 }

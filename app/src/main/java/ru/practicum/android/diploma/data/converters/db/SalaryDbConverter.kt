@@ -6,6 +6,7 @@ import ru.practicum.android.diploma.domain.models.Salary
 class SalaryDbConverter {
     fun salaryToEntity(salary: Salary, vacancyId: String = ""): SalaryEntity =
         SalaryEntity(
+            id = 0,
             vacancyId = vacancyId,
             from = salary.from,
             to = salary.to,

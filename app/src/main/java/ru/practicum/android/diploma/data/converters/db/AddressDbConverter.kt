@@ -6,7 +6,7 @@ import ru.practicum.android.diploma.domain.models.Address
 class AddressDbConverter {
     fun addressToEntity(address: Address, vacancyId: String = ""): AddressEntity =
         AddressEntity(
-            id = address.id,
+            id = 0,
             vacancyId = vacancyId,
             city = address.city,
             street = address.street,
@@ -16,7 +16,7 @@ class AddressDbConverter {
 
     fun entityToAddress(addressEntity: AddressEntity): Address =
         Address(
-            id = addressEntity.id,
+            id = addressEntity.id.toString(),
             city = addressEntity.city,
             street = addressEntity.street,
             building = addressEntity.building,

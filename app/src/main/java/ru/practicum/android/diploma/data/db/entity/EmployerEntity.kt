@@ -14,8 +14,8 @@ import androidx.room.PrimaryKey
     )]
 )
 data class EmployerEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
     val vacancyId: String,
     val name: String,
     val logo: String

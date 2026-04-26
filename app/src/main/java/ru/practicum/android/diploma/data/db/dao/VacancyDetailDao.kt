@@ -38,7 +38,7 @@ interface VacancyDetailDao {
     suspend fun insertEmployer(employer: EmployerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContacts(contacts: ContactsEntity)
+    suspend fun insertContacts(contacts: ContactsEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhones(phones: List<PhoneEntity>)
@@ -53,8 +53,10 @@ interface VacancyDetailDao {
         vacancyWithDetails.address?.let { insertAddress(it) }
 
         vacancyWithDetails.contactsWithPhones?.let { contacts ->
-            insertContacts(contacts.contacts)
-            insertPhones(contacts.phones)
+            val contactsId = insertContacts(contacts.contacts)
+            insertPhones(contacts.phones.map {
+                it.copy(contactsId = contactsId)
+            })
         }
     }
 }
