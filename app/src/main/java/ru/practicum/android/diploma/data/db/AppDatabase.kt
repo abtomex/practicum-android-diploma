@@ -4,8 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.practicum.android.diploma.data.converters.StringListConverter
-import ru.practicum.android.diploma.data.db.dao.VacancyDao
+import ru.practicum.android.diploma.data.db.dao.VacancyCardDao
+import ru.practicum.android.diploma.data.db.dao.VacancyDetailDao
 import ru.practicum.android.diploma.data.db.entity.AddressEntity
+import ru.practicum.android.diploma.data.db.entity.ContactsEntity
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
@@ -16,6 +18,7 @@ import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
     entities = [
         AddressEntity::class,
         EmployerEntity::class,
+        ContactsEntity::class,
         PhoneEntity::class,
         SalaryEntity::class,
         VacancyCardEntity::class,
@@ -26,5 +29,6 @@ import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
 )
 @TypeConverters(StringListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun vacancyDao(): VacancyDao
+    abstract fun vacancyDetailDao(): VacancyDetailDao
+    abstract fun vacancyCardDao(): VacancyCardDao
 }

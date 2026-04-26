@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "employer",
+    tableName = "contacts",
     foreignKeys = [ForeignKey(
         entity = VacancyDetailEntity::class,
         parentColumns = ["id"],
@@ -13,10 +13,10 @@ import androidx.room.PrimaryKey
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class EmployerEntity(
+data class ContactsEntity(
     @PrimaryKey
     val id: String,
     val vacancyId: String,
     val name: String,
-    val logo: String
+    val email: String
 )
