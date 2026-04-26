@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey
 data class PhoneEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val contactsId: String,
+    val contactsId: Long,
     val comment: String?,
     val formatted: String
 )

@@ -7,15 +7,15 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "address",
     foreignKeys = [ForeignKey(
-        entity = VacancyDetailEntity::class,
+        entity = VacancyDetailsEntity::class,
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class AddressEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
     val vacancyId: String,
     val city: String,
     val street: String,
