@@ -19,12 +19,16 @@ class VacancyCardDbConverter {
         )
 
     fun entityToVacancyCard(vacancyCardEntity: VacancyCardEntity): VacancyCard {
-        val salary = if (vacancyCardEntity.salaryFrom != null || vacancyCardEntity.salaryTo != null)
+        val salary = if (vacancyCardEntity.salaryFrom != null || vacancyCardEntity.salaryTo != null) {
             Salary(
                 from = vacancyCardEntity.salaryFrom,
                 to = vacancyCardEntity.salaryTo,
                 currency = vacancyCardEntity.salaryCurrency
-            ) else null
+            )
+        } else {
+            null
+        }
+
         return VacancyCard(
             id = vacancyCardEntity.id,
             name = vacancyCardEntity.name,

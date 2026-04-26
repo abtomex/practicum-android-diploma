@@ -1,15 +1,14 @@
 package ru.practicum.android.diploma.di
 
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import androidx.room.Room
 import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
-import ru.practicum.android.diploma.data.network.AuthInterceptor
 import ru.practicum.android.diploma.data.converters.db.AddressDbConverter
 import ru.practicum.android.diploma.data.converters.db.ContactsDbConverter
 import ru.practicum.android.diploma.data.converters.db.EmployerDbConverter
@@ -18,6 +17,7 @@ import ru.practicum.android.diploma.data.converters.db.SalaryDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyCardDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyDetailsDbConverter
 import ru.practicum.android.diploma.data.db.AppDatabase
+import ru.practicum.android.diploma.data.network.AuthInterceptor
 import ru.practicum.android.diploma.data.network.EndpointsApiService
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient

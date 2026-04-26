@@ -37,7 +37,9 @@ class VacancyDetailsDbConverter(
 
         val salaryEntity = vacancyDetails.salary?.let { salaryDbConverter.salaryToEntity(it, vacancyId) }
         val addressEntity = vacancyDetails.address?.let { addressDbConverter.addressToEntity(it, vacancyId) }
-        val contactsFullEntity = vacancyDetails.contacts?.let { contactsDbConverter.contactsToFullEntity(it, vacancyId) }
+        val contactsFullEntity = vacancyDetails.contacts?.let {
+            contactsDbConverter.contactsToFullEntity(it, vacancyId)
+        }
 
         return VacancyWithDetails(
             vacancy = vacancyEntity,
@@ -70,7 +72,6 @@ class VacancyDetailsDbConverter(
             id = 0,
             name = vacancyWithDetails.vacancy.industry
         )
-
 
         return VacancyDetails(
             id = vacancyWithDetails.vacancy.id,

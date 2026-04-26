@@ -5,16 +5,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import ru.practicum.android.diploma.data.converters.VacancyCardApiConverter
-import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.converters.db.VacancyCardDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyDetailsDbConverter
 import ru.practicum.android.diploma.data.db.AppDatabase
+import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyDetails
-import kotlin.collections.map
 
 class VacanciesRepositoryImpl(
     val networkClient: NetworkClient,
