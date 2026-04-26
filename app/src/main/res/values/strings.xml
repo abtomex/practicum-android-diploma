@@ -12,10 +12,12 @@
     <string name="filter_industries">Отрасли</string>
     <string name="filter_no_salary">Не показывать без зарплаты</string>
     <string name="team_title_label">Над приложением работали:</string>
-    <string name="team_member_anna">Дмитрий Чечумаев - Лид</string>
-    <string name="team_member_olga">Дмитрий Терещенко - Разработчик</string>
-    <string name="team_member_veniamin">Владимир Ульянов - Разработчик(Ленин)</string>
-    <string name="team_member_anton">Александр Рондырев-Ильинский - Куратор</string>
+    <string name="team_member_dmitriych">Дмитрий Чечумаев - Лид</string>
+    <string name="team_member_dmitriytr">Дмитрий Терещенко - Разработчик</string>
+    <string name="team_member_vladimir">Владимир Ульянов - Разработчик(Ленин)</string>
+    <string name="team_member_aleksandr">Александр Рондырев-Ильинский - Куратор</string>
     <string name="favorites_empty">Список пуст</string>
     <string name="back">Назад</string>
+    <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="favorites_error">Не удалось получить список вакансий </string>
 </resources>
