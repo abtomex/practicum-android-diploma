@@ -8,10 +8,10 @@ import ru.practicum.android.diploma.data.VacanciesRepositoryImpl
 import ru.practicum.android.diploma.data.converters.AreasApiConverter
 import ru.practicum.android.diploma.data.converters.IndustriesApiConverter
 import ru.practicum.android.diploma.data.converters.VacancyCardApiConverter
-import ru.practicum.android.diploma.data.db.AppDatabase
 import ru.practicum.android.diploma.domain.AreasRepository
 import ru.practicum.android.diploma.domain.IndustriesRepository
 import ru.practicum.android.diploma.domain.VacanciesRepository
+
 val repositoryModule = module {
 
     factory { Gson() }
@@ -29,12 +29,7 @@ val repositoryModule = module {
     }
 
     single<VacanciesRepository> {
-        VacanciesRepositoryImpl(
-            networkClient = get(),
-            apiConverter = get(),
-            vacancyCardDao = get<AppDatabase>().vacancyCardDao(),
-            vacancyDetailDao = get<AppDatabase>().vacancyDetailDao()
-        )
+        VacanciesRepositoryImpl(get(), get(), get(), get(), get())
     }
 
 }

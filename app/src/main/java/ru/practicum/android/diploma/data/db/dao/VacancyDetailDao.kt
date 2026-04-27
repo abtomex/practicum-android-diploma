@@ -11,7 +11,7 @@ import ru.practicum.android.diploma.data.db.entity.ContactsEntity
 import ru.practicum.android.diploma.data.db.entity.EmployerEntity
 import ru.practicum.android.diploma.data.db.entity.PhoneEntity
 import ru.practicum.android.diploma.data.db.entity.SalaryEntity
-import ru.practicum.android.diploma.data.db.entity.VacancyDetailEntity
+import ru.practicum.android.diploma.data.db.entity.VacancyDetailsEntity
 import ru.practicum.android.diploma.data.db.relations.VacancyWithDetails
 
 @Dao
@@ -21,7 +21,7 @@ interface VacancyDetailDao {
     fun getVacancyWithDetails(id: String): Flow<VacancyWithDetails?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertVacancy(vacancy: VacancyDetailEntity)
+    suspend fun insertVacancy(vacancy: VacancyDetailsEntity)
 
     @Transaction
     @Query("DELETE FROM vacancy_detail WHERE id = :vacancyId")
@@ -38,7 +38,7 @@ interface VacancyDetailDao {
     suspend fun insertEmployer(employer: EmployerEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContacts(contacts: ContactsEntity)
+    suspend fun insertContacts(contacts: ContactsEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhones(phones: List<PhoneEntity>)
@@ -52,9 +52,11 @@ interface VacancyDetailDao {
         vacancyWithDetails.salary?.let { insertSalary(it) }
         vacancyWithDetails.address?.let { insertAddress(it) }
 
-        vacancyWithDetails.contactsWithPhones.let { contacts ->
-            insertContacts(contacts.contacts)
-            insertPhones(contacts.phones)
+        vacancyWithDetails.contactsWithPhones?.let { contacts ->
+            val contactsId = insertContacts(contacts.contacts)
+            insertPhones(contacts.phones.map {
+                it.copy(contactsId = contactsId)
+            })
         }
     }
 }

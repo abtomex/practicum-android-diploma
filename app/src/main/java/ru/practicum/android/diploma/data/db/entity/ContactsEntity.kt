@@ -7,15 +7,15 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "contacts",
     foreignKeys = [ForeignKey(
-        entity = VacancyDetailEntity::class,
+        entity = VacancyDetailsEntity::class,
         parentColumns = ["id"],
         childColumns = ["vacancyId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class ContactsEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
     val vacancyId: String,
     val name: String,
     val email: String
