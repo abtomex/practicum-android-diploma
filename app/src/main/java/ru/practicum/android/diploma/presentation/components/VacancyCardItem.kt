@@ -50,7 +50,7 @@ fun VacancyCardItem(
                 .weight(1f)
                 .padding(start = PaddingSmall)
         ) {
-            //информация о компании
+            // Информация о компании
             Text(
                 text = "${vacancy.name}, ${vacancy.city ?: ""}",
                 fontSize = 22.sp,

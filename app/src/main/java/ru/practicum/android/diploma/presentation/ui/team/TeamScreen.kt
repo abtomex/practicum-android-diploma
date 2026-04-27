@@ -36,7 +36,7 @@ fun TeamScreen() {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
@@ -56,24 +56,30 @@ fun TeamScreen() {
                 color = BlackPrimary,
                 modifier = Modifier.padding(top = PaddingSmall)
             )
-            Text(text = stringResource(R.string.team_member_dmitriytr),
+            Text(
+                text = stringResource(R.string.team_member_dmitriytr),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 lineHeight = 19.sp,
                 color = BlackPrimary,
-                modifier = Modifier.padding(top = PaddingSmall))
-            Text(text = stringResource(R.string.team_member_vladimir),
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
+            Text(
+                text = stringResource(R.string.team_member_vladimir),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 lineHeight = 19.sp,
                 color = BlackPrimary,
-                modifier = Modifier.padding(top = PaddingSmall))
-            Text(text = stringResource(R.string.team_member_aleksandr),
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
+            Text(
+                text = stringResource(R.string.team_member_aleksandr),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 lineHeight = 19.sp,
                 color = BlackPrimary,
-                modifier = Modifier.padding(top = PaddingSmall))
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
         }
     }
 }

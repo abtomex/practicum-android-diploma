@@ -12,7 +12,7 @@ class FavoritesInteractor(
         return repository.getAllVacancyCards()
     }
 
-    fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails> {
+    fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?> {
         return repository.getVacancyDetails(vacancyId)
     }
 
