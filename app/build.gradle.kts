@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
+    implementation(libs.koin.android)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
