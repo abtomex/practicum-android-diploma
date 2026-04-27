@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.practicum.android.diploma.domain.models.VacancyCard
+import ru.practicum.android.diploma.presentation.components.VacancyCardItem
 import ru.practicum.android.diploma.presentation.viewmodel.SearchViewModel
 
 @Composable
@@ -23,9 +24,13 @@ fun SearchResultsContent(
     ) {
         items(vacancyCards, key = { it.id }) { vacancyCard ->
             VacancyCardItem(
-                vacancyCard = vacancyCard,
-                viewModel = viewModel,
-                navController = navController
+                vacancy = vacancyCard,
+                onItemClick = {
+                    // TODO: реализовать переход к описанию вакансии
+                },
+                onFavoriteClick = {
+                    //TODO:
+                }
             )
         }
     }

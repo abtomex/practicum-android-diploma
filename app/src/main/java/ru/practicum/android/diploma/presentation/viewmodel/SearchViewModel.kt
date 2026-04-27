@@ -15,10 +15,10 @@ import ru.practicum.android.diploma.domain.models.VacancyCard
 class SearchViewModel : ViewModel() {
 
     private val state = MutableLiveData<SearchState>()
-    open fun getState(): LiveData<SearchState> = state
+    fun getState(): LiveData<SearchState> = state
 
     private var searchJob: Job? = null
-    open fun scheduleSearch(searchTrack: String) {
+    fun scheduleSearch(searchTrack: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(1000)
@@ -26,7 +26,7 @@ class SearchViewModel : ViewModel() {
         }
     }
 
-    open fun doSearch(searchTrack: String) {
+    fun doSearch(searchTrack: String) {
 
         val json: String = "[{\n" +
             "      \"id\": \"00080c3c-d8b5-3de1-b0ba-1ce1c46fdadd\",\n" +
