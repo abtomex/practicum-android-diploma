@@ -20,4 +20,6 @@
     <string name="back">Назад</string>
     <string name="remove_from_favorites">Удалить из избранного</string>
     <string name="favorites_error">Не удалось получить список вакансий </string>
+    <string name="no_connect">Нет интернета</string>
+    <string name="nothing_to_find">Не удалось получить список вакансий</string>
 </resources>

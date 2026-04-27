@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +27,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
+import ru.practicum.android.diploma.presentation.viewmodel.SearchViewModel
 
 val YsDisplayMedium = FontFamily(
     Font(R.font.ys_display_medium)
@@ -39,11 +43,15 @@ val YsDisplayMedium = FontFamily(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavHostController) {
+fun SearchScreen(
+    navController: NavHostController,
+    viewModel: SearchViewModel = viewModel()
+) {
 
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var firstLoaded by remember { mutableIntStateOf(0) }
     val focusManager = LocalFocusManager.current
+    val state by viewModel.getState().observeAsState(initial = SearchState.Content(emptyList()))
 
     Scaffold(
         topBar = {
@@ -85,10 +93,8 @@ fun SearchScreen(navController: NavHostController) {
                 onValueChange = { newText ->
                     searchText = newText
                     val trimmedText = newText.text.trim()
-                    if (trimmedText.isEmpty()) {
-//                        viewModel.loadHistoryTracks()
-                    } else {
-//                        viewModel.scheduleSearch(trimmedText)
+                    if (!trimmedText.isEmpty()) {
+                        viewModel.scheduleSearch(trimmedText)
                     }
                 },
                 onClear = {
@@ -112,10 +118,35 @@ fun SearchScreen(navController: NavHostController) {
                 }
 
             )
-//            Text(
-//                text = stringResource(R.string.search_hint),
-//                fontSize = 16.sp
+
+//            SearchResultsContent(
+//                vacancyCards = state.data,
+//                viewModel = viewModel,
+//                navController = navController
 //            )
+
+            when (val currentState = state) {
+                is SearchState.Loading -> LoadingContent()
+                is SearchState.Error -> ErrorContent(
+                    message = currentState.message,
+                )
+
+                is SearchState.NoInternet -> NoInternetContent()
+
+                is SearchState.Content -> {
+                    if (currentState.data.isEmpty()) {
+                        EmptyContent()
+                    } else {
+                        SearchResultsContent(
+                            vacancyCards = currentState.data,
+                            viewModel = viewModel,
+                            navController = navController
+                        )
+                    }
+                }
+
+            }
+
         }
     }
 }
