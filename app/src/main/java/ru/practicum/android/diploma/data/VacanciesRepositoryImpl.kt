@@ -12,6 +12,7 @@ import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.VacanciesRepository
+import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyDetails
 
@@ -25,7 +26,35 @@ class VacanciesRepositoryImpl(
 
     override suspend fun getAllFromApi(): List<VacancyCard>? {
         return (networkClient.doRequest(VacanciesRequestDto()) as Response.VacanciesResponse)
-            .body?.items?. map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
+            .body?.items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
+    }
+
+    override suspend fun allVacancies(): ApiResponse<out List<VacancyCard>?> {
+        val response = networkClient.doRequest(VacanciesRequestDto())
+        return when (response.resultCode) {
+            -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету")
+            200 -> {
+                ApiResponse.Success(
+                    (response as Response.VacanciesResponse).body?.
+                    items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) })
+            }
+
+            else -> ApiResponse.Error("response result code is ${response.resultCode}")
+        }
+    }
+
+    override suspend fun findVacanciesByStr(strQuery: String): ApiResponse<out List<VacancyCard>?> {
+        val response = networkClient.doRequest(VacanciesRequestDto(text = strQuery))
+        return when (response.resultCode) {
+            -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету")
+            200 -> {
+                ApiResponse.Success(
+                    (response as Response.VacanciesResponse).body?.
+                    items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) })
+            }
+
+            else -> ApiResponse.Error("response result code is ${response.resultCode}")
+        }
     }
 
     override fun getAllVacancyCards(): Flow<List<VacancyCard>> =

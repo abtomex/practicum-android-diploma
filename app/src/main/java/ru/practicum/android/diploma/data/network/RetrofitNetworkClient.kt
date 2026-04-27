@@ -20,6 +20,7 @@ class RetrofitNetworkClient(
         if (!isConnected()) {
             return Response.ErrorResponse( errorCode = Response.STATUS_NETWORK_ERROR )
         }
+        var errCode = 0
 
         when (dto) {
             is AreasRequestDto -> {
@@ -27,6 +28,8 @@ class RetrofitNetworkClient(
                 val body = resp.body()
                 if (body != null) {
                     return Response.AreasResponse(body)
+                } else {
+                    errCode = resp.code()
                 }
             }
             is IndustriesRequestDto -> {
@@ -34,6 +37,8 @@ class RetrofitNetworkClient(
                 val body = resp.body()
                 if (body != null) {
                     return Response.IndustriesResponse(body)
+                } else {
+                    errCode = resp.code()
                 }
 
             }
@@ -42,6 +47,8 @@ class RetrofitNetworkClient(
                 val body = resp.body()
                 if (body != null) {
                     return Response.VacanciesResponse(body)
+                } else {
+                    errCode = resp.code()
                 }
 
             }
@@ -50,11 +57,13 @@ class RetrofitNetworkClient(
                 val body = resp.body()
                 if (body != null) {
                     return Response.VacancyDetailsResponse(body)
+                } else {
+                    errCode = resp.code()
                 }
             }
         }
 
-        return Response.ErrorResponse(Response.STATUS_UNKNOWN_ERROR)
+        return Response.ErrorResponse(errCode)
 
     }
 

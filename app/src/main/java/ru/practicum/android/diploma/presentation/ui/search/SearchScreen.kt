@@ -27,15 +27,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
+import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.viewmodel.SearchViewModel
+import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
 
 val YsDisplayMedium = FontFamily(
     Font(R.font.ys_display_medium)
@@ -45,7 +45,7 @@ val YsDisplayMedium = FontFamily(
 @Composable
 fun SearchScreen(
     navController: NavHostController,
-    viewModel: SearchViewModel = viewModel()
+    viewModel: SearchViewModel = koinViewModel()
 ) {
 
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
@@ -94,7 +94,7 @@ fun SearchScreen(
                     searchText = newText
                     val trimmedText = newText.text.trim()
                     if (!trimmedText.isEmpty()) {
-                        viewModel.scheduleSearch(trimmedText)
+                        viewModel.onSearchQueryChanged(trimmedText)
                     }
                 },
                 onClear = {
@@ -105,7 +105,7 @@ fun SearchScreen(
                 onSearch = {
                     focusManager.clearFocus()
                     if (searchText.text.trim().isNotEmpty()) {
-//                        viewModel.doSearch(searchText.text.trim())
+                        viewModel.onSearchQueryChanged(searchText.text.trim())
                     }
                 },
                 onTapSearch = {
