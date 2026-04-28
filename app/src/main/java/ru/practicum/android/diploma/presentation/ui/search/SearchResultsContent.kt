@@ -19,25 +19,43 @@ import ru.practicum.android.diploma.presentation.components.VacancyCardItem
 @Composable
 fun SearchResultsContent(
     vacancyCards: List<VacancyCard>,
-//    viewModel: SearchViewModel,
+    currentPage: Int,
+    totalPages: Int,
     loadNextPage: () -> Unit,
+    loadPreviousPage: () -> Unit,
     navController: NavController
 ) {
-
     val lazyListState = rememberLazyListState()
-    // Проверяем, достигнут ли конец списка
-    // Следим за прокруткой и загружаем новые данные при достижении конца
-    LaunchedEffect(lazyListState) {
+
+    // Отслеживаем достижение конца списка (для загрузки следующей страницы)
+    LaunchedEffect(lazyListState, vacancyCards.size) {
         snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .distinctUntilChanged()
             .collect { lastVisibleIndex ->
                 if (lastVisibleIndex != null &&
                     lastVisibleIndex >= vacancyCards.size - 1 &&
-                    vacancyCards.isNotEmpty()) {
-                    // Достигнут конец списка
-//                    viewModel.loadNextPage()
-                    loadNextPage.invoke()
-                    Log.i("bazinga", "Достигнут конец страницы")
+                    vacancyCards.isNotEmpty() &&
+                    currentPage < totalPages) {
+                    Log.i("Pagination", "Загружаем следующую страницу ${currentPage + 1}")
+                    loadNextPage()
+                }
+            }
+    }
+
+    // Отслеживаем достижение начала списка (для загрузки предыдущей страницы)
+    LaunchedEffect(lazyListState, vacancyCards.size) {
+        snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.index }
+            .distinctUntilChanged()
+            .collect { firstVisibleIndex ->
+                if (firstVisibleIndex != null &&
+                    firstVisibleIndex <= 0 &&
+                    vacancyCards.isNotEmpty() &&
+                    currentPage > 1) {
+                    Log.i("Pagination", "Загружаем предыдущую страницу ${currentPage - 1}")
+                    // Сохраняем текущую позицию прокрутки перед загрузкой
+                    val currentScrollPosition = lazyListState.firstVisibleItemIndex
+                    loadPreviousPage()
+                    // Восстанавливаем позицию после загрузки (нужно добавить callback)
                 }
             }
     }
@@ -54,7 +72,7 @@ fun SearchResultsContent(
                     // TODO: реализовать переход к описанию вакансии
                 },
                 onFavoriteClick = {
-                    //TODO:
+                    // TODO:
                 }
             )
         }

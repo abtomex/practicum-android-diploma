@@ -9,6 +9,7 @@ import ru.practicum.android.diploma.data.converters.db.VacancyCardDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyDetailsDbConverter
 import ru.practicum.android.diploma.data.db.AppDatabase
 import ru.practicum.android.diploma.data.dto.Response
+import ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.VacanciesRepository
@@ -29,14 +30,13 @@ class VacanciesRepositoryImpl(
             .body?.items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
     }
 
-    override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<out List<VacancyCard>?> {
+    override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<VacanciesDto?> {
         val response = networkClient.doRequest(request)
         return when (response.resultCode) {
             -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету")
             200 -> {
                 ApiResponse.Success(
-                    (response as Response.VacanciesResponse).body?.
-                    items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) })
+                    (response as Response.VacanciesResponse).body)
             }
 
             else -> ApiResponse.Error("response result code is ${response.resultCode}")

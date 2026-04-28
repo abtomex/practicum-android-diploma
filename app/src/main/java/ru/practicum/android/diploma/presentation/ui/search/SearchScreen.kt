@@ -49,14 +49,12 @@ fun SearchScreen(
     navController: NavHostController,
     viewModel: SearchViewModel = koinViewModel()
 ) {
-
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var loadedPage by remember { mutableIntStateOf(1) }
+    var currentPage by remember { mutableIntStateOf(1) }
     val loadedData = remember { mutableStateListOf<VacancyCard>() }
 
-
     val focusManager = LocalFocusManager.current
-    val state by viewModel.getState().observeAsState(initial = SearchState.Content(emptyList()))
+    val state by viewModel.getState().observeAsState(initial = SearchState.Content(emptyList(), 1, 1))
 
     Scaffold(
         topBar = {
@@ -107,24 +105,21 @@ fun SearchScreen(
                 onClear = {
                     searchText = TextFieldValue("")
                     loadedData.clear()
+                    currentPage = 1
                     focusManager.clearFocus()
                 },
                 onSearch = {
                     focusManager.clearFocus()
                     val trimmedText = searchText.text.trim()
                     if (trimmedText.length > 2) {
-                        viewModel.loadData(trimmedText)
+                        currentPage = 1
+                        loadedData.clear()
+                        viewModel.loadData(trimmedText, 1)
                     }
                 },
                 onTapSearch = {
-                    if (loadedPage == 0) {
-                        loadedPage++
-                    } else if (loadedPage == 1) {
-//                        viewModel.loadHistoryTracks()
-                        loadedPage++
-                    }
+                    // Можно использовать для загрузки истории поиска
                 }
-
             )
 
             when (val currentState = state) {
@@ -132,39 +127,73 @@ fun SearchScreen(
                 is SearchState.Error -> ErrorContent(
                     message = currentState.message,
                 )
-
                 is SearchState.NoInternet -> NoInternetContent()
-
                 is SearchState.Content -> {
                     if (currentState.data.isEmpty()) {
                         EmptyContent()
                     } else {
-//                        loadedPage = 1
-                        loadedData.clear()
-                        loadedData.addAll(currentState.data)
+                        // Первая загрузка или новый поиск
+                        if (currentState.page == 1) {
+                            loadedData.clear()
+                            loadedData.addAll(currentState.data)
+                            currentPage = currentState.page
+                        }
+
                         SearchResultsContent(
                             vacancyCards = loadedData,
-//                            viewModel = viewModel,
-                            navController = navController,
-                            loadNextPage = { viewModel.loadNextPage(loadedPage++) }
+                            currentPage = currentPage,
+                            totalPages = currentState.totalPages,
+                            loadNextPage = {
+                                if (currentPage < currentState.totalPages) {
+                                    viewModel.loadNextPage(currentPage + 1)
+                                }
+                            },
+                            loadPreviousPage = {
+                                if (currentPage > 1) {
+                                    viewModel.loadPreviousPage(currentPage - 1)
+                                }
+                            },
+                            navController = navController
                         )
                     }
                 }
                 is SearchState.ContentNextPage -> {
-                    if (!currentState.data.isEmpty()) {
-                        viewModel.addUnique(loadedData, currentState.data)
-                        loadedData.addAll(currentState.data)
+                    if (currentState.data.isNotEmpty()) {
+                        // Добавляем новую страницу в правильной позиции
+                        if (currentState.page > currentPage) {
+                            // Добавляем в конец (следующая страница)
+                            val newItems = currentState.data.filter { newItem ->
+                                !loadedData.any { it.id == newItem.id }
+                            }
+                            loadedData.addAll(newItems)
+                        } else if (currentState.page < currentPage) {
+                            // Добавляем в начало (предыдущая страница)
+                            val newItems = currentState.data.filter { newItem ->
+                                !loadedData.any { it.id == newItem.id }
+                            }
+                            loadedData.addAll(0, newItems)
+                        }
+                        currentPage = currentState.page
+
                         SearchResultsContent(
                             vacancyCards = loadedData,
-                            navController = navController,
-                            loadNextPage = { viewModel.loadNextPage(loadedPage++) }
+                            currentPage = currentPage,
+                            totalPages = currentState.totalPages,
+                            loadNextPage = {
+                                if (currentPage < currentState.totalPages) {
+                                    viewModel.loadNextPage(currentPage + 1)
+                                }
+                            },
+                            loadPreviousPage = {
+                                if (currentPage > 1) {
+                                    viewModel.loadPreviousPage(currentPage - 1)
+                                }
+                            },
+                            navController = navController
                         )
-
                     }
                 }
-
             }
-
         }
     }
 }
