@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
@@ -49,14 +51,19 @@ fun SearchScreen(
 ) {
 
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var firstLoaded by remember { mutableIntStateOf(0) }
+    var loadedPage by remember { mutableIntStateOf(1) }
+    val loadedData = remember { mutableStateListOf<VacancyCard>() }
+
+
     val focusManager = LocalFocusManager.current
     val state by viewModel.getState().observeAsState(initial = SearchState.Content(emptyList()))
 
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp).height(64.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .height(64.dp),
                 title = {
                     Text(
                         text = stringResource(R.string.search_title),
@@ -93,37 +100,32 @@ fun SearchScreen(
                 onValueChange = { newText ->
                     searchText = newText
                     val trimmedText = newText.text.trim()
-                    if (!trimmedText.isEmpty()) {
+                    if (trimmedText.length > 2 || trimmedText.isEmpty()) {
                         viewModel.onSearchQueryChanged(trimmedText)
                     }
                 },
                 onClear = {
                     searchText = TextFieldValue("")
-//                    viewModel.loadHistoryTracks()
+                    loadedData.clear()
                     focusManager.clearFocus()
                 },
                 onSearch = {
                     focusManager.clearFocus()
-                    if (searchText.text.trim().isNotEmpty()) {
-                        viewModel.onSearchQueryChanged(searchText.text.trim())
+                    val trimmedText = searchText.text.trim()
+                    if (trimmedText.length > 2) {
+                        viewModel.loadData(trimmedText)
                     }
                 },
                 onTapSearch = {
-                    if (firstLoaded == 0) {
-                        firstLoaded++
-                    } else if (firstLoaded == 1) {
+                    if (loadedPage == 0) {
+                        loadedPage++
+                    } else if (loadedPage == 1) {
 //                        viewModel.loadHistoryTracks()
-                        firstLoaded++
+                        loadedPage++
                     }
                 }
 
             )
-
-//            SearchResultsContent(
-//                vacancyCards = state.data,
-//                viewModel = viewModel,
-//                navController = navController
-//            )
 
             when (val currentState = state) {
                 is SearchState.Loading -> LoadingContent()
@@ -137,11 +139,27 @@ fun SearchScreen(
                     if (currentState.data.isEmpty()) {
                         EmptyContent()
                     } else {
+//                        loadedPage = 1
+                        loadedData.clear()
+                        loadedData.addAll(currentState.data)
                         SearchResultsContent(
-                            vacancyCards = currentState.data,
-                            viewModel = viewModel,
-                            navController = navController
+                            vacancyCards = loadedData,
+//                            viewModel = viewModel,
+                            navController = navController,
+                            loadNextPage = { viewModel.loadNextPage(loadedPage++) }
                         )
+                    }
+                }
+                is SearchState.ContentNextPage -> {
+                    if (!currentState.data.isEmpty()) {
+                        viewModel.addUnique(loadedData, currentState.data)
+                        loadedData.addAll(currentState.data)
+                        SearchResultsContent(
+                            vacancyCards = loadedData,
+                            navController = navController,
+                            loadNextPage = { viewModel.loadNextPage(loadedPage++) }
+                        )
+
                     }
                 }
 

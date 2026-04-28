@@ -10,6 +10,6 @@ val interactorModule = module {
         FavoritesInteractor(get())
     }
     single<SearchInteractor> {
-        SearchInteractorImpl(get())
+        SearchInteractorImpl(get(), get())
     }
 }

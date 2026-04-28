@@ -63,7 +63,7 @@ fun SearchField(
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
-                    onSearch()
+//                    onSearch()
                 }
             ),
             decorationBox = { innerTextField ->

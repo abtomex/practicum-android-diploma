@@ -8,5 +8,6 @@ sealed interface SearchState {
     data class Error(val message: String) : SearchState
     data class NoInternet(val message: String) : SearchState
     data class Content(val data: List<VacancyCard>) : SearchState
+    class ContentNextPage(val data: List<VacancyCard>) : SearchState
 
 }

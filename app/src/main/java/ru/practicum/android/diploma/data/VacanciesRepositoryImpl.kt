@@ -29,8 +29,8 @@ class VacanciesRepositoryImpl(
             .body?.items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
     }
 
-    override suspend fun allVacancies(): ApiResponse<out List<VacancyCard>?> {
-        val response = networkClient.doRequest(VacanciesRequestDto())
+    override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<out List<VacancyCard>?> {
+        val response = networkClient.doRequest(request)
         return when (response.resultCode) {
             -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету")
             200 -> {
