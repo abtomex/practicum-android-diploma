@@ -1,105 +1,210 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.Vacancies
+import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyRequestByPages
+import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFailuresEnum
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
+import ru.practicum.android.diploma.util.NetworkConnectivityChecker
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
-    val searchInteractor: SearchInteractor
+    val searchInteractor: SearchInteractor,
+    private val networkChecker: NetworkConnectivityChecker
 ) : ViewModel() {
 
-    private val state = MutableLiveData<SearchState>()
-    fun getState(): LiveData<SearchState> = state
+    private val _isNoInternet = MutableStateFlow(false)
 
-    private var appliedSearchText: String = ""
-    private var currentPage: Int = 1
-    private var totalPages: Int = 1
+    private val _state = MutableStateFlow<SearchState>(SearchState.Default)
+    val state: StateFlow<SearchState> = _state.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchRequest: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val vacancySearchDebounce = debounce<String>(
-        delayMillis = SEARCH_DEBOUNCE_DELAY,
-        coroutineScope = viewModelScope,
-        useLastParam = true
-    ) { changedText ->
-        state.postValue(SearchState.Loading)
-        loadData(changedText, FIRST_PAGE_NUMBER)
+    private val _toastEvent = MutableSharedFlow<SearchFailuresEnum>()
+    val toastEvent: SharedFlow<SearchFailuresEnum> = _toastEvent.asSharedFlow()
+
+    private var currentPage = 0
+    private var maxPages = 0
+    private var currentVacancies = mutableListOf<VacancyCard>()
+    private var isNextPageLoading = false
+
+    private val searchDebounce = debounce<String>(
+        delayMillis = SEARCH_DEBOUNCE_DELAY_MILLIS,
+        coroutineScope = viewModelScope
+    ) { query ->
+        searchRequest(query)
     }
 
     fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
         if (query.isBlank()) {
-            state.postValue(SearchState.Content(emptyList()))
+            currentVacancies.clear()
+            currentPage = 0
+            maxPages = 0
+            _state.value = SearchState.Default
         } else {
-            vacancySearchDebounce(query)
+            _state.value = SearchState.Loading
+            searchDebounce(query)
         }
     }
 
-    fun loadData(searchText: String, page: Int) {
-        if (page < 1) return
+    fun onClearSearch() {
+        _searchQuery.value = ""
+        currentVacancies.clear()
+        currentPage = 0
+        maxPages = 0
+        _state.value = SearchState.Default
+    }
 
-        state.value = SearchState.Loading
-        currentPage = page
+    fun onLoadNextPage() {
+        if (!canLoadNextPage()) return
 
+        if (!networkChecker.isConnected()) {
+            _isNoInternet.value = true
+            viewModelScope.launch {
+                _toastEvent.emit(SearchFailuresEnum.NO_INTERNET)
+            }
+            return
+        }
+
+        startNextPageLoading()
         viewModelScope.launch {
-            searchInteractor.searchByPages(
-                VacancyRequestByPages(
-                    text = searchText,
-                    page = page
-                )
-            ).collect { response ->
-                processData(response, searchText, page)
-                appliedSearchText = searchText
+            searchInteractor.searchByPages(VacancyRequestByPages(
+                text = _searchQuery.value,
+                page = currentPage + 1
+
+                ),
+
+            )
+            .collect { result ->
+                handleNextPageResult(result)
             }
         }
     }
 
-    private fun processData(
-        response: ApiResponse<Vacancies>,
-        searchText: String,
-        page: Int
-    ) {
-        when (response) {
-            is ApiResponse.Success -> {
-                val vacancies = response.data.items
-                totalPages = response.data.pages
+    private fun searchRequest(query: String) {
+        viewModelScope.launch {
+            if (!networkChecker.isConnected()) {
+                _isNoInternet.value = true
+                _state.value = SearchState.NoInternet
+            } else {
+                _isNoInternet.value = false
+                currentPage = 0
+                currentVacancies.clear()
+                searchInteractor.searchByPages(VacancyRequestByPages(
+                    text = _searchQuery.value,
+                    page = currentPage + 1
 
-                if (searchText != appliedSearchText) {
-                    // Новый поиск
-                    state.postValue(SearchState.Content(vacancies, page, totalPages))
-                } else {
-                    // Подгрузка новой страницы
-                    state.postValue(SearchState.ContentNextPage(vacancies, page, totalPages))
+                ),
+
+                    /*
+                                    vacancyInteractor.searchVacancies(
+                                        query = query,
+                                        page = currentPage + 1,
+                                        perPage = SyncStateContract.Constants.ITEMS_PER_PAGE,
+                                        salary = currentFilters.salary.toIntOrNull(),
+                                        onlyWithSalary = currentFilters.isWithoutSalayrHidden,
+                                        industry = currentFilters.selectedIndustryId,
+                                        area = getAreaId()
+                    */
+                ).collect { result ->
+                    handleSearchResult(result)
                 }
             }
-            is ApiResponse.Error -> {
-                state.postValue(SearchState.Error(response.message))
-            }
-            is ApiResponse.NoInternet -> {
-                state.postValue(SearchState.NoInternet(response.message))
-            }
         }
     }
 
-    fun loadNextPage(page: Int) {
-        if (page <= totalPages && page != currentPage) {
-            loadData(appliedSearchText, page)
+    private fun canLoadNextPage(): Boolean {
+        return !isNextPageLoading && currentPage + 1 < maxPages
+    }
+
+    private fun startNextPageLoading() {
+        isNextPageLoading = true
+        val currentState = _state.value
+        if (currentState is SearchState.Content) {
+            _state.value = currentState.copy(isNextPageLoading = true)
         }
     }
 
-    fun loadPreviousPage(page: Int) {
-        if (page >= 1 && page != currentPage) {
-            loadData(appliedSearchText, page)
+    private suspend fun handleNextPageResult(result: ApiResponse<Vacancies>) {
+        when (result) {
+            is ApiResponse.Success -> onNextPageSuccess(result.data)
+            is ApiResponse.Error -> onNextPageError(result.code)
+            is ApiResponse.NoInternet -> onNextPageError(result.code)
+        }
+        isNextPageLoading = false
+    }
+
+    private fun onNextPageSuccess(data: Vacancies) {
+        currentPage = data.page
+        maxPages = data.pages
+        currentVacancies.addAll(data.items)
+        _state.value = SearchState.Content(
+            data = currentVacancies.toList(),
+            found = data.found,
+            isNextPageLoading = false
+        )
+    }
+
+    private suspend fun onNextPageError(code: Int?) {
+        val currentState = _state.value
+        if (currentState is SearchState.Content) {
+            _state.value = currentState.copy(isNextPageLoading = false)
+        }
+        emitToastByCode(code)
+    }
+
+    private fun handleSearchResult(result: ApiResponse<Vacancies>) {
+        when (result) {
+            is ApiResponse.Success -> onSearchSuccess(result.data)
+            is ApiResponse.Error -> onSearchError(result.code, result.message)
+            is ApiResponse.NoInternet -> onSearchError(result.code, result.message)
         }
     }
 
+    private fun onSearchSuccess(data: Vacancies) {
+        maxPages = data.pages
+        currentVacancies.addAll(data.items)
+        _state.value = if (data.items.isEmpty()) {
+            SearchState.Empty
+        } else {
+            SearchState.Content(
+                data = currentVacancies.toList(),
+                found = data.found
+            )
+        }
+    }
+
+    private fun onSearchError(code: Int?, message: String?) {
+        _state.value = if (code == NO_INTERNET_CODE) {
+            SearchState.NoInternet
+        } else {
+            SearchState.Error(message ?: "")
+        }
+    }
+
+    private suspend fun emitToastByCode(code: Int?) {
+        if (code == NO_INTERNET_CODE) {
+            _toastEvent.emit(SearchFailuresEnum.NO_INTERNET)
+        } else {
+            _toastEvent.emit(SearchFailuresEnum.SERVER_ERROR)
+        }
+    }
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val FIRST_PAGE_NUMBER = 1
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
+        private const val NO_INTERNET_CODE = -1
+
     }
+
 }

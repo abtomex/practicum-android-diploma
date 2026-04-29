@@ -26,12 +26,11 @@ class SearchInteractorImpl(
         emit(vacanciesRepository.searchVacancies(requestApiConverter.map(vacancyRequestByPages)))
     }
         .flowOn(Dispatchers.IO)
-        .map {
-            when (it) {
-                is ApiResponse.Success -> return@map ApiResponse.Success(vacanciesApiConverter.map(it.data))
-                is ApiResponse.Error -> return@map ApiResponse.Error(it.message)
-                is ApiResponse.NoInternet -> return@map ApiResponse.NoInternet(it.message)
+        .map { response ->
+            when (response) {
+                is ApiResponse.Success -> ApiResponse.Success(vacanciesApiConverter.map(response.data))
+                is ApiResponse.Error -> ApiResponse.Error(response.message, response.code)
+                is ApiResponse.NoInternet -> ApiResponse.NoInternet(response.message, response.code)
             }
-
         }
 }

@@ -1,109 +1,101 @@
 package ru.practicum.android.diploma.presentation.ui.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
+import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
+import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
 
 @Composable
 fun SearchField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+    searchStr: String,
+    onValueChange: (String) -> Unit,
     onClear: () -> Unit,
-    onSearch: () -> Unit,
-    onTapSearch: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
             .height(56.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFFE6E8EB))
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
-            value = value,
+            value = searchStr,
             onValueChange = onValueChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(0xFFF0F0F0),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .onFocusEvent { onTapSearch.invoke() },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = BlackPrimary
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-//                    onSearch()
-                }
-            ),
+            cursorBrush = SolidColor(ActiveBlue),
+            modifier = Modifier.weight(1f)
+//                .background(
+//                    color = InactiveGray, // Цвет фона
+//                    shape = RoundedCornerShape(8.dp) // С закруглением
+//                )
+                .padding(horizontal = 12.dp, vertical = 8.dp), // Отступы внутри,
             decorationBox = { innerTextField ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Box(
+                    contentAlignment = Alignment.CenterStart
                 ) {
-
-                    Box(Modifier.weight(1f)) {
-                        if (value.text.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.search_hint),
-                                color = Color.Gray,
-                                fontSize = 16.sp
-                            )
-                        }
-                        innerTextField()
-                    }
-
-
-                    IconButton(
-                        onClick = onClear,
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        if (value.text.isNotEmpty()) Icon(
-                            painter = painterResource(id = R.drawable.ic_clear),
-                            contentDescription = "Clear",
-                            tint = Color.Gray
+                    if (searchStr.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.search_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = InactiveGray
                         )
-                        else Icon(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = null,
-                            tint = Color.Gray,
-                            modifier = Modifier.size(20.dp)
-                        )
-
                     }
+                    innerTextField()
                 }
-
             }
         )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        if (searchStr.isEmpty()) {
+            Icon(
+                painter = painterResource(R.drawable.ic_search),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Icon(
+                painter = painterResource(R.drawable.ic_clear),
+                contentDescription = stringResource(R.string.clear_text),
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        onClear()
+                        focusManager.clearFocus()
+                    }
+            )
+        }
     }
 }

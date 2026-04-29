@@ -1,10 +1,13 @@
 package ru.practicum.android.diploma.util
 
 import android.content.Context
+import android.icu.text.DecimalFormat
 import android.util.TypedValue
 
 class Useful {
     companion object {
+        private const val GRP_SIZE = 3
+
         fun dpToPx(dp: Float, context: Context): Int {
             return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics
@@ -19,5 +22,13 @@ class Useful {
                 else -> variant3
             }
         }
+
+        fun formatNumberWithSpaces(number: Int): String {
+            val formatter = DecimalFormat("#,###").apply {
+                groupingSize = GRP_SIZE
+            }
+            return formatter.format(number).replace(',', ' ')
+        }
+
     }
 }

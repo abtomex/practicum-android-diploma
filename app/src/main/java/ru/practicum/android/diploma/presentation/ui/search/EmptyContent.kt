@@ -3,6 +3,8 @@ package ru.practicum.android.diploma.presentation.ui.search
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -12,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 
+@Preview
 @Composable
 fun EmptyContent() {
     Box(
@@ -35,7 +39,12 @@ fun EmptyContent() {
             Text(
                 text = stringResource(R.string.nothing_to_find),
                 fontSize = 18.sp,
-                color = BlackPrimary
+                color = BlackPrimary,
+                modifier = Modifier
+                    .padding(top = 16.dp) // Отступ сверху от иконки
+                    .fillMaxWidth(), // Растянуть на всю ширину
+
+
             )
         }
     }
