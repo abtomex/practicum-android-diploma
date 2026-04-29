@@ -77,7 +77,7 @@ fun SearchResultsContent(
                 items = vacancyCards,
                 key = { it.id }
             ) { vacancy ->
-                VacancyCardContent (
+                VacancyCardContent(
                     vacancy = vacancy,
                     onClick = { onVacancyClick(vacancy.id) }
                 )
@@ -123,4 +123,3 @@ private fun FoundCounter(found: Int) {
         )
     }
 }
-

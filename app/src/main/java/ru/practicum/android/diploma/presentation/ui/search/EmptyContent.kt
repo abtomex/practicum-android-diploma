@@ -46,7 +46,6 @@ fun EmptyContent() {
                     .fillMaxWidth(),
                 color = BlackPrimary
 
-
             )
         }
     }

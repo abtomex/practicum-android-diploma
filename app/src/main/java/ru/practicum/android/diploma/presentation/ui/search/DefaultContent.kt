@@ -19,8 +19,7 @@ fun DefaultContent() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    )
-    {
+    ) {
         Image(
             painter = painterResource(R.drawable.finder),
             contentDescription = stringResource(R.string.ready_to_find),

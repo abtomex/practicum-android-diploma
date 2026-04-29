@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.domain.models
 
-class VacancyRequestByPages (
+class VacancyRequestByPages(
     val area: Int? = null,
     val industry: Int? = null,
     val text: String? = null,

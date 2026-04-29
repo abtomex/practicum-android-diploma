@@ -77,7 +77,7 @@ class SearchViewModel(
 
                 ),
 
-                )
+            )
                 .collect { result ->
                     handleNextPageResult(result)
                 }
@@ -96,7 +96,7 @@ class SearchViewModel(
 
                 ),
 
-                ).collect { result ->
+            ).collect { result ->
                 handleSearchResult(result)
             }
         }

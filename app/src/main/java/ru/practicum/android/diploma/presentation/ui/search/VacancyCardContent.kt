@@ -114,4 +114,3 @@ fun symbol(currency: String?): String {
         else -> currency ?: ""
     }
 }
-

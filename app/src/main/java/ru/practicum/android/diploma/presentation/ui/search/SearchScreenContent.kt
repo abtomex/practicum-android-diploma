@@ -23,10 +23,9 @@ fun SearchScreenContent(
         modifier = modifier
             .padding(horizontal = 16.dp)
     ) {
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        SearchField (
+        SearchField(
             searchStr = searchQuery,
             onValueChange = onQueryChanged,
             onClear = onClearSearch

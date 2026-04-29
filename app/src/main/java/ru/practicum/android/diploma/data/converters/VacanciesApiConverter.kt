@@ -11,7 +11,7 @@ class VacanciesApiConverter(
             found = dto?.found ?: 0,
             pages = dto?.pages ?: 0,
             page = dto?.page ?: 0,
-            items = dto?.items?.map{vacancyCardApiConverter.map(it)} ?: emptyList(),
+            items = dto?.items?.map { vacancyCardApiConverter.map(it) } ?: emptyList(),
         )
     }
 }

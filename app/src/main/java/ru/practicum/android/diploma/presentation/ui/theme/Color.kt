@@ -23,5 +23,3 @@ val InactiveGray = Color(0xFFAEAFB4)
 val BlackPrimary = Color(0xFF1A1B22)
 val WhiteUniversal = Color(0xFFFDFDFD)
 val FieldGray = Color(0xFFE6E8EB)
-
-

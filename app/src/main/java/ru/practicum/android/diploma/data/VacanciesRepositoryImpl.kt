@@ -36,7 +36,8 @@ class VacanciesRepositoryImpl(
             -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
             200 -> {
                 ApiResponse.Success(
-                    (response as Response.VacanciesResponse).body)
+                    (response as Response.VacanciesResponse).body
+                )
             }
 
             else -> ApiResponse.Error("response result code is ${response.resultCode}", response.resultCode)
@@ -50,7 +51,8 @@ class VacanciesRepositoryImpl(
             200 -> {
                 ApiResponse.Success(
                     (response as Response.VacanciesResponse).body?.
-                    items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) })
+                        items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
+                )
             }
 
             else -> ApiResponse.Error("response result code is ${response.resultCode}", response.resultCode)

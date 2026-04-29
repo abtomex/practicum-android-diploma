@@ -15,7 +15,7 @@ class SearchInteractorImpl(
     val vacanciesRepository: VacanciesRepository,
     val requestApiConverter: VacancyRequestApiConverter,
     val vacanciesApiConverter: VacanciesApiConverter
-) : SearchInteractor{
+) : SearchInteractor {
     override fun searchAll(searchStr: String) = flow {
         emit(vacanciesRepository.findVacanciesByStr(searchStr))
 
