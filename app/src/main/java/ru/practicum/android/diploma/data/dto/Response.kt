@@ -15,11 +15,8 @@ sealed class Response<T> (val resultCode: Int, val body: T?) {
 
     companion object {
         const val SUCCESS_RESPONSE_CODE = 200
-        const val SERVER_ERROR_CODE = 500
+        const val STATUS_SERVER_ERROR = 500
         const val STATUS_NETWORK_ERROR = -1
-        const val STATUS_TIMEOUT_ERROR = -2
-        const val STATUS_UNKNOWN_ERROR = -3
-        const val STATUS_NO_INTERNET = -4
     }
 
 }
