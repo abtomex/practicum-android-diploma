@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
+import ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
 
@@ -23,10 +24,8 @@ class RetrofitNetworkClientRealApiTest {
 
     private lateinit var networkClient: NetworkClient
 
-
     @Before
     fun setUp() {
-
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(BuildConfig.API_ACCESS_TOKEN))
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -48,7 +47,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetAreasApiMethodTest() = runBlocking {
-
         val request = AreasRequestDto()
         val response = networkClient.doRequest(request)
 
@@ -62,7 +60,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetIndustriesApiMethodTest() = runBlocking {
-
         val request = IndustriesRequestDto()
         val response = networkClient.doRequest(request)
 
@@ -91,8 +88,12 @@ class RetrofitNetworkClientRealApiTest {
             println("Vacancies API response code: ${response.resultCode}")
 
             response.body?.let { body ->
-                println("Total vacancies found: ${(body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto)?.found}")
-                println("Vacancies in response: ${(body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto)?.items?.size}")
+                println(
+                    "Total vacancies found: ${(body as? VacanciesDto)?.found}"
+                )
+                println(
+                    "Vacancies in response: ${(body as? VacanciesDto)?.items?.size}"
+                )
             }
         }
 
@@ -100,7 +101,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacanciesWithFiltersApiMethodTest() = runBlocking {
-
         val request = VacanciesRequestDto(
             area = 1,
             text = "kotlin",
@@ -120,9 +120,7 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacancyDetailsApiMethodTest() {
-
         runBlocking {
-
             val request = VacancyDetailsRequestDto(id = "0000258d-fb45-3152-bfeb-250a4c547384")
             val response = networkClient.doRequest(request)
 
@@ -145,7 +143,6 @@ class RetrofitNetworkClientRealApiTest {
 
     @Test
     fun realGetVacanciesEmptySearchApiMethodTest() {
-
         runBlocking {
             val request = VacanciesRequestDto(
                 text = "sdkjfhskjdhfkjsdhfkjsdhf", // несуществующий запрос
@@ -162,7 +159,7 @@ class RetrofitNetworkClientRealApiTest {
             assertNotNull(response.body)
 
             response.body?.let { body ->
-                val vacancies = body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
+                val vacancies = body as? VacanciesDto
                 println("Empty search response code: ${response.resultCode}")
                 println("Found vacancies: ${vacancies?.found}")
                 assertTrue(vacancies?.found == 0 || vacancies?.items.isNullOrEmpty())

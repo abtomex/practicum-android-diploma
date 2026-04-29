@@ -7,6 +7,7 @@ import ru.practicum.android.diploma.data.IndustriesRepositoryImpl
 import ru.practicum.android.diploma.data.VacanciesRepositoryImpl
 import ru.practicum.android.diploma.data.converters.AreasApiConverter
 import ru.practicum.android.diploma.data.converters.IndustriesApiConverter
+import ru.practicum.android.diploma.data.converters.VacanciesApiConverter
 import ru.practicum.android.diploma.data.converters.VacancyCardApiConverter
 import ru.practicum.android.diploma.domain.AreasRepository
 import ru.practicum.android.diploma.domain.IndustriesRepository
@@ -19,6 +20,7 @@ val repositoryModule = module {
     factory { AreasApiConverter() }
     factory { IndustriesApiConverter() }
     factory { VacancyCardApiConverter() }
+    factory { VacanciesApiConverter(get()) }
 
     single<AreasRepository> {
         AreasRepositoryImpl(get(), get())

@@ -29,6 +29,10 @@ pagingCompose = "3.4.2"
 coilCompose = "2.7.0"
 datastoreCore = "1.2.1"
 datastorePreferences = "1.2.1"
+glideCompose = "1.0.0-beta09"
+glideVersion = '5.0.7'
+runtimeLivedata = "1.11.0"
+androidsvg = "1.4"
 
 [libraries]
 
@@ -48,6 +52,10 @@ staticAnalysis-detektLibraries = { module = "io.gitlab.arturbosch.detekt:detekt-
 staticAnalysis-detektTwitterComposeRules = { module = "com.twitter.compose.rules:detekt", version.ref = "detektTwitterComposeRules" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glideCompose" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glideVersion" }
+
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 
@@ -85,5 +93,6 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [bundles]

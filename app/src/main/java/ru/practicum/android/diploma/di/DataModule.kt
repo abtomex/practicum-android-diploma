@@ -9,6 +9,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.data.converters.VacancyRequestApiConverter
 import ru.practicum.android.diploma.data.converters.db.AddressDbConverter
 import ru.practicum.android.diploma.data.converters.db.ContactsDbConverter
 import ru.practicum.android.diploma.data.converters.db.EmployerDbConverter
@@ -66,6 +67,9 @@ val dataModule = module {
     }
     single {
         VacancyDetailsDbConverter(get(), get(), get(), get())
+    }
+    single {
+        VacancyRequestApiConverter()
     }
     // endregion
 
