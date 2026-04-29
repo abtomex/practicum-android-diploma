@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
+import ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
 
@@ -88,10 +89,10 @@ class RetrofitNetworkClientRealApiTest {
 
             response.body?.let { body ->
                 println(
-                    "Total vacancies found: ${(body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto)?.found}"
+                    "Total vacancies found: ${(body as? VacanciesDto)?.found}"
                 )
                 println(
-                    "Vacancies in response: ${(body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto)?.items?.size}"
+                    "Vacancies in response: ${(body as? VacanciesDto)?.items?.size}"
                 )
             }
         }
@@ -158,7 +159,7 @@ class RetrofitNetworkClientRealApiTest {
             assertNotNull(response.body)
 
             response.body?.let { body ->
-                val vacancies = body as? ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
+                val vacancies = body as? VacanciesDto
                 println("Empty search response code: ${response.resultCode}")
                 println("Found vacancies: ${vacancies?.found}")
                 assertTrue(vacancies?.found == 0 || vacancies?.items.isNullOrEmpty())

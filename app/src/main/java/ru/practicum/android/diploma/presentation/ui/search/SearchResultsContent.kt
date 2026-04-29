@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyCard
+import ru.practicum.android.diploma.presentation.Constants
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 
@@ -43,7 +44,7 @@ fun SearchResultsContent(
 ) {
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
-    val visibleItemNumber = 5
+    val visibleItemNumber = Constants.VISIBLE_ITEMS_COUNT
 
     LaunchedEffect(listState.isScrollInProgress) {
         if (listState.isScrollInProgress) {

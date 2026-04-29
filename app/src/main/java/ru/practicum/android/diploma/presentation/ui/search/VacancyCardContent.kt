@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
-import ru.practicum.android.diploma.util.Useful.Companion.formatNumberWithSpaces
+import ru.practicum.android.diploma.util.Useful.formatNumberWithSpaces
 
 @Composable
 fun VacancyCardContent(

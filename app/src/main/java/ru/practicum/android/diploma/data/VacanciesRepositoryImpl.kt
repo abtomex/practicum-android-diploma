@@ -33,8 +33,8 @@ class VacanciesRepositoryImpl(
     override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<VacanciesDto?> {
         val response = networkClient.doRequest(request)
         return when (response.resultCode) {
-            -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
-            200 -> {
+            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
+            Response.SUCCESS_RESPONSE_CODE -> {
                 ApiResponse.Success(
                     (response as Response.VacanciesResponse).body
                 )
@@ -47,8 +47,8 @@ class VacanciesRepositoryImpl(
     override suspend fun findVacanciesByStr(strQuery: String): ApiResponse<out List<VacancyCard>?> {
         val response = networkClient.doRequest(VacanciesRequestDto(text = strQuery))
         return when (response.resultCode) {
-            -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
-            200 -> {
+            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
+            Response.SUCCESS_RESPONSE_CODE -> {
                 ApiResponse.Success(
                     (response as Response.VacanciesResponse).body?.
                         items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }

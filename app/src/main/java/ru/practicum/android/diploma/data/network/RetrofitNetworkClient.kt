@@ -10,6 +10,7 @@ import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
+import ru.practicum.android.diploma.data.exceptions.UnexpectedRequestDtoException
 
 class RetrofitNetworkClient(
     private val endpointsApiService: EndpointsApiService,
@@ -27,19 +28,23 @@ class RetrofitNetworkClient(
                     call = { endpointsApiService.areas() },
                     onSuccess = { body -> Response.AreasResponse(body) }
                 )
+
                 is IndustriesRequestDto -> processRequest(
                     call = { endpointsApiService.industries() },
                     onSuccess = { body -> Response.IndustriesResponse(body) }
                 )
+
                 is VacanciesRequestDto -> processRequest(
                     call = { endpointsApiService.vacancies(dto.toQueryMap()) },
                     onSuccess = { body -> Response.VacanciesResponse(body) }
                 )
+
                 is VacancyDetailsRequestDto -> processRequest(
                     call = { endpointsApiService.vacancyDetails(dto.toQueryMap()) },
                     onSuccess = { body -> Response.VacancyDetailsResponse(body) }
                 )
-                else -> throw RuntimeException("unexpected request dto")
+
+                else -> throw UnexpectedRequestDtoException("unexpected request dto")
             }
         } catch (_: Exception) {
             Response.ErrorResponse(Response.STATUS_SERVER_ERROR)
@@ -72,11 +77,9 @@ class RetrofitNetworkClient(
         ) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
+            return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
         }
         return false
     }

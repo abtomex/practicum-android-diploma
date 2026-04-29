@@ -7,8 +7,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 
 @Composable
 fun LoadingContent() {
@@ -17,7 +17,7 @@ fun LoadingContent() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF6200EE),
+            color = ActiveBlue,
             modifier = Modifier.size(44.dp)
         )
     }
