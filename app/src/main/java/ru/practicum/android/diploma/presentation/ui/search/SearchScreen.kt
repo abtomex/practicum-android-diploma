@@ -64,7 +64,6 @@ fun SearchScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-//                    .padding(horizontal = 16.dp)
                     .height(64.dp),
                 title = {
                     Text(
@@ -94,9 +93,7 @@ fun SearchScreen(
         SearchScreenContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-//                .padding(PaddingMedium)
-                ,
+                .padding(innerPadding),
             state = state,
             searchQuery = requestStr,
             onQueryChanged = viewModel::onSearchQueryChanged,

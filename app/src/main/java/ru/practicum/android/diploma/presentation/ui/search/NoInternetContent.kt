@@ -32,7 +32,7 @@ fun NoInternetContent() {
             Icon(
                 painter = painterResource(id = R.drawable.ic_no_connect),
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
+                Modifier.size(height = 223.dp, width = 328.dp),
                 tint = Color.Unspecified
             )
             Text(

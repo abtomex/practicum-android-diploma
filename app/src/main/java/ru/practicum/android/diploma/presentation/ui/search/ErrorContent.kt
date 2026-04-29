@@ -12,13 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 
 @Composable
-fun ErrorContent(message: String) {
+fun ErrorContent() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -28,16 +30,16 @@ fun ErrorContent(message: String) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_no_connect),
+                painter = painterResource(id = R.drawable.ic_server_error),
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
+                modifier = Modifier.size(height = 223.dp, width = 328.dp),
                 tint = Color.Unspecified
             )
             Text(
-                text = message,
+                text = stringResource(R.string.server_error_msg),
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
-                color = Color.Gray
+                color = BlackPrimary
             )
         }
     }

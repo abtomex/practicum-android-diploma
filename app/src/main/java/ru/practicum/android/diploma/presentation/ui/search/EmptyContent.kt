@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,16 +34,17 @@ fun EmptyContent() {
             Icon(
                 painter = painterResource(id = R.drawable.ic_no_content),
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
+                Modifier.size(height = 223.dp, width = 328.dp),
                 tint = Color.Unspecified
             )
             Text(
                 text = stringResource(R.string.nothing_to_find),
                 fontSize = 18.sp,
-                color = BlackPrimary,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 16.dp) // Отступ сверху от иконки
-                    .fillMaxWidth(), // Растянуть на всю ширину
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                color = BlackPrimary
 
 
             )

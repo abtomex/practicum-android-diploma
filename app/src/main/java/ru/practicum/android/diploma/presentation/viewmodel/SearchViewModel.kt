@@ -16,12 +16,10 @@ import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyRequestByPages
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFailuresEnum
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
-import ru.practicum.android.diploma.util.NetworkConnectivityChecker
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
     val searchInteractor: SearchInteractor,
-    private val networkChecker: NetworkConnectivityChecker
 ) : ViewModel() {
 
     private val _isNoInternet = MutableStateFlow(false)
@@ -70,57 +68,36 @@ class SearchViewModel(
     fun onLoadNextPage() {
         if (!canLoadNextPage()) return
 
-        if (!networkChecker.isConnected()) {
-            _isNoInternet.value = true
-            viewModelScope.launch {
-                _toastEvent.emit(SearchFailuresEnum.NO_INTERNET)
-            }
-            return
-        }
-
         startNextPageLoading()
         viewModelScope.launch {
-            searchInteractor.searchByPages(VacancyRequestByPages(
-                text = _searchQuery.value,
-                page = currentPage + 1
-
-                ),
-
-            )
-            .collect { result ->
-                handleNextPageResult(result)
-            }
-        }
-    }
-
-    private fun searchRequest(query: String) {
-        viewModelScope.launch {
-            if (!networkChecker.isConnected()) {
-                _isNoInternet.value = true
-                _state.value = SearchState.NoInternet
-            } else {
-                _isNoInternet.value = false
-                currentPage = 0
-                currentVacancies.clear()
-                searchInteractor.searchByPages(VacancyRequestByPages(
+            searchInteractor.searchByPages(
+                VacancyRequestByPages(
                     text = _searchQuery.value,
                     page = currentPage + 1
 
                 ),
 
-                    /*
-                                    vacancyInteractor.searchVacancies(
-                                        query = query,
-                                        page = currentPage + 1,
-                                        perPage = SyncStateContract.Constants.ITEMS_PER_PAGE,
-                                        salary = currentFilters.salary.toIntOrNull(),
-                                        onlyWithSalary = currentFilters.isWithoutSalayrHidden,
-                                        industry = currentFilters.selectedIndustryId,
-                                        area = getAreaId()
-                    */
-                ).collect { result ->
-                    handleSearchResult(result)
+                )
+                .collect { result ->
+                    handleNextPageResult(result)
                 }
+        }
+    }
+
+    private fun searchRequest(query: String) {
+        viewModelScope.launch {
+            _isNoInternet.value = false
+            currentPage = 0
+            currentVacancies.clear()
+            searchInteractor.searchByPages(
+                VacancyRequestByPages(
+                    text = query,
+                    page = currentPage + 1
+
+                ),
+
+                ).collect { result ->
+                handleSearchResult(result)
             }
         }
     }
@@ -201,6 +178,7 @@ class SearchViewModel(
             _toastEvent.emit(SearchFailuresEnum.SERVER_ERROR)
         }
     }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
         private const val NO_INTERNET_CODE = -1

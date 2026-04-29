@@ -47,7 +47,7 @@ fun SearchScreenContent(
 
             is SearchState.Empty -> EmptyContent()
             is SearchState.NoInternet -> NoInternetContent()
-            is SearchState.Error -> ErrorContent(state.message)
+            is SearchState.Error -> ErrorContent()
         }
     }
 }

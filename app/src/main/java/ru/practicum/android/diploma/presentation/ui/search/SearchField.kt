@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
+import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
 
 @Composable
@@ -43,8 +45,8 @@ fun SearchField(
             .fillMaxWidth()
             .height(56.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFE6E8EB))
-            .padding(horizontal = 12.dp),
+            .background(FieldGray)
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
@@ -56,11 +58,7 @@ fun SearchField(
             ),
             cursorBrush = SolidColor(ActiveBlue),
             modifier = Modifier.weight(1f)
-//                .background(
-//                    color = InactiveGray, // Цвет фона
-//                    shape = RoundedCornerShape(8.dp) // С закруглением
-//                )
-                .padding(horizontal = 12.dp, vertical = 8.dp), // Отступы внутри,
+                .padding(horizontal = 2.dp, vertical = 8.dp), // Отступы внутри,
             decorationBox = { innerTextField ->
                 Box(
                     contentAlignment = Alignment.CenterStart
@@ -83,14 +81,15 @@ fun SearchField(
             Icon(
                 painter = painterResource(R.drawable.ic_search),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(18.dp).padding(end = 4.dp)
             )
         } else {
             Icon(
                 painter = painterResource(R.drawable.ic_clear),
                 contentDescription = stringResource(R.string.clear_text),
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(14.dp)
+                    .padding(end = 4.dp)
                     .clickable {
                         onClear()
                         focusManager.clearFocus()
