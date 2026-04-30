@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data
 
+import android.util.Log
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,6 +17,8 @@ import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyDetails
+import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
+import ru.practicum.android.diploma.domain.models.*
 
 class VacanciesRepositoryImpl(
     val networkClient: NetworkClient,
@@ -69,14 +72,18 @@ class VacanciesRepositoryImpl(
                 }
             }
 
-    override fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?> =
-        appDatabase
+    override fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?> {
+        Log.d("VacanciesRepo", "getVacancyDetails called for id: $vacancyId")
+        return appDatabase
             .vacancyDetailDao()
             .getVacancyWithDetails(vacancyId)
-            .filterNotNull()
-            .map {
-                vacancyDetailsDbConverter.fullEntityToVacancyDetails(it)
+            .map { vacancyWithDetails ->
+                vacancyWithDetails?.let {
+                    Log.d("VacanciesRepo", "Found in DB, converting...")
+                    vacancyDetailsDbConverter.fullEntityToVacancyDetails(it)
+                }
             }
+    }
 
     override suspend fun addVacancyToFavorites(vacancy: VacancyDetails) {
         val newVacancyCard = vacancyCardDbConverter.vacancyDetailsToVacancyCard(vacancy)
@@ -97,4 +104,58 @@ class VacanciesRepositoryImpl(
         }
     }
 
+    override suspend fun getVacancyDetailsFromApi(vacancyId: String): ApiResponse<VacancyDetails?> {
+        Log.d("VacanciesRepo", "getVacancyDetailsFromApi called for id: $vacancyId")
+        val response = networkClient.doRequest(VacancyDetailsRequestDto(vacancyId))
+        Log.d("VacanciesRepo", "Response resultCode: ${response.resultCode}")
+        return when (response.resultCode) {
+            Response.STATUS_NETWORK_ERROR -> {
+                Log.e("VacanciesRepo", "Network error")
+                ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
+            }
+            Response.SUCCESS_RESPONSE_CODE -> {
+                val dto = (response as Response.VacancyDetailsResponse).body
+                Log.d("VacanciesRepo", "DTO received: $dto")
+                if (dto != null) {
+                    try {
+                        val vacancyDetails = VacancyDetails(
+                            id = dto.id,
+                            name = dto.name,
+                            description = dto.description,
+                            salary = dto.salary?.let { Salary(it.from, it.to, it.currency) },
+                            address = dto.address?.let { Address(it.id, it.city, it.street, it.building, it.raw) },
+                            experience = dto.experience?.let { Experience(it.id, it.name) },
+                            schedule = dto.schedule?.let { Schedule(it.id, it.name) },
+                            employment = dto.employment?.let { Employment(it.id, it.name) },
+                            contacts = dto.contacts?.let {
+                                Contacts(
+                                    id = it.id,
+                                    name = it.name,
+                                    email = it.email,
+                                    phones = it.phones.map { phone -> Phone(phone.comment, phone.formatted) }
+                                )
+                            },
+                            employer = Employer(dto.employer.id, dto.employer.name, dto.employer.logo),
+                            area = Area(dto.area.id, dto.area.name, dto.area.parentId, dto.area.areas),
+                            skills = dto.skills,
+                            url = dto.url,
+                            industry = Industry(dto.industry.id, dto.industry.name)
+                        )
+                        Log.d("VacanciesRepo", "Successfully converted to VacancyDetails: ${vacancyDetails.name}")
+                        ApiResponse.Success(vacancyDetails)
+                    } catch (e: Exception) {
+                        Log.e("VacanciesRepo", "Error parsing DTO", e)
+                        ApiResponse.Error("Ошибка парсинга данных", 500)
+                    }
+                } else {
+                    Log.e("VacanciesRepo", "DTO is null")
+                    ApiResponse.Error("Данные вакансии не найдены", 404)
+                }
+            }
+            else -> {
+                Log.e("VacanciesRepo", "Unexpected error code: ${response.resultCode}")
+                ApiResponse.Error("Ошибка загрузки: ${response.resultCode}", response.resultCode)
+            }
+        }
+    }
 }

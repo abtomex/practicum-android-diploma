@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.presentation.ui.search
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.viewmodel.SearchViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFailuresEnum
+import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
 
 val YsDisplayMedium = FontFamily(
     Font(R.font.ys_display_medium)
@@ -40,8 +43,7 @@ val YsDisplayMedium = FontFamily(
 @Composable
 fun SearchScreen(
     navController: NavHostController,
-    viewModel: SearchViewModel = koinViewModel(),
-//    onVacancyClick: (String) -> Unit = {}
+    viewModel: SearchViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val requestStr by viewModel.searchRequest.collectAsStateWithLifecycle()
@@ -63,8 +65,6 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .height(64.dp),
                 title = {
                     Text(
                         text = stringResource(R.string.search_title),
@@ -90,16 +90,41 @@ fun SearchScreen(
             )
         }
     ) { innerPadding ->
-        SearchScreenContent(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            state = state,
-            searchQuery = requestStr,
-            onQueryChanged = viewModel::onSearchQueryChanged,
-            onClearSearch = viewModel::onClearSearch,
-            onLoadNextPage = viewModel::onLoadNextPage,
-            onVacancyClick = { navController.navigate(Destination.VacancyDetails.createRoute(it)) },
-        )
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SearchField(
+                searchStr = requestStr,
+                onValueChange = viewModel::onSearchQueryChanged,
+                onClear = viewModel::onClearSearch
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when (state) {
+                is SearchState.Default -> DefaultContent()
+                is SearchState.Loading -> LoadingContent()
+                is SearchState.Content -> {
+                    val contentState = state as SearchState.Content
+                    SearchResultsContent(
+                        vacancyCards = contentState.data,
+                        found = contentState.found,
+                        isNextPageLoading = contentState.isNextPageLoading,
+                        onVacancyClick = { vacancyId: String ->
+                            navController.navigate(Destination.VacancyDetails.createRoute(vacancyId))
+                        },
+                        onLoadNextPage = viewModel::onLoadNextPage
+                    )
+                }
+                is SearchState.Empty -> EmptyContent()
+                is SearchState.NoInternet -> NoInternetContent()
+                is SearchState.Error -> ErrorContent()
+            }
+        }
     }
 }

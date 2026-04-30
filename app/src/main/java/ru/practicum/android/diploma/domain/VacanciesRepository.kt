@@ -15,4 +15,5 @@ interface VacanciesRepository : ApiRepository<VacancyCard> {
     fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?>
     suspend fun addVacancyToFavorites(vacancy: VacancyDetails)
     suspend fun removeVacancyFromFavorites(vacancyId: String)
+    suspend fun getVacancyDetailsFromApi(vacancyId: String): ApiResponse<VacancyDetails?>
 }

@@ -40,7 +40,7 @@ class RetrofitNetworkClient(
                 )
 
                 is VacancyDetailsRequestDto -> processRequest(
-                    call = { endpointsApiService.vacancyDetails(dto.toQueryMap()) },
+                    call = { endpointsApiService.vacancyDetails(dto.id) },
                     onSuccess = { body -> Response.VacancyDetailsResponse(body) }
                 )
 
