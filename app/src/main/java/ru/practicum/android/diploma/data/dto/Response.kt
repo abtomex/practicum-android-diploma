@@ -19,6 +19,7 @@ sealed class Response<T> (val resultCode: Int, val body: T?) {
 
     companion object {
         const val SUCCESS_RESPONSE_CODE = 200
+        const val NO_PAGE = 404
         const val STATUS_SERVER_ERROR = 500
         const val STATUS_NETWORK_ERROR = -1
     }

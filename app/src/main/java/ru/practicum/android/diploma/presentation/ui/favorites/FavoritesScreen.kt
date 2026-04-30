@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,9 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.components.VacancyCardItem
+import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.viewmodel.FavoritesState
@@ -34,9 +37,14 @@ import ru.practicum.android.diploma.presentation.viewmodel.FavoritesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
+    navController: NavHostController,
     viewModel: FavoritesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFavorites()
+    }
 
     Scaffold(
         topBar = {
@@ -123,12 +131,10 @@ fun FavoritesScreen(
                             items(vacancies) { vacancy ->
                                 VacancyCardItem(
                                     vacancy = vacancy,
-                                    onItemClick = {
-                                        // TODO: реализуется в рамках другого epic
+                                    onItemClick = { vacancyId ->
+                                        navController.navigate(Destination.VacancyDetails.createRoute(vacancyId))
                                     },
-                                    onFavoriteClick = { vacancyId ->
-                                        viewModel.removeFromFavorites(vacancyId)
-                                    }
+                                    showFavoriteButton = false
                                 )
                             }
                         }

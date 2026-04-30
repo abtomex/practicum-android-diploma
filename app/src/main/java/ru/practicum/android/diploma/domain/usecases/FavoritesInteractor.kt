@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.domain.usecases
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.models.VacancyCard
@@ -13,6 +14,7 @@ class FavoritesInteractor(
     }
 
     fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?> {
+        Log.d("FavoritesInteractor", "getVacancyDetails called for id: $vacancyId")
         return repository.getVacancyDetails(vacancyId)
     }
 

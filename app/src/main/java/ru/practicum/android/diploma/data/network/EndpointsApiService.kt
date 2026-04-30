@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.data.network
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.data.dto.areas.AreaDto
 import ru.practicum.android.diploma.data.dto.industries.IndustryDto
@@ -20,6 +21,6 @@ interface EndpointsApiService {
     fun vacancies(@QueryMap params: Map<String, String>): Call<VacanciesDto>
 
     @GET("/vacancies/{id}")
-    fun vacancyDetails(@QueryMap params: Map<String, String>): Call<VacancyDetailsDto>
+    fun vacancyDetails(@Path("id") id: String): Call<VacancyDetailsDto>
 
 }
