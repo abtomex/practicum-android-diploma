@@ -35,54 +35,64 @@ class VacancyDetailsViewModel(
         Log.d(TAG, "loadVacancyDetails CALLED with id: $vacancyId, fromNetwork: $fromNetwork")
         viewModelScope.launch {
             // Сначала проверяем в БД (избранное)
-            Log.d(TAG, "Checking DB for vacancy: $vacancyId")
-            try {
-                val dbVacancy = favoritesInteractor.getVacancyDetails(vacancyId).first()
-                if (dbVacancy != null) {
-                    Log.d(TAG, "Found vacancy in DB: ${dbVacancy.name}")
-                    _state.value = VacancyDetailsState.Content(dbVacancy)
-                    return@launch
-                }
-                Log.d(TAG, "Vacancy NOT found in DB, continuing to network...")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error checking DB", e)
-            }
+            checkFromDb(vacancyId)
 
             // Если из БД нет и нужна сеть
             if (fromNetwork) {
-                Log.d(TAG, "Fetching from network for id: $vacancyId")
-                _state.value = VacancyDetailsState.Loading
-                getVacancyDetailsUseCase(vacancyId)
-                    .catch { e ->
-                        Log.e(TAG, "Error fetching from network", e)
-                        _state.value = VacancyDetailsState.Error
-                    }
-                    .collect { response ->
-                        Log.d(TAG, "Network response received: $response")
-                        when (response) {
-                            is ApiResponse.Success -> {
-                                if (response.data != null) {
-                                    Log.d(TAG, "Success! Vacancy name: ${response.data.name}")
-                                    _state.value = VacancyDetailsState.Content(response.data)
-                                } else {
-                                    Log.e(TAG, "Success but data is null")
-                                    _state.value = VacancyDetailsState.Error
-                                }
-                            }
-                            is ApiResponse.NoInternet -> {
-                                Log.e(TAG, "No internet")
-                                _state.value = VacancyDetailsState.NoInternet
-                            }
-                            is ApiResponse.Error -> {
-                                Log.e(TAG, "Error: ${response.message}, code: ${response.code}")
-                                _state.value = VacancyDetailsState.Error
-                            }
-                        }
-                    }
+                checkFromNetwork(vacancyId)
+
             } else {
                 Log.d(TAG, "fromNetwork=false, not fetching from network")
             }
         }
+    }
+
+    private suspend fun checkFromDb(vacancyId: String) {
+        Log.d(TAG, "Checking DB for vacancy: $vacancyId")
+        try {
+            val dbVacancy = favoritesInteractor.getVacancyDetails(vacancyId).first()
+            if (dbVacancy != null) {
+                Log.d(TAG, "Found vacancy in DB: ${dbVacancy.name}")
+                _state.value = VacancyDetailsState.Content(dbVacancy)
+                return
+            }
+            Log.d(TAG, "Vacancy NOT found in DB, continuing to network...")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking DB", e)
+        }
+
+    }
+
+    private suspend fun checkFromNetwork(vacancyId: String) {
+        Log.d(TAG, "Fetching from network for id: $vacancyId")
+        _state.value = VacancyDetailsState.Loading
+        getVacancyDetailsUseCase(vacancyId)
+            .catch { e ->
+                Log.e(TAG, "Error fetching from network", e)
+                _state.value = VacancyDetailsState.Error
+            }
+            .collect { response ->
+                Log.d(TAG, "Network response received: $response")
+                when (response) {
+                    is ApiResponse.Success -> {
+                        if (response.data != null) {
+                            Log.d(TAG, "Success! Vacancy name: ${response.data.name}")
+                            _state.value = VacancyDetailsState.Content(response.data)
+                        } else {
+                            Log.e(TAG, "Success but data is null")
+                            _state.value = VacancyDetailsState.Error
+                        }
+                    }
+                    is ApiResponse.NoInternet -> {
+                        Log.e(TAG, "No internet")
+                        _state.value = VacancyDetailsState.NoInternet
+                    }
+                    is ApiResponse.Error -> {
+                        Log.e(TAG, "Error: ${response.message}, code: ${response.code}")
+                        _state.value = VacancyDetailsState.Error
+                    }
+                }
+            }
     }
 
     fun toggleFavorite(vacancy: VacancyDetails, isFavorite: Boolean) {

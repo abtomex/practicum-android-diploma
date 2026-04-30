@@ -21,8 +21,8 @@ import ru.practicum.android.diploma.presentation.ui.favorites.FavoritesScreen
 import ru.practicum.android.diploma.presentation.ui.filter.FilterScreen
 import ru.practicum.android.diploma.presentation.ui.search.SearchScreen
 import ru.practicum.android.diploma.presentation.ui.team.TeamScreen
-import ru.practicum.android.diploma.presentation.ui.vacancydetails.VacancyDetailsScreen
 import ru.practicum.android.diploma.presentation.ui.theme.AppTheme
+import ru.practicum.android.diploma.presentation.ui.vacancydetails.VacancyDetailsScreen
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsViewModel
 
 class MainActivity : ComponentActivity() {

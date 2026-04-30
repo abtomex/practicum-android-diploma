@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.converters
+package ru.practicum.android.diploma.data.converters.api
 
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
 import ru.practicum.android.diploma.domain.models.Vacancies

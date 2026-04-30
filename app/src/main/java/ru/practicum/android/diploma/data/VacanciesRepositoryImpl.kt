@@ -3,29 +3,29 @@ package ru.practicum.android.diploma.data
 import android.util.Log
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import ru.practicum.android.diploma.data.converters.VacancyCardApiConverter
+import ru.practicum.android.diploma.data.converters.api.VacancyCardApiConverter
+import ru.practicum.android.diploma.data.converters.api.VacancyDetailsApiConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyCardDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyDetailsDbConverter
 import ru.practicum.android.diploma.data.db.AppDatabase
 import ru.practicum.android.diploma.data.dto.Response
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
+import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
 import ru.practicum.android.diploma.data.network.NetworkClient
 import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyDetails
-import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
-import ru.practicum.android.diploma.domain.models.*
 
 class VacanciesRepositoryImpl(
     val networkClient: NetworkClient,
     val apiConverter: VacancyCardApiConverter,
     val appDatabase: AppDatabase,
     val vacancyCardDbConverter: VacancyCardDbConverter,
-    val vacancyDetailsDbConverter: VacancyDetailsDbConverter
+    val vacancyDetailsDbConverter: VacancyDetailsDbConverter,
+    val vacancyDetailsApiConverter: VacancyDetailsApiConverter
 ) : VacanciesRepository {
 
     override suspend fun getAllFromApi(): List<VacancyCard>? {
@@ -47,21 +47,6 @@ class VacanciesRepositoryImpl(
         }
     }
 
-    override suspend fun findVacanciesByStr(strQuery: String): ApiResponse<out List<VacancyCard>?> {
-        val response = networkClient.doRequest(VacanciesRequestDto(text = strQuery))
-        return when (response.resultCode) {
-            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
-            Response.SUCCESS_RESPONSE_CODE -> {
-                ApiResponse.Success(
-                    (response as Response.VacanciesResponse).body?.
-                        items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
-                )
-            }
-
-            else -> ApiResponse.Error("response result code is ${response.resultCode}", response.resultCode)
-        }
-    }
-
     override fun getAllVacancyCards(): Flow<List<VacancyCard>> =
         appDatabase
             .vacancyCardDao()
@@ -73,13 +58,11 @@ class VacanciesRepositoryImpl(
             }
 
     override fun getVacancyDetails(vacancyId: String): Flow<VacancyDetails?> {
-        Log.d("VacanciesRepo", "getVacancyDetails called for id: $vacancyId")
         return appDatabase
             .vacancyDetailDao()
             .getVacancyWithDetails(vacancyId)
             .map { vacancyWithDetails ->
                 vacancyWithDetails?.let {
-                    Log.d("VacanciesRepo", "Found in DB, converting...")
                     vacancyDetailsDbConverter.fullEntityToVacancyDetails(it)
                 }
             }
@@ -105,7 +88,6 @@ class VacanciesRepositoryImpl(
     }
 
     override suspend fun getVacancyDetailsFromApi(vacancyId: String): ApiResponse<VacancyDetails?> {
-        Log.d("VacanciesRepo", "getVacancyDetailsFromApi called for id: $vacancyId")
         val response = networkClient.doRequest(VacancyDetailsRequestDto(vacancyId))
         Log.d("VacanciesRepo", "Response resultCode: ${response.resultCode}")
         return when (response.resultCode) {
@@ -118,6 +100,8 @@ class VacanciesRepositoryImpl(
                 Log.d("VacanciesRepo", "DTO received: $dto")
                 if (dto != null) {
                     try {
+                        val vacancyDetails = vacancyDetailsApiConverter.map(dto)
+/*
                         val vacancyDetails = VacancyDetails(
                             id = dto.id,
                             name = dto.name,
@@ -141,15 +125,15 @@ class VacanciesRepositoryImpl(
                             url = dto.url,
                             industry = Industry(dto.industry.id, dto.industry.name)
                         )
+*/
                         Log.d("VacanciesRepo", "Successfully converted to VacancyDetails: ${vacancyDetails.name}")
                         ApiResponse.Success(vacancyDetails)
-                    } catch (e: Exception) {
-                        Log.e("VacanciesRepo", "Error parsing DTO", e)
+                    } catch (_: Exception) {
                         ApiResponse.Error("Ошибка парсинга данных", 500)
                     }
                 } else {
                     Log.e("VacanciesRepo", "DTO is null")
-                    ApiResponse.Error("Данные вакансии не найдены", 404)
+                    ApiResponse.Error("Данные вакансии не найдены", Response.NO_PAGE)
                 }
             }
             else -> {

@@ -4,13 +4,13 @@ import ru.practicum.android.diploma.data.dto.Request
 
 class VacancyDetailsRequestDto(
 //    val id: String
-//) : Request() {
+// ) : Request() {
 //    fun toQueryMap(): Map<String, String> {
 //        return buildMap {
 //            put("id", id)
 //        }
 //    }
 //
-//}
+// }
     val id: String
 ) : Request()

@@ -24,11 +24,11 @@ val CornerRadiusMedium = 16.dp
 
 // ==================== РАЗМЕРЫ ТЕКСТОВ ====================
 // Базовые размеры
-val TextSize32 = 32.sp       // Название вакансии
-val TextSize22 = 22.sp       // Зарплата, компания, разделы, заголовки
-val TextSize18 = 18.sp       // Ошибки
-val TextSize16 = 16.sp       // Основной текст (город, опыт, навыки, контакты)
-val TextSize14 = 14.sp       // Вспомогательный текст (чипсы, комментарии)
+val TextSize32 = 32.sp // Название вакансии
+val TextSize22 = 22.sp // Зарплата, компания, разделы, заголовки
+val TextSize18 = 18.sp // Ошибки
+val TextSize16 = 16.sp // Основной текст (город, опыт, навыки, контакты)
+val TextSize14 = 14.sp // Вспомогательный текст (чипсы, комментарии)
 
 // Алиасы для удобства использования
 val TitleSize22 = TextSize22
@@ -52,9 +52,9 @@ val FavoriteSalaryFontSize = TextSize16
 
 // ==================== ВЫСОТА СТРОКИ (lineHeight) ====================
 // Базовые значения
-val LineHeight38 = 38.sp      // для текста 32px
-val LineHeight26 = 26.sp      // для текста 22px
-val LineHeight19 = 19.sp      // для текста 16px и 14px
+val LineHeight38 = 38.sp // для текста 32px
+val LineHeight26 = 26.sp // для текста 22px
+val LineHeight19 = 19.sp // для текста 16px и 14px
 
 // Алиасы для экрана "Вакансия"
 val VacancyTitleLineHeight = LineHeight38

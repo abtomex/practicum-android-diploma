@@ -60,10 +60,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.LineHeight38
 import ru.practicum.android.diploma.presentation.ui.theme.LogoSizeMedium
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingSmall
-import ru.practicum.android.diploma.presentation.ui.theme.SpaceLarge
-import ru.practicum.android.diploma.presentation.ui.theme.SpaceMedium
-import ru.practicum.android.diploma.presentation.ui.theme.SpaceSmall
-import ru.practicum.android.diploma.presentation.ui.theme.SpaceXLarge
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize14
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize22
@@ -73,6 +69,7 @@ import ru.practicum.android.diploma.presentation.ui.theme.TitleSize22
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteBackground
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsState
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsViewModel
+import androidx.core.net.toUri
 
 val YsDisplay = FontFamily(
     Font(R.font.ys_display_regular, FontWeight.Normal),
@@ -480,7 +477,7 @@ private fun VacancyDetailsContent(vacancy: VacancyDetails) {
                     color = ContactBlue,
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:${contacts.email}")
+                            data = "mailto:${contacts.email}".toUri()
                         }
                         context.startActivity(intent)
                     }

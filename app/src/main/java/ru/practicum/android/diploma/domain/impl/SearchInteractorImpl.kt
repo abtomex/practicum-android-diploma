@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import ru.practicum.android.diploma.data.converters.VacanciesApiConverter
-import ru.practicum.android.diploma.data.converters.VacancyRequestApiConverter
+import ru.practicum.android.diploma.data.converters.api.VacanciesApiConverter
+import ru.practicum.android.diploma.data.converters.api.VacancyRequestApiConverter
 import ru.practicum.android.diploma.domain.SearchInteractor
 import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.api.ApiResponse
@@ -16,11 +16,6 @@ class SearchInteractorImpl(
     val requestApiConverter: VacancyRequestApiConverter,
     val vacanciesApiConverter: VacanciesApiConverter
 ) : SearchInteractor {
-    override fun searchAll(searchStr: String) = flow {
-        emit(vacanciesRepository.findVacanciesByStr(searchStr))
-
-    }
-        .flowOn(Dispatchers.IO)
 
     override fun searchByPages(vacancyRequestByPages: VacancyRequestByPages) = flow {
         emit(vacanciesRepository.searchVacancies(requestApiConverter.map(vacancyRequestByPages)))
