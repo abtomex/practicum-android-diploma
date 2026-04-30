@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
@@ -39,6 +40,8 @@ fun EmployerLogo(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(logoUrl)
                 .crossfade(true)
+                .addHeader("User-Agent", "Mozilla/5.0")
+                .decoderFactory(SvgDecoder.Factory())
                 .build(),
             contentDescription = employerName,
             modifier = Modifier
