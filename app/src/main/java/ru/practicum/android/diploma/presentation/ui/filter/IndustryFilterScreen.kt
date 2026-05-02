@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
+import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +105,7 @@ fun IndustrySelectionScreen(
                         .height(52.dp), // Стандартная высота для таких кнопок
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3F7CF6), // Синий цвет как на макете
+                        containerColor = ActiveBlue, // Синий цвет как на макете
                         contentColor = Color.White
                     )
                 ) {
@@ -131,9 +133,9 @@ fun IndustrySelectionScreen(
                 placeholder = { Text("Введите отрасль", color = Color.Gray) },
                 leadingIcon = { Icon(painter = painterResource(R.drawable.ic_search), contentDescription = null) },
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFF2F2F7),
-                    unfocusedContainerColor = Color(0xFFF2F2F7),
-                    disabledContainerColor = Color(0xFFF2F2F7),
+                    focusedContainerColor = WhiteUniversal,
+                    unfocusedContainerColor = WhiteUniversal,
+                    disabledContainerColor = WhiteUniversal,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
@@ -187,9 +189,9 @@ fun IndustryItem(
                 checked = isSelected,
                 onCheckedChange = null, // Клик по-прежнему обрабатывается всей строкой через Surface
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color(0xFF3F7CF6),   // Синий цвет при выборе
-                    uncheckedColor = Color(0xFF3F7CF6), // Синий контур, когда не выбрано
-                    checkmarkColor = Color.White        // Цвет галочки
+                    checkedColor = ActiveBlue, // Синий цвет при выборе
+                    uncheckedColor = ActiveBlue, // Синий контур, когда не выбрано
+                    checkmarkColor = WhiteUniversal // Цвет галочки
                 )
             )
         }
