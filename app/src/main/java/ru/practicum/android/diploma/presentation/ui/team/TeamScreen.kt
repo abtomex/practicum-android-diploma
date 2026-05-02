@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
@@ -26,6 +27,8 @@ fun TeamScreen() {
                     Text(
                         text = stringResource(R.string.team_title),
                         fontSize = 22.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 26.sp,
                         color = BlackPrimary
                     )
                 }
@@ -33,22 +36,50 @@ fun TeamScreen() {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(PaddingMedium)
         ) {
             Text(
                 text = stringResource(R.string.team_title_label),
-                fontSize = 16.sp
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 38.sp,
+                color = BlackPrimary
             )
             Text(
-                text = stringResource(R.string.team_member_anna),
-                modifier = Modifier.Companion.padding(top = PaddingSmall)
+                text = stringResource(R.string.team_member_dmitriych),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 19.sp,
+                color = BlackPrimary,
+                modifier = Modifier.padding(top = PaddingSmall)
             )
-            Text(text = stringResource(R.string.team_member_olga))
-            Text(text = stringResource(R.string.team_member_veniamin))
-            Text(text = stringResource(R.string.team_member_anton))
+            Text(
+                text = stringResource(R.string.team_member_dmitriytr),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 19.sp,
+                color = BlackPrimary,
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
+            Text(
+                text = stringResource(R.string.team_member_vladimir),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 19.sp,
+                color = BlackPrimary,
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
+            Text(
+                text = stringResource(R.string.team_member_aleksandr),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 19.sp,
+                color = BlackPrimary,
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
         }
     }
 }

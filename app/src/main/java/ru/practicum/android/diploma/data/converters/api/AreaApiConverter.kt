@@ -1,9 +1,9 @@
-package ru.practicum.android.diploma.data.converters
+package ru.practicum.android.diploma.data.converters.api
 
 import ru.practicum.android.diploma.data.dto.areas.AreaDto
 import ru.practicum.android.diploma.domain.models.Area
 
-class AreasApiConverter : ApiConverter<AreaDto, Area> {
+class AreaApiConverter : ApiConverter<AreaDto, Area> {
 
     override fun map(dto: AreaDto): Area {
         return Area(

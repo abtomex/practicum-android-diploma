@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "vacancy_detail")
-data class VacancyDetailEntity(
+data class VacancyDetailsEntity(
     @PrimaryKey
     val id: String,
     val name: String,
@@ -15,6 +15,5 @@ data class VacancyDetailEntity(
     val skillsList: List<String>,
     val area: String,
     val url: String,
-    val industry: String,
-    val employerId: String
+    val industry: String
 )

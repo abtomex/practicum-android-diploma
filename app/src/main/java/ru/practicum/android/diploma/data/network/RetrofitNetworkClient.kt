@@ -10,9 +10,7 @@ import ru.practicum.android.diploma.data.dto.areas.AreasRequestDto
 import ru.practicum.android.diploma.data.dto.industries.IndustriesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancies.VacanciesRequestDto
 import ru.practicum.android.diploma.data.dto.vacancydetails.VacancyDetailsRequestDto
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
+import ru.practicum.android.diploma.data.exceptions.UnexpectedRequestDtoException
 
 class RetrofitNetworkClient(
     private val endpointsApiService: EndpointsApiService,
@@ -20,74 +18,70 @@ class RetrofitNetworkClient(
 
 ) : NetworkClient {
 
-    override suspend fun doRequest(dto: Request): Response {
+    override suspend fun doRequest(dto: Request): Response<out Any> {
         if (!isConnected()) {
-            return Response().apply { resultCode = STATUS_NETWORK_ERROR }
+            return Response.ErrorResponse(errorCode = Response.STATUS_NETWORK_ERROR)
         }
-
-        when (dto) {
-            is AreasRequestDto -> {
-                return executeCall(endpointsApiService.areas())
-            }
-            is IndustriesRequestDto -> {
-                return executeCall(endpointsApiService.industries())
-
-            }
-            is VacanciesRequestDto -> {
-                return executeCall(endpointsApiService.vacancies(dto.toQueryMap()))
-
-            }
-            is VacancyDetailsRequestDto -> {
-                return executeCall(endpointsApiService.vacancyDetails(dto.toQueryMap()))
-            }
-            else -> return Response()
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Response> executeCall(call: Call<T>): T {
         return try {
-            val resp = call.execute()
-            val body = resp.body() ?: Response() as T
-            return body.apply { resultCode = resp.code() }
+            when (dto) {
+                is AreasRequestDto -> processRequest(
+                    call = { endpointsApiService.areas() },
+                    onSuccess = { body -> Response.AreasResponse(body) }
+                )
 
-        } catch (_: UnknownHostException) {
-            createErrorResponse(STATUS_NO_INTERNET)
-        } catch (_: SocketTimeoutException) {
-            createErrorResponse(STATUS_TIMEOUT_ERROR)
-        } catch (_: IOException) {
-            createErrorResponse(STATUS_NETWORK_ERROR)
+                is IndustriesRequestDto -> processRequest(
+                    call = { endpointsApiService.industries() },
+                    onSuccess = { body -> Response.IndustriesResponse(body) }
+                )
+
+                is VacanciesRequestDto -> processRequest(
+                    call = { endpointsApiService.vacancies(dto.toQueryMap()) },
+                    onSuccess = { body -> Response.VacanciesResponse(body) }
+                )
+
+                is VacancyDetailsRequestDto -> processRequest(
+                    call = { endpointsApiService.vacancyDetails(dto.id) },
+                    onSuccess = { body -> Response.VacancyDetailsResponse(body) }
+                )
+
+                else -> throw UnexpectedRequestDtoException("unexpected request dto")
+            }
         } catch (_: Exception) {
-            createErrorResponse(STATUS_UNKNOWN_ERROR)
+            Response.ErrorResponse(Response.STATUS_SERVER_ERROR)
         }
 
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Response> createErrorResponse(code: Int): T {
-        return Response().apply {
-            resultCode = code
-        } as T
+    private suspend fun <T> processRequest(
+        call: suspend () -> Call<T>,
+        onSuccess: (T) -> Response<out Any>
+    ): Response<out Any> {
+        return try {
+            val response = call().execute()
+
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    onSuccess(body)
+                } ?: Response.ErrorResponse(response.code())
+            } else {
+                Response.ErrorResponse(response.code())
+            }
+        } catch (_: Exception) {
+            Response.ErrorResponse(Response.STATUS_SERVER_ERROR)
+        }
     }
+
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
+            return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
         }
         return false
     }
 
-    companion object {
-        private const val STATUS_NETWORK_ERROR = -1
-        private const val STATUS_TIMEOUT_ERROR = -2
-        private const val STATUS_UNKNOWN_ERROR = -3
-        private const val STATUS_NO_INTERNET = -4
-    }
 }

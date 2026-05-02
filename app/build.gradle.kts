@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.ui.constraintLayout)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
     testImplementation(libs.unitTests.junit)
     androidTestImplementation(libs.uiTests.junitExt)
     androidTestImplementation(libs.uiTests.espressoCore)
@@ -76,6 +77,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
+    implementation(libs.koin.android)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
@@ -92,4 +94,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.coil.svg)
     implementation(libs.androidsvg.aar)
+    implementation(libs.glide.compose)
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+
 }
