@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -96,7 +98,7 @@ fun IndustrySelectionScreen(
             ) {
                 Button(
                     onClick = {
-                        //Вернуться на предыдущий экран, передав значение фильтра
+                        // Вернуться на предыдущий экран, передав значение фильтра
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -183,12 +185,13 @@ fun IndustryItem(
                 color = Color.Black
             )
 
-            RadioButton(
-                selected = isSelected,
-                onClick = null, // Клик обрабатывается в Surface
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = Color(0xFF3F7CF6), // Синий цвет как на макете
-                    unselectedColor = Color(0xFF3F7CF6)
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = null, // Клик по-прежнему обрабатывается всей строкой через Surface
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Color(0xFF3F7CF6),   // Синий цвет при выборе
+                    uncheckedColor = Color(0xFF3F7CF6), // Синий контур, когда не выбрано
+                    checkmarkColor = Color.White        // Цвет галочки
                 )
             )
         }
