@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.domain.usecases.AreasInteractor
+import ru.practicum.android.diploma.domain.usecases.AreaFiltersViewModel
 
-class FiltersViewModel(
-    private val areaInteractor: AreasInteractor
+class AreaFiltersViewModel(
+    private val areaInteractor: AreaFiltersViewModel
 ) : ViewModel() {
     val listAreas = MutableStateFlow<List<Area>>(emptyList())
     val areaFilter = MutableStateFlow<Area?>(null)
