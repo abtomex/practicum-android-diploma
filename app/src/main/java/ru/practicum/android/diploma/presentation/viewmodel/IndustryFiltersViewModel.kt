@@ -14,11 +14,11 @@ class IndustryFiltersViewModel(
     private val industryInteractor: IndustriesInteractor
 ) : ViewModel() {
 
-    val _state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
+    private val _state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
     val state: StateFlow<IndustryFiltersState> = _state.asStateFlow()
-    val _listIndustries = MutableStateFlow<List<Industry>>(emptyList())
+    private val _listIndustries = MutableStateFlow<List<Industry>>(emptyList())
     val listIndustries: StateFlow<List<Industry>> = _listIndustries.asStateFlow()
-    val _industryFilter = MutableStateFlow<Industry?>(null)
+    private val _industryFilter = MutableStateFlow<Industry?>(null)
     val industryFilter: StateFlow<Industry?> = _industryFilter.asStateFlow()
 
     init {
@@ -27,7 +27,7 @@ class IndustryFiltersViewModel(
 
     fun getIndustriesList() {
         viewModelScope.launch {
-            _listIndustries.value = (industryInteractor.getIndustriesList() ?: emptyList())
+            _listIndustries.value = industryInteractor.getIndustriesList() ?: emptyList()
             _state.value = IndustryFiltersState.Content(
                 data = _listIndustries.value,
                 checked = null

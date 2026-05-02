@@ -33,14 +33,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IndustrySelectionScreen() {
+fun IndustrySelectionScreen(
+    viewModel: IndustryFiltersViewModel,
+    navController: NavController
+) {
     // Пример данных
     // To be replaced by viewModel retreiving
+    // val industries = viewModel.getIndustriesList()
     val industries = remember {
         listOf(
             Industry(name = "Авиаперевозки", id = 1),
