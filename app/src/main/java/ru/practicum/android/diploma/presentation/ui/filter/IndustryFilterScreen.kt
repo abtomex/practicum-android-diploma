@@ -1,15 +1,19 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -81,6 +85,32 @@ fun IndustrySelectionScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            // Контейнер для кнопки с отступами
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 20.dp) // Отступы от краев экрана
+            ) {
+                Button(
+                    onClick = { /* Действие при нажатии */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp), // Стандартная высота для таких кнопок
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF3F7CF6), // Синий цвет как на макете
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(
+                        text = "Выбрать",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         Column(
