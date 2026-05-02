@@ -95,6 +95,7 @@ class VacanciesRepositoryImpl(
                 Log.e(LOG_TAG, "Network error")
                 ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
             }
+
             Response.SUCCESS_RESPONSE_CODE -> {
                 val dto = (response as Response.VacancyDetailsResponse).body
                 Log.d(LOG_TAG, "DTO received: $dto")
@@ -104,19 +105,21 @@ class VacanciesRepositoryImpl(
                         Log.d(LOG_TAG, "Successfully converted to VacancyDetails: ${vacancyDetails.name}")
                         ApiResponse.Success(vacancyDetails)
                     } catch (_: Exception) {
-                            ApiResponse.Error("Ошибка парсинга данных", Response.STATUS_SERVER_ERROR)
+                        ApiResponse.Error("Ошибка парсинга данных", Response.STATUS_SERVER_ERROR)
                     }
                 } else {
                     Log.e(LOG_TAG, "DTO is null")
                     ApiResponse.Error("Данные вакансии не найдены", Response.NO_PAGE)
                 }
             }
+
             else -> {
                 Log.e(LOG_TAG, "Unexpected error code: ${response.resultCode}")
                 ApiResponse.Error("Ошибка загрузки: ${response.resultCode}", response.resultCode)
             }
         }
     }
+
     companion object {
         private const val LOG_TAG = "VacanciesRepo"
     }

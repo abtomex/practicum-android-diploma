@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,8 +86,40 @@ fun VacancyDetailsScreen(
     onBackPressed: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val favoriteState = rememberFavoriteState(vacancyId, viewModel)
+    val currentVacancy by rememberCurrentVacancy(state)
+
+    Scaffold(
+        topBar = {
+            VacancyDetailsTopBar(
+                currentVacancy = currentVacancy,
+                isFavorite = favoriteState.isFavorite,
+                onBackPressed = onBackPressed,
+                onShareClick = { vacancy ->
+                    createShareIntent(vacancy)
+                },
+                onFavoriteClick = { vacancy, isFav ->
+                    viewModel.toggleFavorite(vacancy, isFav)
+                    favoriteState.toggle()
+                }
+            )
+        }
+    ) { innerPadding ->
+        VacancyDetailsContentWrapper(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            state = state
+        )
+    }
+}
+
+@Composable
+private fun rememberFavoriteState(
+    vacancyId: String,
+    viewModel: VacancyDetailsViewModel
+): FavoriteState {
     var isFavorite by remember { mutableStateOf(false) }
-    var currentVacancy by remember { mutableStateOf<VacancyDetails?>(null) }
 
     LaunchedEffect(vacancyId) {
         viewModel.loadVacancyDetails(vacancyId, fromNetwork = true)
@@ -95,461 +128,523 @@ fun VacancyDetailsScreen(
         }
     }
 
-    LaunchedEffect(state) {
-        if (state is VacancyDetailsState.Content) {
-            currentVacancy = (state as VacancyDetailsState.Content).vacancy
-        }
-    }
+    return FavoriteState(
+        isFavorite = isFavorite,
+        toggle = { isFavorite = !isFavorite }
+    )
+}
 
-    val context = LocalContext.current
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.vacancy_title),
-                        fontSize = TitleSize22,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = YsDisplay,
-                        lineHeight = LineHeight26,
-                        color = BlackPrimary
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = stringResource(R.string.back),
-                            tint = BlackPrimary
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            currentVacancy?.let { vacancy ->
-                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, vacancy.url)
-                                }
-                                context.startActivity(Intent.createChooser(shareIntent, null))
-                            }
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_share),
-                            contentDescription = stringResource(R.string.share),
-                            tint = BlackPrimary
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            currentVacancy?.let { vacancy ->
-                                viewModel.toggleFavorite(vacancy, isFavorite)
-                                isFavorite = !isFavorite
-                            }
-                        },
-                        enabled = currentVacancy != null
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                id = if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite
-                            ),
-                            contentDescription = stringResource(R.string.favorites_title),
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+@Composable
+private fun rememberCurrentVacancy(state: VacancyDetailsState): androidx.compose.runtime.State<VacancyDetails?> {
+    return remember(state) {
+        derivedStateOf {
             when (state) {
-                is VacancyDetailsState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is VacancyDetailsState.Content -> {
-                    val vacancy = (state as VacancyDetailsState.Content).vacancy
-                    VacancyDetailsContent(vacancy = vacancy)
-                }
-                is VacancyDetailsState.NoInternet -> {
-                    ErrorPlaceholder(text = stringResource(R.string.no_connect))
-                }
-                is VacancyDetailsState.Error -> {
-                    ErrorPlaceholder(text = stringResource(R.string.server_error_msg))
-                }
+                is VacancyDetailsState.Content -> state.vacancy
+                else -> null
             }
         }
     }
 }
 
+private fun createShareIntent(vacancy: VacancyDetails): Intent {
+    return Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, vacancy.url)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun VacancyDetailsContent(vacancy: VacancyDetails) {
+private fun VacancyDetailsTopBar(
+    currentVacancy: VacancyDetails?,
+    isFavorite: Boolean,
+    onBackPressed: () -> Unit,
+    onShareClick: (VacancyDetails) -> Unit,
+    onFavoriteClick: (VacancyDetails, Boolean) -> Unit
+) {
     val context = LocalContext.current
 
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.vacancy_title),
+                fontSize = TitleSize22,
+                fontWeight = FontWeight.Medium,
+                fontFamily = YsDisplay,
+                lineHeight = LineHeight26,
+                color = BlackPrimary
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackPressed) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = stringResource(R.string.back),
+                    tint = BlackPrimary
+                )
+            }
+        },
+        actions = {
+            ShareButton(
+                currentVacancy = currentVacancy,
+                context = context
+            )
+            FavoriteButton(
+                currentVacancy = currentVacancy,
+                isFavorite = isFavorite,
+                onFavoriteClick = { vacancy, isFav ->
+                    onFavoriteClick(vacancy, isFav)
+                }
+            )
+        }
+    )
+}
+
+@Composable
+private fun ShareButton(
+    currentVacancy: VacancyDetails?,
+    context: android.content.Context
+) {
+    IconButton(
+        onClick = {
+            currentVacancy?.let { vacancy ->
+                val shareIntent = createShareIntent(vacancy)
+                context.startActivity(Intent.createChooser(shareIntent, null))
+            }
+        }
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_share),
+            contentDescription = stringResource(R.string.share),
+            tint = BlackPrimary
+        )
+    }
+}
+
+@Composable
+private fun FavoriteButton(
+    currentVacancy: VacancyDetails?,
+    isFavorite: Boolean,
+    onFavoriteClick: (VacancyDetails, Boolean) -> Unit
+) {
+    IconButton(
+        onClick = {
+            currentVacancy?.let { vacancy ->
+                onFavoriteClick(vacancy, isFavorite)
+            }
+        },
+        enabled = currentVacancy != null
+    ) {
+        Icon(
+            painter = painterResource(
+                id = if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite
+            ),
+            contentDescription = stringResource(R.string.favorites_title),
+            tint = Color.Unspecified
+        )
+    }
+}
+
+@Composable
+private fun VacancyDetailsContentWrapper(
+    modifier: Modifier,
+    state: VacancyDetailsState
+) {
+    Box(modifier = modifier) {
+        when (state) {
+            is VacancyDetailsState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            is VacancyDetailsState.Content -> {
+                VacancyDetailsContent(vacancy = state.vacancy)
+            }
+            is VacancyDetailsState.NoInternet -> {
+                ErrorPlaceholder(text = stringResource(R.string.no_connect))
+            }
+            is VacancyDetailsState.Error -> {
+                ErrorPlaceholder(text = stringResource(R.string.server_error_msg))
+            }
+        }
+    }
+}
+
+private data class FavoriteState(
+    val isFavorite: Boolean,
+    val toggle: () -> Unit
+)
+@Composable
+private fun VacancyDetailsContent(vacancy: VacancyDetails) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(PaddingMedium)
     ) {
-        // НАЗВАНИЕ ВАКАНСИИ
-        Text(
-            text = vacancy.name,
-            fontSize = TextSize32,
-            fontWeight = FontWeight.Bold,
-            fontFamily = YsDisplay,
-            lineHeight = LineHeight38,
-            color = BlackPrimary
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // ЗАРПЛАТА
-        Text(
-            text = formatSalary(vacancy.salary?.from, vacancy.salary?.to, vacancy.salary?.currency),
-            fontSize = TextSize22,
-            fontWeight = FontWeight.Medium,
-            fontFamily = YsDisplay,
-            lineHeight = LineHeight26,
-            color = BlackPrimary
-        )
+        VacancyHeaderSection(vacancy)
         Spacer(modifier = Modifier.height(16.dp))
+        VacancyEmployerSection(vacancy)
+        Spacer(modifier = Modifier.height(24.dp))
+        VacancyExperienceSection(vacancy)
+        VacancyScheduleSection(vacancy)
+        Spacer(modifier = Modifier.height(24.dp))
+        VacancyDescriptionSection(vacancy)
+        VacancySkillsSection(vacancy.skills)
+        VacancyContactsSection(vacancy.contacts)
+    }
+}
 
-        // ЛОГОТИП, КОМПАНИЯ, ГОРОД
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(FieldGray, RoundedCornerShape(CornerRadiusSmall))
-                .padding(PaddingMedium)
+@Composable
+private fun VacancyHeaderSection(vacancy: VacancyDetails) {
+    // Название
+    Text(
+        text = vacancy.name,
+        fontSize = TextSize32,
+        fontWeight = FontWeight.Bold,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight38,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Зарплата
+    Text(
+        text = formatSalary(vacancy.salary?.from, vacancy.salary?.to, vacancy.salary?.currency),
+        fontSize = TextSize22,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight26,
+        color = BlackPrimary
+    )
+}
+
+@Composable
+private fun VacancyEmployerSection(vacancy: VacancyDetails) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(FieldGray, RoundedCornerShape(CornerRadiusSmall))
+            .padding(PaddingMedium)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                AsyncImage(
-                    model = vacancy.employer.logo,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(LogoSizeMedium)
-                        .clip(RoundedCornerShape(CornerRadiusSmall))
-                        .background(WhiteBackground),
-                    error = painterResource(id = R.drawable.ic_company_placeholder),
-                    placeholder = painterResource(id = R.drawable.ic_company_placeholder)
+            AsyncImage(
+                model = vacancy.employer.logo,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(LogoSizeMedium)
+                    .clip(RoundedCornerShape(CornerRadiusSmall))
+                    .background(WhiteBackground),
+                error = painterResource(id = R.drawable.ic_company_placeholder),
+                placeholder = painterResource(id = R.drawable.ic_company_placeholder)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = vacancy.employer.name,
+                    fontSize = TextSize22,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = YsDisplay,
+                    lineHeight = LineHeight26,
+                    color = BlackPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = vacancy.employer.name,
-                        fontSize = TextSize22,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = YsDisplay,
-                        lineHeight = LineHeight26,
-                        color = BlackPrimary
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = vacancy.address?.city ?: vacancy.area.name,
-                        fontSize = TextSize16,
-                        fontWeight = FontWeight.Normal,
-                        fontFamily = YsDisplay,
-                        lineHeight = LineHeight19,
-                        color = CityGray
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = vacancy.address?.city ?: vacancy.area.name,
+                    fontSize = TextSize16,
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = YsDisplay,
+                    lineHeight = LineHeight19,
+                    color = CityGray
+                )
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
 
-        // ТРЕБУЕМЫЙ ОПЫТ
-        if (vacancy.experience != null) {
+@Composable
+private fun VacancyExperienceSection(vacancy: VacancyDetails) {
+    if (vacancy.experience == null) return
+
+    Text(
+        text = stringResource(R.string.required_experience),
+        fontSize = TextSize16,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight19,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(
+        text = vacancy.experience.name,
+        fontSize = TextSize16,
+        fontWeight = FontWeight.Normal,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight19,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+@Composable
+private fun VacancyScheduleSection(vacancy: VacancyDetails) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        if (vacancy.schedule != null) {
             Text(
-                text = stringResource(R.string.required_experience),
-                fontSize = TextSize16,
-                fontWeight = FontWeight.Medium,
-                fontFamily = YsDisplay,
-                lineHeight = LineHeight19,
-                color = BlackPrimary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = vacancy.experience.name,
+                text = vacancy.schedule.name,
                 fontSize = TextSize16,
                 fontWeight = FontWeight.Normal,
                 fontFamily = YsDisplay,
                 lineHeight = LineHeight19,
                 color = BlackPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
-
-        // ГРАФИК И ЗАНЯТОСТЬ
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (vacancy.schedule != null) {
-                Text(
-                    text = vacancy.schedule.name,
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary
-                )
-            }
-            if (vacancy.schedule != null && vacancy.employment != null) {
-                Text(
-                    text = ", ",
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary
-                )
-            }
-            if (vacancy.employment != null) {
-                Text(
-                    text = vacancy.employment.name,
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // ОПИСАНИЕ ВАКАНСИИ (ЗАГОЛОВОК)
-        Text(
-            text = stringResource(R.string.vacancy_description),
-            fontSize = TextSize22,
-            fontWeight = FontWeight.Medium,
-            fontFamily = YsDisplay,
-            lineHeight = LineHeight26,
-            color = BlackPrimary
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val cleanText = vacancy.description
-            .replace(Regex("<[^>]*>"), "")
-            .replace("&nbsp;", " ")
-            .trim()
-
-        // ОБЯЗАННОСТИ
-        val responsibilities = splitIntoSentences(cleanText, "Обязанности")
-        if (responsibilities.isNotEmpty()) {
+        if (vacancy.schedule != null && vacancy.employment != null) {
             Text(
-                text = stringResource(R.string.responsibilities_header),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
+                text = ", ",
+                fontSize = TextSize16,
+                fontWeight = FontWeight.Normal,
                 fontFamily = YsDisplay,
-                lineHeight = 19.sp,
+                lineHeight = LineHeight19,
                 color = BlackPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            responsibilities.forEach { sentence ->
-                Text(
-                    text = "$BULLET_POINT$sentence",
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary,
-                    modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
         }
-
-        // ТРЕБОВАНИЯ
-        val requirements = splitIntoSentences(cleanText, "Требования")
-        if (requirements.isNotEmpty()) {
+        if (vacancy.employment != null) {
             Text(
-                text = stringResource(R.string.requirements_header),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
+                text = vacancy.employment.name,
+                fontSize = TextSize16,
+                fontWeight = FontWeight.Normal,
                 fontFamily = YsDisplay,
-                lineHeight = 19.sp,
+                lineHeight = LineHeight19,
                 color = BlackPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            requirements.forEach { sentence ->
-                Text(
-                    text = "$BULLET_POINT$sentence",
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary,
-                    modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        // УСЛОВИЯ
-        val conditions = splitIntoSentences(cleanText, "Условия")
-        if (conditions.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.conditions_header),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                fontFamily = YsDisplay,
-                lineHeight = 19.sp,
-                color = BlackPrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            conditions.forEach { sentence ->
-                Text(
-                    text = "$BULLET_POINT$sentence",
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary,
-                    modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        // КЛЮЧЕВЫЕ НАВЫКИ
-        if (vacancy.skills.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.key_skills),
-                fontSize = TextSize22,
-                fontWeight = FontWeight.Medium,
-                fontFamily = YsDisplay,
-                lineHeight = LineHeight26,
-                color = BlackPrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            vacancy.skills.forEach { skill ->
-                Text(
-                    text = "• $skill",
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary,
-                    modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        // КОНТАКТЫ
-        vacancy.contacts?.let { contacts ->
-            Text(
-                text = stringResource(R.string.contacts),
-                fontSize = TextSize22,
-                fontWeight = FontWeight.Medium,
-                fontFamily = YsDisplay,
-                lineHeight = LineHeight26,
-                color = BlackPrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (contacts.name.isNotBlank()) {
-                Text(
-                    text = contacts.name,
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = BlackPrimary
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            if (contacts.email.isNotBlank()) {
-                Text(
-                    text = contacts.email,
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = ContactBlue,
-                    modifier = Modifier.clickable {
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = "mailto:${contacts.email}".toUri()
-                        }
-                        context.startActivity(intent)
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            contacts.phones.forEach { phone ->
-                Text(
-                    text = phone.formatted,
-                    fontSize = TextSize16,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = YsDisplay,
-                    lineHeight = LineHeight19,
-                    color = ContactBlue,
-                    modifier = Modifier.clickable {
-                        val intent = Intent(Intent.ACTION_DIAL).apply {
-                            data = "tel:${phone.formatted.replace(Regex("[^0-9+]"), "")}".toUri()
-                        }
-                        context.startActivity(intent)
-                    }
-                )
-                phone.comment?.let {
-                    Text(
-                        text = it,
-                        fontSize = TextSize14,
-                        fontWeight = FontWeight.Normal,
-                        fontFamily = YsDisplay,
-                        lineHeight = LineHeight19,
-                        color = CommentGray,
-                        modifier = Modifier.padding(start = PaddingSmall)
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
         }
     }
 }
 
-private fun splitIntoSentences(fullText: String, sectionName: String): List<String> {
-    val startIndex = fullText.indexOf(sectionName)
-    if (startIndex == -1) return emptyList()
+@Composable
+private fun VacancyDescriptionSection(vacancy: VacancyDetails) {
+    Text(
+        text = stringResource(R.string.vacancy_description),
+        fontSize = TextSize22,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight26,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(16.dp))
 
+    val cleanText = vacancy.description
+        .replace(Regex("<[^>]*>"), "")
+        .replace("&nbsp;", " ")
+        .trim()
+
+    // ОБЯЗАННОСТИ
+    val responsibilities = splitIntoSentences(cleanText, "Обязанности")
+    if (responsibilities.isNotEmpty()) {
+        BulletPointSection(
+            title = stringResource(R.string.responsibilities_header),
+            items = responsibilities
+        )
+    }
+
+    // ТРЕБОВАНИЯ
+    val requirements = splitIntoSentences(cleanText, "Требования")
+    if (requirements.isNotEmpty()) {
+        BulletPointSection(
+            title = stringResource(R.string.requirements_header),
+            items = requirements
+        )
+    }
+
+    // УСЛОВИЯ
+    val conditions = splitIntoSentences(cleanText, "Условия")
+    if (conditions.isNotEmpty()) {
+        BulletPointSection(
+            title = stringResource(R.string.conditions_header),
+            items = conditions
+        )
+    }
+}
+
+@Composable
+private fun BulletPointSection(title: String, items: List<String>) {
+    Text(
+        text = title,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = 19.sp,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    items.forEach { sentence ->
+        Text(
+            text = "$BULLET_POINT$sentence",
+            fontSize = TextSize16,
+            fontWeight = FontWeight.Normal,
+            fontFamily = YsDisplay,
+            lineHeight = LineHeight19,
+            color = BlackPrimary,
+            modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
+        )
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+}
+
+@Composable
+private fun VacancySkillsSection(skills: List<String>) {
+    if (skills.isEmpty()) return
+
+    Text(
+        text = stringResource(R.string.key_skills),
+        fontSize = TextSize22,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight26,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    skills.forEach { skill ->
+        Text(
+            text = "$BULLET_POINT$skill",
+            fontSize = TextSize16,
+            fontWeight = FontWeight.Normal,
+            fontFamily = YsDisplay,
+            lineHeight = LineHeight19,
+            color = BlackPrimary,
+            modifier = Modifier.padding(start = 16.dp).padding(vertical = 4.dp)
+        )
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+}
+
+@Composable
+private fun VacancyContactsSection(contacts: ru.practicum.android.diploma.domain.models.Contacts?) {
+    if (contacts == null) return
+
+    val context = LocalContext.current
+
+    Text(
+        text = stringResource(R.string.contacts),
+        fontSize = TextSize22,
+        fontWeight = FontWeight.Medium,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight26,
+        color = BlackPrimary
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    if (contacts.name.isNotBlank()) {
+        Text(
+            text = contacts.name,
+            fontSize = TextSize16,
+            fontWeight = FontWeight.Normal,
+            fontFamily = YsDisplay,
+            lineHeight = LineHeight19,
+            color = BlackPrimary
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    if (contacts.email.isNotBlank()) {
+        EmailContact(email = contacts.email, context = context)
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    contacts.phones.forEach { phone ->
+        PhoneContact(phone = phone, context = context)
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun EmailContact(email: String, context: android.content.Context) {
+    Text(
+        text = email,
+        fontSize = TextSize16,
+        fontWeight = FontWeight.Normal,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight19,
+        color = ContactBlue,
+        modifier = Modifier.clickable {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = "mailto:$email".toUri()
+            }
+            context.startActivity(intent)
+        }
+    )
+}
+
+@Composable
+private fun PhoneContact(phone: ru.practicum.android.diploma.domain.models.Phone, context: android.content.Context) {
+    Text(
+        text = phone.formatted,
+        fontSize = TextSize16,
+        fontWeight = FontWeight.Normal,
+        fontFamily = YsDisplay,
+        lineHeight = LineHeight19,
+        color = ContactBlue,
+        modifier = Modifier.clickable {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = "tel:${phone.formatted.replace(Regex("[^0-9+]"), "")}".toUri()
+            }
+            context.startActivity(intent)
+        }
+    )
+    phone.comment?.let {
+        Text(
+            text = it,
+            fontSize = TextSize14,
+            fontWeight = FontWeight.Normal,
+            fontFamily = YsDisplay,
+            lineHeight = LineHeight19,
+            color = CommentGray,
+            modifier = Modifier.padding(start = PaddingSmall)
+        )
+    }
+}
+private fun splitIntoSentences(fullText: String, sectionName: String): List<String> {
+    val sectionContent = extractSectionContent(fullText, sectionName) ?: return emptyList()
+    return splitTextIntoSentences(sectionContent)
+}
+
+private fun extractSectionContent(fullText: String, sectionName: String): String? {
+    val startIndex = fullText.indexOf(sectionName)
+    if (startIndex == -1) return null
+
+    val endIndex = findNextSectionIndex(fullText, sectionName, startIndex)
+    val content = fullText.substring(startIndex + sectionName.length, endIndex).trim()
+
+    return content.ifEmpty { null }
+}
+
+private fun findNextSectionIndex(fullText: String, currentSection: String, startIndex: Int): Int {
     val nextSections = listOf("Обязанности", "Требования", "Условия")
     var endIndex = fullText.length
+
     for (nextSection in nextSections) {
-        if (nextSection != sectionName) {
-            val nextIndex = fullText.indexOf(nextSection, startIndex + sectionName.length)
+        if (nextSection != currentSection) {
+            val nextIndex = fullText.indexOf(nextSection, startIndex + currentSection.length)
             if (nextIndex != -1 && nextIndex < endIndex) {
                 endIndex = nextIndex
             }
         }
     }
 
-    val content = fullText.substring(startIndex + sectionName.length, endIndex).trim()
-    if (content.isEmpty()) return emptyList()
+    return endIndex
+}
 
+private fun splitTextIntoSentences(content: String): List<String> {
     val result = mutableListOf<String>()
     var currentSentence = StringBuilder()
 
     for (char in content) {
         currentSentence.append(char)
-        if (char == '.' || char == '!' || char == '?') {
-            var sentence = currentSentence.toString().trim()
+        if (isSentenceEnding(char)) {
+            val sentence = processSentence(currentSentence.toString())
             if (sentence.isNotEmpty()) {
-                sentence = sentence.replace(Regex("^[•\\-*\\d+.]\\s*"), "")
-                sentence = sentence.replace(Regex("\\s+"), " ")
-                if (sentence.isNotEmpty()) {
-                    val firstChar = sentence[0].uppercaseChar()
-                    val rest = if (sentence.length > 1) sentence.substring(1) else ""
-                    sentence = firstChar + rest
-                }
                 result.add(sentence)
             }
             currentSentence = StringBuilder()
@@ -557,6 +652,38 @@ private fun splitIntoSentences(fullText: String, sectionName: String): List<Stri
     }
 
     return result
+}
+
+private fun isSentenceEnding(char: Char): Boolean {
+    return char == '.' || char == '!' || char == '?'
+}
+
+private fun processSentence(rawSentence: String): String {
+    var sentence = rawSentence.trim()
+    if (sentence.isEmpty()) return ""
+
+    sentence = removeBulletPrefix(sentence)
+    sentence = normalizeWhitespace(sentence)
+
+    return if (sentence.isNotEmpty()) {
+        capitalizeFirstLetter(sentence)
+    } else {
+        ""
+    }
+}
+
+private fun removeBulletPrefix(text: String): String {
+    return text.replace(Regex("^[•\\-*\\d+.]\\s*"), "")
+}
+
+private fun normalizeWhitespace(text: String): String {
+    return text.replace(Regex("\\s+"), " ")
+}
+
+private fun capitalizeFirstLetter(text: String): String {
+    val firstChar = text[0].uppercaseChar()
+    val rest = if (text.length > 1) text.substring(1) else ""
+    return firstChar + rest
 }
 
 @Composable
