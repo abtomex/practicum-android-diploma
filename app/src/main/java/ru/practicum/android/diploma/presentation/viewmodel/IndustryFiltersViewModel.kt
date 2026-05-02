@@ -7,19 +7,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.Industry
-import ru.practicum.android.diploma.domain.usecases.IndustriesInteractor
+import ru.practicum.android.diploma.domain.impl.IndustriesInteractorImpl
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
 class IndustryFiltersViewModel(
-    private val industryInteractor: IndustriesInteractor
+    private val industryInteractor: IndustriesInteractorImpl
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
-    val state: StateFlow<IndustryFiltersState> = _state.asStateFlow()
-    private val _listIndustries = MutableStateFlow<List<Industry>>(emptyList())
-    val listIndustries: StateFlow<List<Industry>> = _listIndustries.asStateFlow()
-    private val _industryFilter = MutableStateFlow<Industry?>(null)
-    val industryFilter: StateFlow<Industry?> = _industryFilter.asStateFlow()
+    private val state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
+    val stateModified: StateFlow<IndustryFiltersState> = state.asStateFlow()
+    private val listIndustries = MutableStateFlow<List<Industry>>(emptyList())
+    val listIndustriesModified: StateFlow<List<Industry>> = listIndustries.asStateFlow()
+    private val industryFilter = MutableStateFlow<MutableList<Industry>>(mutableListOf())
+    val listIndustryFilterModified: StateFlow<List<Industry>> = industryFilter.asStateFlow()
 
     init {
         getIndustriesList()
@@ -27,21 +27,16 @@ class IndustryFiltersViewModel(
 
     fun getIndustriesList() {
         viewModelScope.launch {
-            _listIndustries.value = industryInteractor.getIndustriesList() ?: emptyList()
-            _state.value = IndustryFiltersState.Content(
-                data = _listIndustries.value,
-                checked = null
+            listIndustries.value = industryInteractor.getIndustriesList() ?: emptyList()
+            state.value = IndustryFiltersState.Content(
+                data = listIndustries.value
             )
         }
 
     }
 
-    fun setFilter(industry: Industry) {
-        _industryFilter.value = industry
-        _state.value = IndustryFiltersState.Content(
-            data = _listIndustries.value,
-            checked = industry
-        )
+    fun addFilter(industry: Industry) {
+        industryFilter.value.add(industry)
     }
 
 }
