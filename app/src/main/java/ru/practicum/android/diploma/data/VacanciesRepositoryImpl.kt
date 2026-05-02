@@ -89,57 +89,35 @@ class VacanciesRepositoryImpl(
 
     override suspend fun getVacancyDetailsFromApi(vacancyId: String): ApiResponse<VacancyDetails?> {
         val response = networkClient.doRequest(VacancyDetailsRequestDto(vacancyId))
-        Log.d("VacanciesRepo", "Response resultCode: ${response.resultCode}")
+        Log.d(LOG_TAG, "Response resultCode: ${response.resultCode}")
         return when (response.resultCode) {
             Response.STATUS_NETWORK_ERROR -> {
-                Log.e("VacanciesRepo", "Network error")
+                Log.e(LOG_TAG, "Network error")
                 ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
             }
             Response.SUCCESS_RESPONSE_CODE -> {
                 val dto = (response as Response.VacancyDetailsResponse).body
-                Log.d("VacanciesRepo", "DTO received: $dto")
+                Log.d(LOG_TAG, "DTO received: $dto")
                 if (dto != null) {
                     try {
                         val vacancyDetails = vacancyDetailsApiConverter.map(dto)
-/*
-                        val vacancyDetails = VacancyDetails(
-                            id = dto.id,
-                            name = dto.name,
-                            description = dto.description,
-                            salary = dto.salary?.let { Salary(it.from, it.to, it.currency) },
-                            address = dto.address?.let { Address(it.id, it.city, it.street, it.building, it.raw) },
-                            experience = dto.experience?.let { Experience(it.id, it.name) },
-                            schedule = dto.schedule?.let { Schedule(it.id, it.name) },
-                            employment = dto.employment?.let { Employment(it.id, it.name) },
-                            contacts = dto.contacts?.let {
-                                Contacts(
-                                    id = it.id,
-                                    name = it.name,
-                                    email = it.email,
-                                    phones = it.phones.map { phone -> Phone(phone.comment, phone.formatted) }
-                                )
-                            },
-                            employer = Employer(dto.employer.id, dto.employer.name, dto.employer.logo),
-                            area = Area(dto.area.id, dto.area.name, dto.area.parentId, dto.area.areas),
-                            skills = dto.skills,
-                            url = dto.url,
-                            industry = Industry(dto.industry.id, dto.industry.name)
-                        )
-*/
-                        Log.d("VacanciesRepo", "Successfully converted to VacancyDetails: ${vacancyDetails.name}")
+                        Log.d(LOG_TAG, "Successfully converted to VacancyDetails: ${vacancyDetails.name}")
                         ApiResponse.Success(vacancyDetails)
                     } catch (_: Exception) {
-                        ApiResponse.Error("Ошибка парсинга данных", 500)
+                            ApiResponse.Error("Ошибка парсинга данных", Response.STATUS_SERVER_ERROR)
                     }
                 } else {
-                    Log.e("VacanciesRepo", "DTO is null")
+                    Log.e(LOG_TAG, "DTO is null")
                     ApiResponse.Error("Данные вакансии не найдены", Response.NO_PAGE)
                 }
             }
             else -> {
-                Log.e("VacanciesRepo", "Unexpected error code: ${response.resultCode}")
+                Log.e(LOG_TAG, "Unexpected error code: ${response.resultCode}")
                 ApiResponse.Error("Ошибка загрузки: ${response.resultCode}", response.resultCode)
             }
         }
+    }
+    companion object {
+        private const val LOG_TAG = "VacanciesRepo"
     }
 }

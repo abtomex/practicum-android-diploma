@@ -72,13 +72,15 @@ fun MainScreen() {
                 route = Destination.VacancyDetails.route,
                 arguments = listOf(navArgument("vacancyId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val vacancyId = backStackEntry.arguments?.getString("vacancyId") ?: return@composable
-                val viewModel: VacancyDetailsViewModel = koinViewModel()
-                VacancyDetailsScreen(
-                    vacancyId = vacancyId,
-                    viewModel = viewModel,
-                    onBackPressed = { navController.popBackStack() }
-                )
+                backStackEntry.arguments?.getString("vacancyId")?.let {
+                    val viewModel: VacancyDetailsViewModel = koinViewModel()
+                    VacancyDetailsScreen(
+                        vacancyId = it,
+                        viewModel = viewModel,
+                        onBackPressed = { navController.popBackStack() }
+                    )
+
+                }
             }
         }
     }

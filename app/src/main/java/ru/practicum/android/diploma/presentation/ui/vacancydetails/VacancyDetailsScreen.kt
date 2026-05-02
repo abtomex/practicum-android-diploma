@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.vacancydetails
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ru.practicum.android.diploma.R
@@ -69,13 +69,13 @@ import ru.practicum.android.diploma.presentation.ui.theme.TitleSize22
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteBackground
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsState
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsViewModel
-import androidx.core.net.toUri
 
 val YsDisplay = FontFamily(
     Font(R.font.ys_display_regular, FontWeight.Normal),
     Font(R.font.ys_display_medium, FontWeight.Medium),
     Font(R.font.ys_display_bold, FontWeight.Bold)
 )
+private const val BULLET_POINT = "• "
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -354,7 +354,7 @@ private fun VacancyDetailsContent(vacancy: VacancyDetails) {
             Spacer(modifier = Modifier.height(8.dp))
             responsibilities.forEach { sentence ->
                 Text(
-                    text = "• $sentence",
+                    text = "$BULLET_POINT$sentence",
                     fontSize = TextSize16,
                     fontWeight = FontWeight.Normal,
                     fontFamily = YsDisplay,
@@ -380,7 +380,7 @@ private fun VacancyDetailsContent(vacancy: VacancyDetails) {
             Spacer(modifier = Modifier.height(8.dp))
             requirements.forEach { sentence ->
                 Text(
-                    text = "• $sentence",
+                    text = "$BULLET_POINT$sentence",
                     fontSize = TextSize16,
                     fontWeight = FontWeight.Normal,
                     fontFamily = YsDisplay,
@@ -406,7 +406,7 @@ private fun VacancyDetailsContent(vacancy: VacancyDetails) {
             Spacer(modifier = Modifier.height(8.dp))
             conditions.forEach { sentence ->
                 Text(
-                    text = "• $sentence",
+                    text = "$BULLET_POINT$sentence",
                     fontSize = TextSize16,
                     fontWeight = FontWeight.Normal,
                     fontFamily = YsDisplay,
@@ -495,7 +495,7 @@ private fun VacancyDetailsContent(vacancy: VacancyDetails) {
                     color = ContactBlue,
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_DIAL).apply {
-                            data = Uri.parse("tel:${phone.formatted.replace(Regex("[^0-9+]"), "")}")
+                            data = "tel:${phone.formatted.replace(Regex("[^0-9+]"), "")}".toUri()
                         }
                         context.startActivity(intent)
                     }
