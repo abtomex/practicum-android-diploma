@@ -37,7 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
@@ -45,8 +45,7 @@ import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewMo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndustrySelectionScreen(
-    viewModel: IndustryFiltersViewModel,
-    navController: NavController
+    viewModel: IndustryFiltersViewModel
 ) {
     // Пример данных
     // To be replaced by viewModel retreiving
@@ -65,6 +64,8 @@ fun IndustrySelectionScreen(
             Industry(name = "Алкогольные напитки (продвижение, оптовая торговля)", id = 10)
         )
     }
+
+    val navController = rememberNavController()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustryId by remember { mutableStateOf<Int?>(null) }
@@ -94,7 +95,9 @@ fun IndustrySelectionScreen(
                     .padding(horizontal = 16.dp, vertical = 20.dp) // Отступы от краев экрана
             ) {
                 Button(
-                    onClick = { /* Действие при нажатии */ },
+                    onClick = {
+                        //Вернуться на предыдущий экран, передав значение фильтра
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp), // Стандартная высота для таких кнопок
