@@ -18,4 +18,10 @@ val viewModelModule = module {
     viewModel { FiltersScreenViewModel(get()) }
     viewModel { SearchViewModel(get(), get()) }
     viewModel { VacancyDetailsViewModel(get(), get()) }
+    viewModel {
+        IndustryFiltersViewModel(get())
+    }
+    viewModel {
+        FiltersScreenViewModel(get())
+    }
 }

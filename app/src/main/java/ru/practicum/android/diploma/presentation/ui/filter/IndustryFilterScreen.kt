@@ -37,7 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
+import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
@@ -46,8 +47,8 @@ import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewMo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IndustrySelectionScreen(
-    viewModel: IndustryFiltersViewModel
+fun IndustryFilterScreen(
+    navController: NavController
 ) {
     // Пример данных
     // To be replaced by viewModel retreiving
@@ -67,7 +68,7 @@ fun IndustrySelectionScreen(
         )
     }
 
-    val navController = rememberNavController()
+    val viewModel: IndustryFiltersViewModel = koinViewModel()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }

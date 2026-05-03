@@ -19,6 +19,7 @@ import ru.practicum.android.diploma.presentation.components.BottomNavigationBar
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.favorites.FavoritesScreen
 import ru.practicum.android.diploma.presentation.ui.filter.FilterScreen
+import ru.practicum.android.diploma.presentation.ui.filter.IndustryFilterScreen
 import ru.practicum.android.diploma.presentation.ui.search.SearchScreen
 import ru.practicum.android.diploma.presentation.ui.team.TeamScreen
 import ru.practicum.android.diploma.presentation.ui.theme.AppTheme
@@ -67,6 +68,9 @@ fun MainScreen() {
             }
             composable(Destination.Filter.route) {
                 FilterScreen(navController = navController)
+            }
+            composable(Destination.IndustryFilter.route) {
+                IndustryFilterScreen(navController = navController)
             }
             composable(
                 route = Destination.VacancyDetails.route,

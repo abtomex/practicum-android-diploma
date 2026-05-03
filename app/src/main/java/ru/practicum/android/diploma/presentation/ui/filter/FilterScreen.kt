@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerLarge
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerMedium
@@ -38,7 +39,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 val YsDisplayMediumFilter = FontFamily(
     Font(R.font.ys_display_medium)
 )
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,18 +101,15 @@ fun FilterScreen(navController: NavHostController) {
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
                     onClick = { //ЗАГЛУШКА
-                              },
-
+                        },
                 )
-
-
 
                 // Поле "Отрасль"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_industry),
-                    onClick = { //ЗАГЛУШКА
+                    onClick = {
+                        navController.navigate(Destination.IndustryFilter)
                      },
-
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))
