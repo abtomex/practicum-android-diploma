@@ -68,6 +68,7 @@ fun IndustrySelectionScreen(
     }
 
     val navController = rememberNavController()
+    var selectedIndustries by remember { mutableStateOf(setOf<Int>()) }
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustryId by remember { mutableStateOf<Int?>(null) }
@@ -98,7 +99,13 @@ fun IndustrySelectionScreen(
             ) {
                 Button(
                     onClick = {
-                        // Вернуться на предыдущий экран, передав значение фильтра
+                        // 1. Получаем доступ к состоянию предыдущего экрана
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("selected_industries", selectedIndustryId) // Ключ и значение
+
+                        // 2. Возвращаемся назад
+                        navController.popBackStack()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -152,7 +159,13 @@ fun IndustrySelectionScreen(
                     IndustryItem(
                         industry = industry,
                         isSelected = industry.id == selectedIndustryId,
-                        onSelect = { selectedIndustryId = industry.id }
+                        onSelect = {
+                            selectedIndustries = if (selectedIndustries.contains(industry.id)) {
+                                selectedIndustries - industry.id // Убираем из списка
+                            } else {
+                                selectedIndustries + industry.id // Добавляем в список
+                            }
+                        }
                     )
                 }
             }
