@@ -22,6 +22,10 @@ class IndustryFiltersViewModel(
     private val industryFilterChangeable = MutableStateFlow<Industry?>(null)
     val listIndustryFilter: StateFlow<Industry?> = industryFilterChangeable.asStateFlow()
 
+//    init {
+//        getIndustriesList()
+//    }
+
     fun getIndustriesList() {
         viewModelScope.launch {
             industryInteractor.getIndustriesList()

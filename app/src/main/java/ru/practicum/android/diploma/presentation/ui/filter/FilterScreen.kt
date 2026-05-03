@@ -108,7 +108,7 @@ fun FilterScreen(navController: NavHostController) {
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_industry),
                     onClick = {
-                        navController.navigate(Destination.IndustryFilter)
+                        navController.navigate(Destination.IndustryFilter.route)
                      },
                 )
 
