@@ -29,6 +29,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
+import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.SearchViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFailuresEnum
 
@@ -41,9 +42,11 @@ val YsDisplayMedium = FontFamily(
 fun SearchScreen(
     navController: NavHostController,
     viewModel: SearchViewModel = koinViewModel(),
+    filtersViewModel: FiltersScreenViewModel = koinViewModel()
 //    onVacancyClick: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val filterState by filtersViewModel.state.collectAsStateWithLifecycle()
     val requestStr by viewModel.searchRequest.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
