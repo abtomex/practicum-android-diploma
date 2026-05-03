@@ -26,6 +26,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +38,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
+import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,26 +53,11 @@ fun IndustrySelectionScreen(
     viewModel: IndustryFiltersViewModel
 ) {
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    // Пример данных
-    // To be replaced by viewModel retreiving
-    // val industries = viewModel.getIndustriesList()
-    val industries = remember {
-        listOf(
-            Industry(name = "Авиаперевозки", id = 1),
-            Industry(name = "Авиационная, вертолетная и аэрокосмическая промышленность", id = 2),
-            Industry(name = "Автокомпоненты, запчасти (производство)", id = 3),
-            Industry(name = "Автокомпоненты, запчасти, шины (продвижение, оптовая торговля)", id = 4),
-            Industry(name = "Автомобильные перевозки", id = 5),
-            Industry(name = "Автошкола", id = 6),
-            Industry(name = "Агентские услуги в недвижимости", id = 7),
-            Industry(name = "Агрохимия (продвижение, оптовая торговля)", id = 8),
-            Industry(name = "Агрохимия (производство)", id = 9),
-            Industry(name = "Алкогольные напитки (продвижение, оптовая торговля)", id = 10)
-        )
-    }
+    val industriesState by viewModel.state.collectAsState()
 
-//    val navController = rememberNavController()
+    viewModel.getIndustriesList()
+
+    val industries = (industriesState as? IndustryFiltersState.Content)?.data
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
@@ -161,7 +147,7 @@ fun IndustrySelectionScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(industries) { industry ->
+                items(industries ?: emptyList()) { industry ->
                     IndustryItem(
                         industry = industry,
                         isSelected = industry.id == selectedIndustry?.id,
