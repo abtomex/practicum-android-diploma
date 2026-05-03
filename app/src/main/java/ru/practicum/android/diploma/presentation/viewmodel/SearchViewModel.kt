@@ -20,6 +20,7 @@ import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
     val searchInteractor: SearchInteractor,
+    val filtersViewmodel: FiltersScreenViewModel
 ) : ViewModel() {
 
     private val _isNoInternet = MutableStateFlow(false)
@@ -74,7 +75,7 @@ class SearchViewModel(
                 VacancyRequestByPages(
                     text = _searchQuery.value,
                     page = currentPage + 1
-
+                    // todo: делаем обогащение VacancyRequestByPages из стейта фильтров
                 ),
 
             )
@@ -93,7 +94,7 @@ class SearchViewModel(
                 VacancyRequestByPages(
                     text = query,
                     page = currentPage + 1
-
+                    // todo: делаем обогащение VacancyRequestByPages из стейта фильтров
                 ),
 
             ).collect { result ->
