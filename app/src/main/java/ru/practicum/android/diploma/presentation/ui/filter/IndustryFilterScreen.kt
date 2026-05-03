@@ -162,7 +162,8 @@ fun IndustrySelectionScreen(
                         industry = industry,
                         isSelected = industry.id == selectedIndustry?.id,
                         onSelect = {
-                            (viewModel::addFilter)(industry)
+                            selectedIndustry = industry
+                            viewModel.addFilter(industry)
                         }
                     )
                 }
