@@ -68,7 +68,7 @@ fun FilterScreen(
 
     // Получение данных со следующего экрана при возврате (имя отрасли)
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val selectedIndustryName  = backStackEntry?.savedStateHandle
+    val selectedIndustryName = backStackEntry?.savedStateHandle
         ?.getLiveData<String>("industry_name")
         ?.observeAsState()
 
