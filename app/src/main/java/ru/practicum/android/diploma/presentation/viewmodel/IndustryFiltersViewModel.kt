@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +26,15 @@ class IndustryFiltersViewModel(
 //        getIndustriesList() //
     }
 
+
+
     fun getIndustriesList() {
         viewModelScope.launch {
-            listIndustries.value = industryInteractor.getIndustriesList() ?: emptyList()
+            industryInteractor.getIndustriesList()
+                .collect {
+                    listIndustries.value = it ?: emptyList()
+                    Log.d(LOADED_INDUSTRIES, it.toString())
+                }
             state.value = IndustryFiltersState.Content(
                 data = listIndustries.value
             )
@@ -37,6 +44,10 @@ class IndustryFiltersViewModel(
 
     fun addFilter(industry: Industry) {
         industryFilter.value.add(industry)
+    }
+
+    companion object {
+        private const val LOADED_INDUSTRIES = "loadedIndustries"
     }
 
 // todo: когда пользователь выбрал (не выбрал) отрасли, при нажатии на кнопку Выбрать. state становится
