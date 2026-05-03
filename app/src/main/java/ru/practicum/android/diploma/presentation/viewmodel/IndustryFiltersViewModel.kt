@@ -6,12 +6,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.IndustriesInteractor
 import ru.practicum.android.diploma.domain.models.Industry
-import ru.practicum.android.diploma.domain.impl.IndustriesInteractorImpl
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
 class IndustryFiltersViewModel(
-    private val industryInteractor: IndustriesInteractorImpl
+    private val industryInteractor: IndustriesInteractor
 ) : ViewModel() {
 
     private val state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
@@ -22,7 +22,7 @@ class IndustryFiltersViewModel(
     val listIndustryFilterModified: StateFlow<List<Industry>> = industryFilter.asStateFlow()
 
     init {
-        getIndustriesList()
+//        getIndustriesList() //
     }
 
     fun getIndustriesList() {
@@ -38,5 +38,9 @@ class IndustryFiltersViewModel(
     fun addFilter(industry: Industry) {
         industryFilter.value.add(industry)
     }
+
+// todo: когда пользователь выбрал (не выбрал) отрасли, при нажатии на кнопку Выбрать. state становится
+//  IndustryFiltersState.Checked с переданным в него объектом отрасли
+//    и выполняется возвращение на предыдущий экран navController.navigateUp()
 
 }
