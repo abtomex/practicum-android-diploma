@@ -101,7 +101,7 @@ fun FilterScreen(navController: NavHostController) {
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
                     onClick = { //ЗАГЛУШКА
-                        },
+                    },
                 )
 
                 // Поле "Отрасль"
@@ -109,7 +109,7 @@ fun FilterScreen(navController: NavHostController) {
                     placeholder = stringResource(R.string.filter_industry),
                     onClick = {
                         navController.navigate(Destination.IndustryFilter.route)
-                     },
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))
