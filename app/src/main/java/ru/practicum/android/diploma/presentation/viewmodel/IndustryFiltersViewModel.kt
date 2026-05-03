@@ -15,21 +15,21 @@ class IndustryFiltersViewModel(
     private val industryInteractor: IndustriesInteractor
 ) : ViewModel() {
 
-    private val state = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
-    val stateModified: StateFlow<IndustryFiltersState> = state.asStateFlow()
-    private val listIndustries = MutableStateFlow<List<Industry>>(emptyList())
-    val listIndustriesModified: StateFlow<List<Industry>> = listIndustries.asStateFlow()
-    private val industryFilter = MutableStateFlow<MutableList<Industry>>(mutableListOf())
-    val listIndustryFilterModified: StateFlow<List<Industry>> = industryFilter.asStateFlow()
+    private val stateChangeable = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
+    val state: StateFlow<IndustryFiltersState> = stateChangeable.asStateFlow()
+    private val listIndustriesChangeable = MutableStateFlow<List<Industry>>(emptyList())
+    val listIndustries: StateFlow<List<Industry>> = listIndustriesChangeable.asStateFlow()
+    private val industryFilterChangeable = MutableStateFlow<Industry?>(null)
+    val listIndustryFilter: StateFlow<Industry?> = industryFilterChangeable.asStateFlow()
 
     fun getIndustriesList() {
         viewModelScope.launch {
             industryInteractor.getIndustriesList()
                 .collect {
-                    listIndustries.value = it ?: emptyList()
+                    listIndustriesChangeable.value = it ?: emptyList()
                     Log.d(LOADED_INDUSTRIES, it.toString())
                 }
-            state.value = IndustryFiltersState.Content(
+            stateChangeable.value = IndustryFiltersState.Content(
                 data = listIndustries.value
             )
         }
@@ -37,15 +37,16 @@ class IndustryFiltersViewModel(
     }
 
     fun addFilter(industry: Industry) {
-        industryFilter.value.add(industry)
+        industryFilterChangeable.value = industry
+    }
+
+    fun confirmFilter() {
+        stateChangeable.value = IndustryFiltersState.Checked(
+            checkedIndustry = industryFilterChangeable.value
+        )
     }
 
     companion object {
         private const val LOADED_INDUSTRIES = "loadedIndustries"
     }
-
-// todo: когда пользователь выбрал (не выбрал) отрасли, при нажатии на кнопку Выбрать. state становится
-//  IndustryFiltersState.Checked с переданным в него объектом отрасли
-//    и выполняется возвращение на предыдущий экран navController.navigateUp()
-
 }

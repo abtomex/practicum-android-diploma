@@ -14,11 +14,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -68,10 +68,9 @@ fun IndustrySelectionScreen(
     }
 
     val navController = rememberNavController()
-    var selectedIndustries by remember { mutableStateOf(setOf<Int>()) }
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedIndustryId by remember { mutableStateOf<Int?>(null) }
+    var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
 
     Scaffold(
         topBar = {
@@ -99,10 +98,13 @@ fun IndustrySelectionScreen(
             ) {
                 Button(
                     onClick = {
+                        viewModel.confirmFilter()
+
                         // 1. Получаем доступ к состоянию предыдущего экрана
-                        navController.previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("selected_industries", selectedIndustryId) // Ключ и значение
+                        val navHandle = navController.previousBackStackEntry?.savedStateHandle
+
+                        navHandle?.set("industry_id", selectedIndustry?.id)
+                        navHandle?.set("industry_name", selectedIndustry?.name)
 
                         // 2. Возвращаемся назад
                         navController.popBackStack()
@@ -158,13 +160,9 @@ fun IndustrySelectionScreen(
                 items(industries) { industry ->
                     IndustryItem(
                         industry = industry,
-                        isSelected = industry.id == selectedIndustryId,
+                        isSelected = industry.id == selectedIndustry?.id,
                         onSelect = {
-                            selectedIndustries = if (selectedIndustries.contains(industry.id)) {
-                                selectedIndustries - industry.id // Убираем из списка
-                            } else {
-                                selectedIndustries + industry.id // Добавляем в список
-                            }
+                            (viewModel::addFilter)(industry)
                         }
                     )
                 }
@@ -198,13 +196,12 @@ fun IndustryItem(
                 color = Color.Black
             )
 
-            Checkbox(
-                checked = isSelected,
-                onCheckedChange = null, // Клик по-прежнему обрабатывается всей строкой через Surface
-                colors = CheckboxDefaults.colors(
-                    checkedColor = ActiveBlue, // Синий цвет при выборе
-                    uncheckedColor = ActiveBlue, // Синий контур, когда не выбрано
-                    checkmarkColor = WhiteUniversal // Цвет галочки
+            RadioButton(
+                selected = isSelected,
+                onClick = null, // Клик обрабатывается в Surface
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = ActiveBlue,
+                    unselectedColor = ActiveBlue
                 )
             )
         }
