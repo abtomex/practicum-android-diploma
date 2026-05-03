@@ -25,7 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
+import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerLarge
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerMedium
@@ -34,6 +36,7 @@ import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarFontSize
 import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarTopPadding
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
+import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 
 val YsDisplayMediumFilter = FontFamily(
     Font(R.font.ys_display_medium)
@@ -42,7 +45,10 @@ val YsDisplayMediumFilter = FontFamily(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterScreen(navController: NavHostController) {
+fun FilterScreen(
+    navController: NavHostController,
+    viewModel: FiltersScreenViewModel = koinViewModel()
+) {
 
     // Заглушка "Отрасль"
     var selectedIndustry by remember { mutableStateOf("") }
@@ -110,7 +116,8 @@ fun FilterScreen(navController: NavHostController) {
                 // Поле "Отрасль"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_industry),
-                    onClick = { //ЗАГЛУШКА
+                    onClick = {
+                        navController.navigate(Destination.IndustryFilter.route)
                      },
 
                 )
@@ -143,6 +150,8 @@ fun FilterScreen(navController: NavHostController) {
                     onClick = {
                         // ЗАГЛУШКА
                         navController.navigateUp()
+                        viewModel.applyFilters(salaryInput, selectedIndustry, hideWithoutSalary)
+
                     },
                     modifier = Modifier.padding(horizontal = PaddingMedium)
                 )

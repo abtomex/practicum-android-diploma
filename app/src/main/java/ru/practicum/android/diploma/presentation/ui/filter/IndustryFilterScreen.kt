@@ -37,7 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
@@ -47,8 +48,11 @@ import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewMo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndustrySelectionScreen(
+    navController: NavHostController,
     viewModel: IndustryFiltersViewModel
 ) {
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
     // Пример данных
     // To be replaced by viewModel retreiving
     // val industries = viewModel.getIndustriesList()
@@ -67,7 +71,7 @@ fun IndustrySelectionScreen(
         )
     }
 
-    val navController = rememberNavController()
+//    val navController = rememberNavController()
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
@@ -83,7 +87,7 @@ fun IndustrySelectionScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(painter = painterResource(R.drawable.ic_back), contentDescription = "Назад")
                     }
                 }

@@ -19,6 +19,7 @@ import ru.practicum.android.diploma.presentation.components.BottomNavigationBar
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.favorites.FavoritesScreen
 import ru.practicum.android.diploma.presentation.ui.filter.FilterScreen
+import ru.practicum.android.diploma.presentation.ui.filter.IndustrySelectionScreen
 import ru.practicum.android.diploma.presentation.ui.search.SearchScreen
 import ru.practicum.android.diploma.presentation.ui.team.TeamScreen
 import ru.practicum.android.diploma.presentation.ui.theme.AppTheme
@@ -41,8 +42,10 @@ fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val shouldShowBottomBar = currentRoute != Destination.Filter.route &&
-        currentRoute?.startsWith("vacancy_detail") != true
+    val shouldShowBottomBar =
+        currentRoute != Destination.Filter.route &&
+        currentRoute?.startsWith("vacancy_detail") != true &&
+        currentRoute != Destination.IndustryFilter.route
 
     Scaffold(
         bottomBar = {
@@ -66,7 +69,9 @@ fun MainScreen() {
                 TeamScreen()
             }
             composable(Destination.Filter.route) {
-                FilterScreen(navController = navController)
+                FilterScreen(
+                    navController = navController
+                )
             }
             composable(
                 route = Destination.VacancyDetails.route,
@@ -81,6 +86,12 @@ fun MainScreen() {
                     )
 
                 }
+            }
+            composable(route = Destination.IndustryFilter.route) {
+                IndustrySelectionScreen(
+                    navController = navController,
+                    viewModel = koinViewModel()
+                )
             }
         }
     }
