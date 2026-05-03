@@ -29,7 +29,7 @@ val dataModule = module {
         val token: String = BuildConfig.API_ACCESS_TOKEN
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(token))
-            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.HEADERS })
             .build()
     }
 
