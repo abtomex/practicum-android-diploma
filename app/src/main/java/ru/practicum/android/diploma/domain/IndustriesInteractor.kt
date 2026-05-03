@@ -1,7 +1,8 @@
 package ru.practicum.android.diploma.domain
 
+import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.domain.models.Industry
 
 interface IndustriesInteractor {
-    suspend fun getIndustriesList(): List<Industry>?
+    suspend fun getIndustriesList(): Flow<List<Industry>?>
 }
