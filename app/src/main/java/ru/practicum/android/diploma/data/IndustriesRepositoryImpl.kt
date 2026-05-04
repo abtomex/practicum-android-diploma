@@ -18,8 +18,6 @@ class IndustriesRepositoryImpl(
             else -> emptyList()
         }
 
-//        return (networkClient.doRequest(IndustriesRequestDto()) as Response.IndustriesResponse)
-//            .body?.map { industryDto -> apiConverter.map(industryDto) }
     }
 
 }
