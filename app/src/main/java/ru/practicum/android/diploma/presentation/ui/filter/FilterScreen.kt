@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,7 +60,6 @@ fun FilterScreen(
         currentEntry?.savedStateHandle?.getLiveData<Int>("industry_id")
             ?.observeForever { industryId ->
                 if (industryId != null && industryId != 0) {
-
                     val entry = backStackEntry
                     val industryName = entry?.savedStateHandle
                         ?.get<String>("industry_name") ?: ""
@@ -115,7 +113,7 @@ fun FilterScreen(
                 // Поле "Место работы"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
-                    onClick = { //ЗАГЛУШКА
+                    onClick = { // ЗАГЛУШКА
                     },
 
                 )

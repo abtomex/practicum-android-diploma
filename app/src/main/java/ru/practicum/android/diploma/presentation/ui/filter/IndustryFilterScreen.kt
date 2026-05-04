@@ -52,7 +52,6 @@ fun IndustrySelectionScreen(
     navController: NavHostController,
     viewModel: IndustryFiltersViewModel
 ) {
-
     val industriesState by viewModel.state.collectAsState()
 
     viewModel.getIndustriesList()
@@ -198,4 +197,3 @@ fun IndustryItem(
         }
     }
 }
-

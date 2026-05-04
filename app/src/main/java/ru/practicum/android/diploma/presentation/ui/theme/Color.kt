@@ -29,4 +29,3 @@ val ContactBlue = Color(0xFF3772E7)
 val CityGray = Color(0xFFAEAFB4)
 val CommentGray = Color(0xFFAEAFB4)
 val WhiteBackground = Color(0xFFFFFFFF)
-

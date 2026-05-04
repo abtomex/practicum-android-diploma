@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.sp
 val PaddingSmall = 8.dp
 val PaddingMedium = 16.dp
 
-
 // Размеры иконок и лого
 val IconSizeDefault = 24.dp
 val LogoSizeMedium = 48.dp
@@ -29,13 +28,11 @@ val TextSize12 = 12.sp
 val TitleSize22 = TextSize22
 val TitleSize18 = TextSize18
 
-
 // Строки
 // Базовые значения
 val LineHeight38 = 38.sp // для текста 32px
 val LineHeight26 = 26.sp // для текста 22px
 val LineHeight19 = 19.sp // для текста 16px и 14px
-
 
 // Размеры для экрана фильтра
 
@@ -53,4 +50,3 @@ val FilterTopBarTopPadding = 8.dp
 val FilterTopBarFontSize = 22.sp
 val FilterCheckboxSize = 24.dp
 val FilterSalaryFieldHeight = 51.dp
-

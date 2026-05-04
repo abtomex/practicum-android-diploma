@@ -54,8 +54,8 @@ import ru.practicum.android.diploma.presentation.ui.theme.FilterResetRed
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSalaryFieldHeight
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingSmall
-import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize12
+import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
 
 val YsDisplayRegular = FontFamily(
     Font(R.font.ys_display_regular)
@@ -221,7 +221,7 @@ fun NoSalaryCheckbox(
     }
 }
 
-//Кнопки
+// Кнопки
 
 // Кнопка "Применить"
 @Composable

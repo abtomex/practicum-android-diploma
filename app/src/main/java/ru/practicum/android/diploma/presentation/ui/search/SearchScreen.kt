@@ -115,10 +115,7 @@ fun SearchScreen(
                 modifier = Modifier
                     .padding(end = 0.dp)
                     .height(64.dp)
-                    .fillMaxWidth()
-
-
-                ,
+                    .fillMaxWidth(),
                 title = {
                     Text(
                         text = stringResource(R.string.search_title),
@@ -153,10 +150,11 @@ fun SearchScreen(
 }
 
 @Composable
-fun FilterButton(onClick: () -> Unit,
-                 contentColor: Color,
-                 containerColor: Color
-                 ) {
+fun FilterButton(
+    onClick: () -> Unit,
+    contentColor: Color,
+    containerColor: Color
+) {
     Box(
         modifier = Modifier
             .padding(end = 18.dp)
