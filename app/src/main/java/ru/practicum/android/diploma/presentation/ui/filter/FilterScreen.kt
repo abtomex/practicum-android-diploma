@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
@@ -46,10 +46,9 @@ val YsDisplayMediumFilter = FontFamily(
 @Composable
 fun FilterScreen(
     navController: NavHostController,
-    viewModel: FiltersScreenViewModel = koinViewModel()
+    viewModel: FiltersScreenViewModel
 ) {
     val salaryInput by viewModel.salaryInput.collectAsStateWithLifecycle()
-    val selectedIndustryId by viewModel.selectedIndustryId.collectAsStateWithLifecycle()
     val selectedIndustryName by viewModel.selectedIndustryName.collectAsStateWithLifecycle()
     val hideWithoutSalary by viewModel.hideWithoutSalary.collectAsStateWithLifecycle()
     val hasActiveFilters by viewModel.hasActiveFilters.collectAsStateWithLifecycle()

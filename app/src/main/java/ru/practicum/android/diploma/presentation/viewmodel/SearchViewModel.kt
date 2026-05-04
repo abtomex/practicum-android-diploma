@@ -15,15 +15,16 @@ import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.Vacancies
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyRequestByPages
+import ru.practicum.android.diploma.presentation.viewmodel.state.AppliedFilters
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFailuresEnum
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
     val searchInteractor: SearchInteractor,
-    val filtersViewmodel: FiltersScreenViewModel
 ) : ViewModel() {
 
+    private var appliedFilters: AppliedFilters? = null
     private val _isNoInternet = MutableStateFlow(false)
 
     private val _state = MutableStateFlow<SearchState>(SearchState.Default)
@@ -94,8 +95,10 @@ class SearchViewModel(
             searchInteractor.searchByPages(
                 VacancyRequestByPages(
                     text = query,
-                    page = currentPage + 1
-                    // todo: делаем обогащение VacancyRequestByPages из стейта фильтров
+                    page = currentPage + 1,
+                    industry = appliedFilters?.industry,
+                    salary = appliedFilters?.salary,
+                    onlyWithSalary = appliedFilters?.onlyWithSalary ?: false
                 ),
 
             ).collect { result ->
@@ -181,8 +184,9 @@ class SearchViewModel(
         }
     }
 
-    fun updateFilters(salary: Int?, industry: Int?, onlyWithSalary: Boolean) {
-        Log.d("bazinga", "salary=${salary}, industryId=${industry}, onlyWithSalary=${onlyWithSalary}")
+    fun updateFilters(appliedFilters: AppliedFilters) {
+        this.appliedFilters = appliedFilters
+        searchRequest(_searchQuery.value)
     }
 
     companion object {

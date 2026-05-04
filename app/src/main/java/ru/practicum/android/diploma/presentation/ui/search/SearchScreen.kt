@@ -43,8 +43,7 @@ val YsDisplayMedium = FontFamily(
 fun SearchScreen(
     navController: NavHostController,
     viewModel: SearchViewModel = koinViewModel(),
-    filtersViewModel: FiltersScreenViewModel = koinViewModel()
-//    onVacancyClick: (String) -> Unit = {}
+    filtersViewModel: FiltersScreenViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val requestStr by viewModel.searchRequest.collectAsStateWithLifecycle()
@@ -52,21 +51,12 @@ fun SearchScreen(
 
     val noInternetMessage = stringResource(R.string.error_no_internet)
     val errorMessage = stringResource(R.string.error_error)
+    val filterData by filtersViewModel.filtersApplied.collectAsStateWithLifecycle()
 
-//    val backStackEntry by navController.currentBackStackEntryAsState()
-//    val selectedIndustryId = backStackEntry?.savedStateHandle
-//        ?.getLiveData<Int>("industry_id")
-//        ?.observeAsState()
-
-    val filterData by filtersViewModel.filtersApplied.collectAsStateWithLifecycle(null)
     LaunchedEffect(filterData) {
         Log.d("SearchScreen", "LaunchedEffect triggered with: $filterData")
         filterData?.let {
-            viewModel.updateFilters(
-                salary = it.salary,
-                industry = it.industry,
-                onlyWithSalary = it.onlyWithSalary
-            )
+            viewModel.updateFilters(it)
         }
     }
 

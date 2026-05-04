@@ -1,18 +1,15 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.domain.models.VacancyRequestByPages
+import ru.practicum.android.diploma.presentation.viewmodel.state.AppliedFilters
 
 class FiltersScreenViewModel : ViewModel() {
 
@@ -42,9 +39,8 @@ class FiltersScreenViewModel : ViewModel() {
         initialValue = false
     )
 
-    // Отправка применённых фильтров
-    private val _filtersApplied = MutableSharedFlow<VacancyRequestByPages>()
-    val filtersApplied: SharedFlow<VacancyRequestByPages> = _filtersApplied.asSharedFlow()
+    private val _filtersApplied = MutableStateFlow<AppliedFilters?>(null)
+    val filtersApplied: StateFlow<AppliedFilters?> = _filtersApplied.asStateFlow()
 
     fun updateSalaryInput(salary: String) {
         _salaryInput.value = salary
@@ -67,14 +63,11 @@ class FiltersScreenViewModel : ViewModel() {
     }
 
     fun applyFilters() {
-        viewModelScope.launch {
-            _filtersApplied.emit(
-                VacancyRequestByPages(
-                    salary = _salaryInput.value.toIntOrNull(),
-                    industry = _selectedIndustryId.value,
-                    onlyWithSalary = _hideWithoutSalary.value
-                )
-            )
-        }
+        // Просто устанавливаем значение - StateFlow сам сохранит его
+        _filtersApplied.value = AppliedFilters(
+            salary = _salaryInput.value.toIntOrNull(),
+            industry = _selectedIndustryId.value,
+            onlyWithSalary = _hideWithoutSalary.value
+        )
     }
 }
