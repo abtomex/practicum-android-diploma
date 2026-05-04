@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ class FiltersScreenViewModel : ViewModel() {
     val salaryInput: StateFlow<String> = _salaryInput.asStateFlow()
 
     private val _selectedIndustryId = MutableStateFlow(0)
-    val selectedIndustryId: StateFlow<Int> = _selectedIndustryId.asStateFlow()
 
     private val _selectedIndustryName = MutableStateFlow("")
     val selectedIndustryName: StateFlow<String> = _selectedIndustryName.asStateFlow()
@@ -60,6 +58,7 @@ class FiltersScreenViewModel : ViewModel() {
         _selectedIndustryId.value = 0
         _selectedIndustryName.value = ""
         _hideWithoutSalary.value = false
+        _filtersApplied.value = AppliedFilters()
     }
 
     fun applyFilters() {
