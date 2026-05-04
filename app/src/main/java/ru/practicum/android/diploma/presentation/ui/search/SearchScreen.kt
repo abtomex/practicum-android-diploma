@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
@@ -52,6 +54,11 @@ fun SearchScreen(
 
     val noInternetMessage = stringResource(R.string.error_no_internet)
     val errorMessage = stringResource(R.string.error_error)
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val selectedIndustryId = backStackEntry?.savedStateHandle
+        ?.getLiveData<Int>("industry_id")
+        ?.observeAsState()
 
     LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { event ->
