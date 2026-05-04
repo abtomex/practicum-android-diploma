@@ -15,7 +15,7 @@ val viewModelModule = module {
             getIndustriesList() // Вызов после создания
         }
     }
-    viewModel { FiltersScreenViewModel(get()) }
+    viewModel { FiltersScreenViewModel() }
     viewModel { SearchViewModel(get(), get()) }
     viewModel { VacancyDetailsViewModel(get(), get()) }
 }

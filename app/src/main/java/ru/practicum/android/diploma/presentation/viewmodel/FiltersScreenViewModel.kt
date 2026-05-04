@@ -1,30 +1,80 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.VacancyRequestByPages
-import ru.practicum.android.diploma.presentation.viewmodel.state.SearchFiltersState
 
-class FiltersScreenViewModel(
-    val industryFiltersViewModel: IndustryFiltersViewModel
-) : ViewModel() {
+class FiltersScreenViewModel : ViewModel() {
 
-    private val _state = MutableStateFlow<SearchFiltersState>(SearchFiltersState.Default)
-    val state: StateFlow<SearchFiltersState> = _state.asStateFlow()
+    // Состояние полей фильтрации
+    private val _salaryInput = MutableStateFlow("")
+    val salaryInput: StateFlow<String> = _salaryInput.asStateFlow()
 
-    // todo: подписаться на стейт industryFiltersViewModel и, если он is IndustryFiltersState.Checked, то взять для заполнения его checkedIndustry
+    private val _selectedIndustryId = MutableStateFlow(0)
+    val selectedIndustryId: StateFlow<Int> = _selectedIndustryId.asStateFlow()
 
-    // todo: когда пользователь выполнил заполнение фильтров и нажал кнопку Применить state данной viewModel становится
-    //    и выполняется возвращение на предыдущий экран navController.navigateUp()
-    fun applyFilters(salaryInput: String, selectedIndustry: String, hideWithoutSalary: Boolean) {
-        _state.value = SearchFiltersState.SpecifiedFilters(VacancyRequestByPages(
-//            industry =
-//            salary = salaryInput.
-//            page =
-//            onlyWithSalary =
-        ))
+    private val _selectedIndustryName = MutableStateFlow("")
+    val selectedIndustryName: StateFlow<String> = _selectedIndustryName.asStateFlow()
+
+    private val _hideWithoutSalary = MutableStateFlow(false)
+    val hideWithoutSalary: StateFlow<Boolean> = _hideWithoutSalary.asStateFlow()
+
+    // Флаг наличия активных фильтров
+    val hasActiveFilters: StateFlow<Boolean> = combine(
+        _salaryInput,
+        _selectedIndustryId,
+        _hideWithoutSalary
+    ) { salary, industryId, hide ->
+        salary.isNotBlank() || industryId != 0 || hide
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
+    // Отправка применённых фильтров
+    private val _filtersApplied = MutableSharedFlow<VacancyRequestByPages>()
+    val filtersApplied: SharedFlow<VacancyRequestByPages> = _filtersApplied.asSharedFlow()
+
+    fun updateSalaryInput(salary: String) {
+        _salaryInput.value = salary
     }
 
+    fun updateSelectedIndustry(industryId: Int, industryName: String) {
+        _selectedIndustryId.value = industryId
+        _selectedIndustryName.value = industryName
+    }
+
+    fun updateHideWithoutSalary(hide: Boolean) {
+        _hideWithoutSalary.value = hide
+    }
+
+    fun resetFilters() {
+        _salaryInput.value = ""
+        _selectedIndustryId.value = 0
+        _selectedIndustryName.value = ""
+        _hideWithoutSalary.value = false
+    }
+
+    fun applyFilters() {
+        viewModelScope.launch {
+            _filtersApplied.emit(
+                VacancyRequestByPages(
+                    salary = _salaryInput.value.toIntOrNull(),
+                    industry = _selectedIndustryId.value,
+                    onlyWithSalary = _hideWithoutSalary.value
+                )
+            )
+        }
+    }
 }

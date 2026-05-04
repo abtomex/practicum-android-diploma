@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -178,6 +179,10 @@ class SearchViewModel(
         } else {
             _toastEvent.emit(SearchFailuresEnum.SERVER_ERROR)
         }
+    }
+
+    fun updateFilters(salary: Int?, industry: Int?, onlyWithSalary: Boolean) {
+        Log.d("bazinga", "salary=${salary}, industryId=${industry}, onlyWithSalary=${onlyWithSalary}")
     }
 
     companion object {

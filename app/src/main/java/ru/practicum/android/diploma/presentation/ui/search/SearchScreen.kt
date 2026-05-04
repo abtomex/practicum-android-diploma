@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.search
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -14,7 +15,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
@@ -48,17 +47,28 @@ fun SearchScreen(
 //    onVacancyClick: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val filterState by filtersViewModel.state.collectAsStateWithLifecycle()
     val requestStr by viewModel.searchRequest.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val noInternetMessage = stringResource(R.string.error_no_internet)
     val errorMessage = stringResource(R.string.error_error)
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val selectedIndustryId = backStackEntry?.savedStateHandle
-        ?.getLiveData<Int>("industry_id")
-        ?.observeAsState()
+//    val backStackEntry by navController.currentBackStackEntryAsState()
+//    val selectedIndustryId = backStackEntry?.savedStateHandle
+//        ?.getLiveData<Int>("industry_id")
+//        ?.observeAsState()
+
+    val filterData by filtersViewModel.filtersApplied.collectAsStateWithLifecycle(null)
+    LaunchedEffect(filterData) {
+        Log.d("SearchScreen", "LaunchedEffect triggered with: $filterData")
+        filterData?.let {
+            viewModel.updateFilters(
+                salary = it.salary,
+                industry = it.industry,
+                onlyWithSalary = it.onlyWithSalary
+            )
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { event ->
