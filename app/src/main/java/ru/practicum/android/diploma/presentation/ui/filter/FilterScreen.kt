@@ -66,11 +66,18 @@ fun FilterScreen(
         salaryInput.isNotBlank() || selectedIndustry.isNotBlank() || hideWithoutSalary
     }
 
-    // Получение данных со следующего экрана при возврате (имя отрасли)
+    // Получение данных со следующего экрана при возврате (отрасль)
     val backStackEntry by navController.currentBackStackEntryAsState()
     val selectedIndustryName = backStackEntry?.savedStateHandle
         ?.getLiveData<String>("industry_name")
         ?.observeAsState()
+    val selectedIndustryId = backStackEntry?.savedStateHandle
+        ?.getLiveData<Int>("industry_id")
+        ?.observeAsState()
+
+    // Передача данных на предыдущий экран
+    val navHandle = navController.previousBackStackEntry?.savedStateHandle
+    navHandle?.set("industry_id", selectedIndustryId)
 
     Scaffold(
         topBar = {

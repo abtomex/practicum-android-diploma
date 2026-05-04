@@ -84,7 +84,7 @@ fun IndustrySelectionScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp) // Отступы от краев экрана
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
             ) {
                 Button(
                     onClick = {
@@ -101,10 +101,10 @@ fun IndustrySelectionScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp), // Стандартная высота для таких кнопок
+                        .height(52.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ActiveBlue, // Синий цвет как на макете
+                        containerColor = ActiveBlue,
                         contentColor = Color.White
                     )
                 ) {
