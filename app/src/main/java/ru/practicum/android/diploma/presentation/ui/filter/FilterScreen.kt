@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
@@ -63,6 +65,12 @@ fun FilterScreen(
     val hasActiveFilters = remember(salaryInput, selectedIndustry, hideWithoutSalary) {
         salaryInput.isNotBlank() || selectedIndustry.isNotBlank() || hideWithoutSalary
     }
+
+    // Получение данных со следующего экрана при возврате (имя отрасли)
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val selectedIndustryName = backStackEntry?.savedStateHandle
+        ?.getLiveData<String>("industry_name")
+        ?.observeAsState()
 
     Scaffold(
         topBar = {
@@ -107,19 +115,16 @@ fun FilterScreen(
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
                     onClick = { //ЗАГЛУШКА
-                              },
+                    },
 
                 )
 
-
-
                 // Поле "Отрасль"
                 FilterFieldRow(
-                    placeholder = stringResource(R.string.filter_industry),
+                    placeholder = selectedIndustryName?.value ?: stringResource(R.string.filter_industry),
                     onClick = {
                         navController.navigate(Destination.IndustryFilter.route)
-                     },
-
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))
