@@ -103,38 +103,41 @@ fun IndustrySelectionScreen(
             )
         },
         bottomBar = {
-            // Контейнер для кнопки с отступами
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp)
-            ) {
-                Button(
-                    onClick = {
-                        viewModel.confirmFilter()
-
-                        // Получаем доступ к состоянию предыдущего экрана
-                        val navHandle = navController.previousBackStackEntry?.savedStateHandle
-
-                        navHandle?.set("industry_id", selectedIndustry?.id)
-                        navHandle?.set("industry_name", selectedIndustry?.name)
-
-                        navController.popBackStack()
-                    },
+            // Показывать только при выбранной отрасли
+            if (selectedIndustry != null) {
+                // Контейнер для кнопки с отступами
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ActiveBlue,
-                        contentColor = Color.White
-                    )
+                        .padding(horizontal = 16.dp, vertical = 20.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.filter_industry_apply),
-                        fontFamily = YsDisplayMedium,
-                        fontSize = 16.sp
-                    )
+                    Button(
+                        onClick = {
+                            viewModel.confirmFilter()
+
+                            // Получаем доступ к состоянию предыдущего экрана
+                            val navHandle = navController.previousBackStackEntry?.savedStateHandle
+
+                            navHandle?.set("industry_id", selectedIndustry?.id)
+                            navHandle?.set("industry_name", selectedIndustry?.name)
+
+                            navController.popBackStack()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ActiveBlue,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.filter_industry_apply),
+                            fontFamily = YsDisplayMedium,
+                            fontSize = 16.sp
+                        )
+                    }
                 }
             }
         }
