@@ -33,7 +33,7 @@ class FiltersScreenViewModel : ViewModel() {
         salary.isNotBlank() || industryId != 0 || hide
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(SUBSCRIPTION_DURATION),
         initialValue = false
     )
 
@@ -62,11 +62,13 @@ class FiltersScreenViewModel : ViewModel() {
     }
 
     fun applyFilters() {
-        // Просто устанавливаем значение - StateFlow сам сохранит его
         _filtersApplied.value = AppliedFilters(
             salary = _salaryInput.value.toIntOrNull(),
             industry = _selectedIndustryId.value,
             onlyWithSalary = _hideWithoutSalary.value
         )
+    }
+    companion object {
+        private const val SUBSCRIPTION_DURATION = 5000L
     }
 }
