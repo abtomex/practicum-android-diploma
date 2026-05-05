@@ -13,8 +13,11 @@ class IndustriesRepositoryImpl(
 ) : IndustriesRepository {
 
     override suspend fun getAllFromApi(): List<Industry>? {
-        return (networkClient.doRequest(IndustriesRequestDto()) as Response.IndustriesResponse)
-            .body?.map { industryDto -> apiConverter.map(industryDto) }
+        return when (val resp = networkClient.doRequest(IndustriesRequestDto())) {
+            is Response.IndustriesResponse -> resp.body?.map { apiConverter.map(it) }
+            else -> emptyList()
+        }
+
     }
 
 }

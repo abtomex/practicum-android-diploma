@@ -15,19 +15,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
@@ -44,40 +41,35 @@ val YsDisplayMediumFilter = FontFamily(
     Font(R.font.ys_display_medium)
 )
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
     navController: NavHostController,
-    viewModel: FiltersScreenViewModel = koinViewModel()
+    viewModel: FiltersScreenViewModel
 ) {
-
-    // Заглушка "Отрасль"
-    var selectedIndustry by remember { mutableStateOf("") }
-
-    // Поле ЗП
-    var salaryInput by remember { mutableStateOf("") }
-
-    // Чекбокс "Не показывать без зарплаты"
-    var hideWithoutSalary by remember { mutableStateOf(false) }
-
-    // Флаг для отображения кнопок
-    val hasActiveFilters = remember(salaryInput, selectedIndustry, hideWithoutSalary) {
-        salaryInput.isNotBlank() || selectedIndustry.isNotBlank() || hideWithoutSalary
-    }
+    val salaryInput by viewModel.salaryInput.collectAsStateWithLifecycle()
+    val selectedIndustryName by viewModel.selectedIndustryName.collectAsStateWithLifecycle()
+    val hideWithoutSalary by viewModel.hideWithoutSalary.collectAsStateWithLifecycle()
+    val hasActiveFilters by viewModel.hasActiveFilters.collectAsStateWithLifecycle()
 
     // Получение данных со следующего экрана при возврате (отрасль)
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val selectedIndustryName = backStackEntry?.savedStateHandle
-        ?.getLiveData<String>("industry_name")
-        ?.observeAsState()
-    val selectedIndustryId = backStackEntry?.savedStateHandle
-        ?.getLiveData<Int>("industry_id")
-        ?.observeAsState()
 
-    // Передача данных на предыдущий экран
-    val navHandle = navController.previousBackStackEntry?.savedStateHandle
-    navHandle?.set("industry_id", selectedIndustryId)
+    LaunchedEffect(backStackEntry) {
+        val currentEntry = backStackEntry
+        currentEntry?.savedStateHandle?.getLiveData<Int>("industry_id")
+            ?.observeForever { industryId ->
+                if (industryId != null && industryId != 0) {
+                    val entry = backStackEntry
+                    val industryName = entry?.savedStateHandle
+                        ?.get<String>("industry_name") ?: ""
+                    viewModel.updateSelectedIndustry(industryId, industryName)
+                    // Очищаем после получения
+                    entry?.savedStateHandle?.remove<Int>("industry_id")
+                    entry?.savedStateHandle?.remove<String>("industry_name")
+                }
+            }
+    }
 
     Scaffold(
         topBar = {
@@ -121,17 +113,19 @@ fun FilterScreen(
                 // Поле "Место работы"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
-                    onClick = { //ЗАГЛУШКА
+                    onClick = { // ЗАГЛУШКА
                     },
 
                 )
 
                 // Поле "Отрасль"
                 FilterFieldRow(
-                    placeholder = selectedIndustryName?.value ?: stringResource(R.string.filter_industry),
+                    placeholder = selectedIndustryName.ifEmpty {
+                        stringResource(R.string.filter_industry)
+                    },
                     onClick = {
                         navController.navigate(Destination.IndustryFilter.route)
-                    },
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))
@@ -139,8 +133,8 @@ fun FilterScreen(
                 // Поле ввода зарплаты
                 SalaryInputField(
                     value = salaryInput,
-                    onValueChange = { salaryInput = it },
-                    onClear = { salaryInput = "" },
+                    onValueChange = { viewModel.updateSalaryInput(it) },
+                    onClear = { viewModel.updateSalaryInput("") },
                     modifier = Modifier.padding(horizontal = PaddingMedium)
                 )
 
@@ -149,7 +143,7 @@ fun FilterScreen(
                 // Чекбокс
                 NoSalaryCheckbox(
                     checked = hideWithoutSalary,
-                    onCheckedChange = { hideWithoutSalary = it },
+                    onCheckedChange = { viewModel.updateHideWithoutSalary(it) },
                     modifier = Modifier.padding(horizontal = PaddingMedium)
                 )
 
@@ -160,10 +154,8 @@ fun FilterScreen(
             if (hasActiveFilters) {
                 ApplyButton(
                     onClick = {
-                        // ЗАГЛУШКА
+                        viewModel.applyFilters()
                         navController.navigateUp()
-                        viewModel.applyFilters(salaryInput, selectedIndustry, hideWithoutSalary)
-
                     },
                     modifier = Modifier.padding(horizontal = PaddingMedium)
                 )
@@ -172,9 +164,7 @@ fun FilterScreen(
 
                 ResetButton(
                     onClick = {
-                        salaryInput = ""
-                        selectedIndustry = ""
-                        hideWithoutSalary = false
+                        viewModel.resetFilters()
                     },
                     modifier = Modifier.padding(horizontal = PaddingMedium)
                 )

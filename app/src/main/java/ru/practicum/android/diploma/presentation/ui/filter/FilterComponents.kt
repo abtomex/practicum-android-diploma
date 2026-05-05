@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
@@ -52,8 +54,8 @@ import ru.practicum.android.diploma.presentation.ui.theme.FilterResetRed
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSalaryFieldHeight
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingSmall
-import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize12
+import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
 
 val YsDisplayRegular = FontFamily(
     Font(R.font.ys_display_regular)
@@ -128,6 +130,7 @@ fun SalaryInputField(
             )
 
             BasicTextField(
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = value,
                 onValueChange = { newValue ->
                     if (newValue.all { it.isDigit() }) {
@@ -218,7 +221,7 @@ fun NoSalaryCheckbox(
     }
 }
 
-//Кнопки
+// Кнопки
 
 // Кнопка "Применить"
 @Composable
