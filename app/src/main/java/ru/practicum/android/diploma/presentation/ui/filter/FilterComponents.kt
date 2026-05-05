@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -94,6 +95,7 @@ fun FilterFieldRow(
 }
 
 // Поле ЗП
+// Поле ЗП
 @Composable
 fun SalaryInputField(
     value: String,
@@ -114,77 +116,130 @@ fun SalaryInputField(
             .clickable {
                 focusRequester.requestFocus()
             }
-            .padding(horizontal = FilterHorizontalPadding),
-        contentAlignment = Alignment.CenterStart
+            .padding(horizontal = FilterHorizontalPadding)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.filter_expected_salary),
-                fontSize = TextSize12,
-                fontFamily = YsDisplayRegular,
-                color = if (isFocused) ActiveBlue else InactiveGray,
-
-            )
-
-            BasicTextField(
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                value = value,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) {
-                        onValueChange(newValue)
-                    }
-                },
-                singleLine = true,
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    fontSize = TextSize16,
-                    fontFamily = YsDisplayRegular,
-                    color = BlackPrimary
-                ),
-                cursorBrush = SolidColor(ActiveBlue),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { focusState ->
-                        isFocused = focusState.isFocused
-                    },
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        if (value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.filter_salary_hint),
-                                fontSize = TextSize16,
-                                fontFamily = YsDisplayRegular,
-                                color = InactiveGray
-                            )
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-        }
+        SalaryInputContent(
+            value = value,
+            isFocused = isFocused,
+            onValueChange = onValueChange,
+            focusRequester = focusRequester,
+            onFocusChanged = { isFocused = it }
+        )
 
         if (value.isNotEmpty()) {
-            Icon(
-                painter = painterResource(R.drawable.ic_clear),
-                contentDescription = stringResource(R.string.clear_text),
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(FilterClearIconSize)
-                    .clickable {
-                        onClear()
-                        focusManager.clearFocus()
-                        isFocused = false
-                    },
-                tint = BlackPrimary
-            )
+            ClearSalaryButton(onClear = {
+                onClear()
+                focusManager.clearFocus()
+                isFocused = false
+            })
         }
     }
+}
+
+@Composable
+private fun SalaryInputContent(
+    value: String,
+    isFocused: Boolean,
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    onFocusChanged: (Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        SalaryLabel(isFocused = isFocused)
+
+        SalaryBasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            focusRequester = focusRequester,
+            onFocusChanged = onFocusChanged
+        )
+    }
+}
+
+@Composable
+private fun SalaryLabel(isFocused: Boolean) {
+    Text(
+        text = stringResource(R.string.filter_expected_salary),
+        fontSize = TextSize12,
+        fontFamily = YsDisplayRegular,
+        color = if (isFocused) ActiveBlue else InactiveGray,
+    )
+}
+
+@Composable
+private fun SalaryBasicTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    onFocusChanged: (Boolean) -> Unit
+) {
+    BasicTextField(
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        value = value,
+        onValueChange = { newValue ->
+            if (newValue.all { it.isDigit() }) {
+                onValueChange(newValue)
+            }
+        },
+        singleLine = true,
+        textStyle = androidx.compose.ui.text.TextStyle(
+            fontSize = TextSize16,
+            fontFamily = YsDisplayRegular,
+            color = BlackPrimary
+        ),
+        cursorBrush = SolidColor(ActiveBlue),
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+            .onFocusChanged { focusState ->
+                onFocusChanged(focusState.isFocused)
+            },
+        decorationBox = { innerTextField ->
+            SalaryTextFieldDecoration(
+                value = value,
+                innerTextField = innerTextField
+            )
+        }
+    )
+}
+
+@Composable
+private fun SalaryTextFieldDecoration(
+    value: String,
+    innerTextField: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        if (value.isEmpty()) {
+            Text(
+                text = stringResource(R.string.filter_salary_hint),
+                fontSize = TextSize16,
+                fontFamily = YsDisplayRegular,
+                color = InactiveGray
+            )
+        }
+        innerTextField()
+    }
+}
+
+@Composable
+private fun BoxScope.ClearSalaryButton(
+    onClear: () -> Unit
+) {
+    Icon(
+        painter = painterResource(R.drawable.ic_clear),
+        contentDescription = stringResource(R.string.clear_text),
+        modifier = Modifier
+            .align(Alignment.CenterEnd)
+            .size(FilterClearIconSize)
+            .clickable { onClear() },
+        tint = BlackPrimary
+    )
 }
 
 // Не показывать без ЗП
