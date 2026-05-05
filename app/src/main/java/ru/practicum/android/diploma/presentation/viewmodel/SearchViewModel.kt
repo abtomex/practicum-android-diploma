@@ -75,8 +75,10 @@ class SearchViewModel(
             searchInteractor.searchByPages(
                 VacancyRequestByPages(
                     text = _searchQuery.value,
-                    page = currentPage + 1
-                    // todo: делаем обогащение VacancyRequestByPages из стейта фильтров
+                    page = currentPage + 1,
+                    industry = appliedFilters?.industry,
+                    salary = appliedFilters?.salary,
+                    onlyWithSalary = appliedFilters?.onlyWithSalary ?: false
                 ),
 
             )
@@ -185,7 +187,9 @@ class SearchViewModel(
 
     fun updateFilters(appliedFilters: AppliedFilters) {
         this.appliedFilters = appliedFilters
-        searchRequest(_searchQuery.value)
+        if (_searchQuery.value.trim() != "") {
+            searchRequest(_searchQuery.value)
+        }
     }
 
     companion object {
