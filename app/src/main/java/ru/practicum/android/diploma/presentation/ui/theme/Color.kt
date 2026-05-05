@@ -24,11 +24,8 @@ val BlackPrimary = Color(0xFF1A1B22)
 val WhiteUniversal = Color(0xFFFDFDFD)
 val FieldGray = Color(0xFFE6E8EB)
 
-val FavoriteActive = Color(0xFFF56B6C)
+val FilterResetRed = Color(0xFFF56B6C)
 val ContactBlue = Color(0xFF3772E7)
 val CityGray = Color(0xFFAEAFB4)
 val CommentGray = Color(0xFFAEAFB4)
 val WhiteBackground = Color(0xFFFFFFFF)
-val Transparent = Color(0x00000000)
-
-val ErrorIconTint = Color.Unspecified

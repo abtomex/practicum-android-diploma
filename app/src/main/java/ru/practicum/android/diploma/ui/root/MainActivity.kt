@@ -19,10 +19,12 @@ import ru.practicum.android.diploma.presentation.components.BottomNavigationBar
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.favorites.FavoritesScreen
 import ru.practicum.android.diploma.presentation.ui.filter.FilterScreen
+import ru.practicum.android.diploma.presentation.ui.filter.IndustrySelectionScreen
 import ru.practicum.android.diploma.presentation.ui.search.SearchScreen
 import ru.practicum.android.diploma.presentation.ui.team.TeamScreen
 import ru.practicum.android.diploma.presentation.ui.theme.AppTheme
 import ru.practicum.android.diploma.presentation.ui.vacancydetails.VacancyDetailsScreen
+import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -41,8 +43,12 @@ fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val shouldShowBottomBar = currentRoute != Destination.Filter.route &&
-        currentRoute?.startsWith("vacancy_detail") != true
+    val shouldShowBottomBar =
+        currentRoute != Destination.Filter.route &&
+            currentRoute?.startsWith("vacancy_detail") != true &&
+            currentRoute != Destination.IndustryFilter.route
+
+    val filtersViewModel: FiltersScreenViewModel = koinViewModel()
 
     Scaffold(
         bottomBar = {
@@ -57,7 +63,10 @@ fun MainScreen() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Destination.Search.route) {
-                SearchScreen(navController = navController)
+                SearchScreen(
+                    navController = navController,
+                    filtersViewModel = filtersViewModel
+                )
             }
             composable(Destination.Favorites.route) {
                 FavoritesScreen(navController = navController)
@@ -66,18 +75,29 @@ fun MainScreen() {
                 TeamScreen()
             }
             composable(Destination.Filter.route) {
-                FilterScreen(navController = navController)
+                FilterScreen(
+                    navController = navController,
+                    viewModel = filtersViewModel
+                )
             }
             composable(
                 route = Destination.VacancyDetails.route,
                 arguments = listOf(navArgument("vacancyId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val vacancyId = backStackEntry.arguments?.getString("vacancyId") ?: return@composable
-                val viewModel: VacancyDetailsViewModel = koinViewModel()
-                VacancyDetailsScreen(
-                    vacancyId = vacancyId,
-                    viewModel = viewModel,
-                    onBackPressed = { navController.popBackStack() }
+                backStackEntry.arguments?.getString("vacancyId")?.let {
+                    val viewModel: VacancyDetailsViewModel = koinViewModel()
+                    VacancyDetailsScreen(
+                        vacancyId = it,
+                        viewModel = viewModel,
+                        onBackPressed = { navController.popBackStack() }
+                    )
+
+                }
+            }
+            composable(route = Destination.IndustryFilter.route) {
+                IndustrySelectionScreen(
+                    navController = navController,
+                    viewModel = koinViewModel()
                 )
             }
         }

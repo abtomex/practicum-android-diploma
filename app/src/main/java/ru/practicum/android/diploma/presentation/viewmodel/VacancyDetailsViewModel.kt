@@ -49,17 +49,13 @@ class VacancyDetailsViewModel(
 
     private suspend fun checkFromDb(vacancyId: String) {
         Log.d(TAG, "Checking DB for vacancy: $vacancyId")
-        try {
-            val dbVacancy = favoritesInteractor.getVacancyDetails(vacancyId).first()
-            if (dbVacancy != null) {
-                Log.d(TAG, "Found vacancy in DB: ${dbVacancy.name}")
-                _state.value = VacancyDetailsState.Content(dbVacancy)
-                return
-            }
-            Log.d(TAG, "Vacancy NOT found in DB, continuing to network...")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking DB", e)
+        val dbVacancy = favoritesInteractor.getVacancyDetails(vacancyId).first()
+        if (dbVacancy != null) {
+            Log.d(TAG, "Found vacancy in DB: ${dbVacancy.name}")
+            _state.value = VacancyDetailsState.Content(dbVacancy)
+            return
         }
+        Log.d(TAG, "Vacancy NOT found in DB, continuing to network...")
 
     }
 
@@ -83,10 +79,12 @@ class VacancyDetailsViewModel(
                             _state.value = VacancyDetailsState.Error
                         }
                     }
+
                     is ApiResponse.NoInternet -> {
                         Log.e(TAG, "No internet")
                         _state.value = VacancyDetailsState.NoInternet
                     }
+
                     is ApiResponse.Error -> {
                         Log.e(TAG, "Error: ${response.message}, code: ${response.code}")
                         _state.value = VacancyDetailsState.Error
@@ -111,16 +109,11 @@ class VacancyDetailsViewModel(
     fun checkIsFavorite(vacancyId: String, onResult: (Boolean) -> Unit) {
         Log.d(TAG, "checkIsFavorite CALLED for id: $vacancyId")
         viewModelScope.launch {
-            try {
-                Log.d(TAG, "checkIsFavorite: collecting from DB")
-                val details = favoritesInteractor.getVacancyDetails(vacancyId).first()
-                val isFav = details != null
-                Log.d(TAG, "checkIsFavorite: isFavorite=$isFav")
-                onResult(isFav)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error checking isFavorite", e)
-                onResult(false)
-            }
+            Log.d(TAG, "checkIsFavorite: collecting from DB")
+            val details = favoritesInteractor.getVacancyDetails(vacancyId).first()
+            val isFav = details != null
+            Log.d(TAG, "checkIsFavorite: isFavorite=$isFav")
+            onResult(isFav)
         }
     }
 }
