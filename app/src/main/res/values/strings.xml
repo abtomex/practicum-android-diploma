@@ -51,5 +51,8 @@
     <string name="filter_do_not_show_without_salary">Не показывать без зарплаты</string>
     <string name="filter_apply">Применить</string>
     <string name="filter_reset">Сбросить</string>
+    <string name="filter_industry_header">Выбор отрасли</string>
+    <string name="filter_industry_apply">Выбор отрасли</string>
+    <string name="filter_industry_search">Введите отрасль</string>
 
 </resources>

@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,12 +38,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
@@ -61,14 +65,24 @@ fun IndustrySelectionScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
 
+    val searchedIndustries by remember(searchQuery, industries) {
+        derivedStateOf {
+            if (searchQuery.isEmpty()) {
+                industries
+            } else {
+                industries?.filter { it.name.contains(searchQuery, ignoreCase = true) }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Выбор отрасли",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        text = stringResource(R.string.filter_industry_header),
+                        fontFamily = YsDisplayMedium,
+                        fontSize = 22.sp
                     )
                 },
                 navigationIcon = {
@@ -108,9 +122,9 @@ fun IndustrySelectionScreen(
                     )
                 ) {
                     Text(
-                        text = "Выбрать",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
+                        text = stringResource(R.string.filter_industry_apply),
+                        fontFamily = YsDisplayMedium,
+                        fontSize = 16.sp
                     )
                 }
             }
@@ -128,7 +142,7 @@ fun IndustrySelectionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                placeholder = { Text("Введите отрасль", color = Color.Gray) },
+                placeholder = { Text(stringResource(R.string.filter_industry_search), color = Color.Gray) },
                 leadingIcon = { Icon(painter = painterResource(R.drawable.ic_search), contentDescription = null) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = WhiteUniversal,
@@ -146,7 +160,7 @@ fun IndustrySelectionScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(industries ?: emptyList()) { industry ->
+                items(searchedIndustries ?: emptyList()) { industry ->
                     IndustryItem(
                         industry = industry,
                         isSelected = industry.id == selectedIndustry?.id,
@@ -181,10 +195,13 @@ fun IndustryItem(
             Text(
                 text = industry.name,
                 modifier = Modifier.weight(1f),
-                fontSize = 15.sp,
+                fontFamily = YsDisplayRegular,
+                fontSize = 16.sp,
                 lineHeight = 20.sp,
                 color = Color.Black
             )
+
+            Spacer(modifier = Modifier.width(12.dp))
 
             RadioButton(
                 selected = isSelected,
