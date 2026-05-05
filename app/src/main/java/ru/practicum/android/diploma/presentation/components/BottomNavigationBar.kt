@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,8 +22,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.navigation.Destination
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
+import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
 import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
+import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
@@ -35,8 +39,17 @@ fun BottomNavigationBar(navController: NavHostController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        containerColor = Color.White,
-        tonalElevation = 0.dp
+        // Тонкая линия-разделитель сверху
+        modifier = Modifier.drawBehind {
+            val strokeWidth = 1.dp.toPx()
+            drawLine(
+                color = FieldGray,
+                start = Offset(0f, 0f), // Левый верхний угол
+                end = Offset(size.width, 0f), // Правый верхний угол
+                strokeWidth = strokeWidth
+            )
+        },
+        containerColor = WhiteUniversal
     ) {
         items.forEach { item ->
             val isSelected = currentRoute == item.destination.route

@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
-    background = md_theme_light_background,
-    surface = md_theme_light_surface,
+    background = WhiteUniversal,
+    surface = WhiteUniversal,
     onSurface = md_theme_light_onSurface,
 )
 
