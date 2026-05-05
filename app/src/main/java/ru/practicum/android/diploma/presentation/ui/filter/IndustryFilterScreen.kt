@@ -27,6 +27,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +61,16 @@ fun IndustrySelectionScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
+
+    val searchedIndustries by remember(searchQuery, industries) {
+        derivedStateOf {
+            if (searchQuery.isEmpty()) {
+                industries
+            } else {
+                industries?.filter { it.name.contains(searchQuery, ignoreCase = true) }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -146,7 +157,7 @@ fun IndustrySelectionScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(industries ?: emptyList()) { industry ->
+                items(searchedIndustries ?: emptyList()) { industry ->
                     IndustryItem(
                         industry = industry,
                         isSelected = industry.id == selectedIndustry?.id,
