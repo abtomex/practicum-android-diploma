@@ -17,6 +17,7 @@ class FiltersScreenViewModel : ViewModel() {
     val salaryInput: StateFlow<String> = _salaryInput.asStateFlow()
 
     private val _selectedIndustryId = MutableStateFlow(0)
+    val selectedIndustryId: StateFlow<Int> = _selectedIndustryId.asStateFlow()
 
     private val _selectedIndustryName = MutableStateFlow("")
     val selectedIndustryName: StateFlow<String> = _selectedIndustryName.asStateFlow()

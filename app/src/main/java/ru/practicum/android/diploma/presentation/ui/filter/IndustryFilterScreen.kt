@@ -28,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -54,7 +55,8 @@ import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFilters
 @Composable
 fun IndustrySelectionScreen(
     navController: NavHostController,
-    viewModel: IndustryFiltersViewModel
+    viewModel: IndustryFiltersViewModel,
+    previousSelectedId: Int = 0
 ) {
     val industriesState by viewModel.state.collectAsState()
 
@@ -65,6 +67,7 @@ fun IndustrySelectionScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedIndustry by remember { mutableStateOf<Industry?>(null) }
 
+    // Фильтрация списка отраслей в соответствии с поисковым запросом
     val searchedIndustries by remember(searchQuery, industries) {
         derivedStateOf {
             if (searchQuery.isEmpty()) {
@@ -72,6 +75,13 @@ fun IndustrySelectionScreen(
             } else {
                 industries?.filter { it.name.contains(searchQuery, ignoreCase = true) }
             }
+        }
+    }
+
+    // Выбор ранее отмеченной отрасли при повторном заходе на экран
+    LaunchedEffect(searchedIndustries) {
+        if (previousSelectedId != 0) {
+            selectedIndustry = searchedIndustries?.firstOrNull { it.id == previousSelectedId }
         }
     }
 
@@ -103,13 +113,12 @@ fun IndustrySelectionScreen(
                     onClick = {
                         viewModel.confirmFilter()
 
-                        // 1. Получаем доступ к состоянию предыдущего экрана
+                        // Получаем доступ к состоянию предыдущего экрана
                         val navHandle = navController.previousBackStackEntry?.savedStateHandle
 
                         navHandle?.set("industry_id", selectedIndustry?.id)
                         navHandle?.set("industry_name", selectedIndustry?.name)
 
-                        // 2. Возвращаемся назад
                         navController.popBackStack()
                     },
                     modifier = Modifier
