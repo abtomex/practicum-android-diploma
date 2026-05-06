@@ -49,6 +49,7 @@ fun FilterScreen(
 ) {
     val salaryInput by viewModel.salaryInput.collectAsStateWithLifecycle()
     val selectedIndustryName by viewModel.selectedIndustryName.collectAsStateWithLifecycle()
+    val selectedIndustryId by viewModel.selectedIndustryId.collectAsStateWithLifecycle()
     val hideWithoutSalary by viewModel.hideWithoutSalary.collectAsStateWithLifecycle()
     val hasActiveFilters by viewModel.hasActiveFilters.collectAsStateWithLifecycle()
 
@@ -124,7 +125,7 @@ fun FilterScreen(
                         stringResource(R.string.filter_industry)
                     },
                     onClick = {
-                        navController.navigate(Destination.IndustryFilter.route)
+                        navController.navigate(Destination.IndustryFilter.createRoute(selectedIndustryId))
                     }
                 )
 
