@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,16 +41,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.domain.IndustriesInteractor
+import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.ui.search.DefaultContent
+import ru.practicum.android.diploma.presentation.ui.search.EmptyContent
+import ru.practicum.android.diploma.presentation.ui.search.ErrorContent
+import ru.practicum.android.diploma.presentation.ui.search.LoadingContent
+import ru.practicum.android.diploma.presentation.ui.search.NoInternetContent
 import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
+
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+fun IndustrySelectionScreenPreview() {
+    val mockInteractor = MockIndustriesInteractor()
+    val testViewModel = IndustryFiltersViewModel(
+        industryInteractor = mockInteractor
+    )
+
+    IndustrySelectionScreen(
+        navController = rememberNavController(),
+        viewModel = testViewModel
+    )
+}
+
+private class MockIndustriesInteractor : IndustriesInteractor {
+    override suspend fun getIndustriesList(): Flow<ApiResponse<List<Industry>?>> {
+        return flowOf(ApiResponse.Success(emptyList()))
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +94,9 @@ fun IndustrySelectionScreen(
 ) {
     val industriesState by viewModel.state.collectAsState()
 
-    viewModel.getIndustriesList()
+    LaunchedEffect(Unit) {
+        viewModel.getIndustriesList()
+    }
 
     val industries = (industriesState as? IndustryFiltersState.Content)?.data
 
@@ -113,7 +149,7 @@ fun IndustrySelectionScreen(
                 ) {
                     Button(
                         onClick = {
-                            viewModel.confirmFilter()
+//                            viewModel.confirmFilter()
 
                             // Получаем доступ к состоянию предыдущего экрана
                             val navHandle = navController.previousBackStackEntry?.savedStateHandle
@@ -167,24 +203,47 @@ fun IndustrySelectionScreen(
                 singleLine = true
             )
 
-            // Список отраслей
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(searchedIndustries ?: emptyList()) { industry ->
-                    IndustryItem(
-                        industry = industry,
-                        isSelected = industry.id == selectedIndustry?.id,
-                        onSelect = {
-                            selectedIndustry = industry
-                            viewModel.addFilter(industry)
-                        }
-                    )
-                }
+            when (industriesState) {
+                is IndustryFiltersState.Default -> DefaultContent()
+                is IndustryFiltersState.Loading -> LoadingContent()
+                is IndustryFiltersState.Content -> IndustriesContent(
+                    searchedIndustries,
+                    selectedIndustry,
+                    onSelect = {
+                        selectedIndustry = it
+                        viewModel.addFilter(it)
+                    }
+                )
+
+                is IndustryFiltersState.Empty -> EmptyContent()
+                is IndustryFiltersState.NoInternet -> NoInternetContent()
+                is IndustryFiltersState.Error -> ErrorContent()
+
             }
         }
     }
+}
+
+@Composable
+fun IndustriesContent(
+    searchedIndustries: List<Industry>?,
+    selectedIndustry: Industry?,
+    onSelect: (industry: Industry) -> Unit
+) {
+    // Список отраслей
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 16.dp)
+    ) {
+        items(searchedIndustries ?: emptyList()) { industry ->
+            IndustryItem(
+                industry = industry,
+                isSelected = industry.id == selectedIndustry?.id,
+                onSelect = { onSelect(industry) }
+            )
+        }
+    }
+
 }
 
 @Composable

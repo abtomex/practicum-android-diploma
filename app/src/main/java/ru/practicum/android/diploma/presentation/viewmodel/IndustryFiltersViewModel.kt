@@ -18,37 +18,29 @@ class IndustryFiltersViewModel(
 
     private val stateChangeable = MutableStateFlow<IndustryFiltersState>(IndustryFiltersState.Default)
     val state: StateFlow<IndustryFiltersState> = stateChangeable.asStateFlow()
-    private val listIndustriesChangeable = MutableStateFlow<List<Industry>>(emptyList())
-    val listIndustries: StateFlow<List<Industry>> = listIndustriesChangeable.asStateFlow()
     private val industryFilterChangeable = MutableStateFlow<Industry?>(null)
 
     fun getIndustriesList() {
         viewModelScope.launch {
+            stateChangeable.value = IndustryFiltersState.Loading
             industryInteractor.getIndustriesList()
                 .collect {
                     when(it) {
-                        is ApiResponse.Success -> listIndustriesChangeable.value = it.data ?: emptyList()
-                        is ApiResponse.Error -> listIndustriesChangeable.value = emptyList()
-                        is ApiResponse.NoInternet -> listIndustriesChangeable.value = emptyList()
+                        is ApiResponse.Success -> stateChangeable.value = IndustryFiltersState.Content(
+                            data = it.data ?: emptyList()
+                        )
+                        is ApiResponse.Error -> stateChangeable.value = IndustryFiltersState.Error(it.message)
+                        is ApiResponse.NoInternet -> stateChangeable.value = IndustryFiltersState.NoInternet
                     }
 
                     Log.d(LOADED_INDUSTRIES, it.toString())
                 }
-            stateChangeable.value = IndustryFiltersState.Content(
-                data = listIndustries.value
-            )
         }
 
     }
 
     fun addFilter(industry: Industry) {
         industryFilterChangeable.value = industry
-    }
-
-    fun confirmFilter() {
-        stateChangeable.value = IndustryFiltersState.Checked(
-            checkedIndustry = industryFilterChangeable.value
-        )
     }
 
     companion object {

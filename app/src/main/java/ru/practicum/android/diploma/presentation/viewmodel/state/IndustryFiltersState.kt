@@ -9,5 +9,4 @@ sealed interface IndustryFiltersState {
     data class Error(val message: String) : IndustryFiltersState
     data object NoInternet : IndustryFiltersState
     data class Content(val data: List<Industry>) : IndustryFiltersState
-    data class Checked(val checkedIndustry: Industry?) : IndustryFiltersState
 }
