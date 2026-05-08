@@ -35,6 +35,7 @@ fun SearchField(
     searchStr: String,
     onValueChange: (String) -> Unit,
     onClear: () -> Unit,
+    placeholder: String
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -56,14 +57,14 @@ fun SearchField(
             ),
             cursorBrush = SolidColor(ActiveBlue),
             modifier = Modifier.weight(1f)
-                .padding(horizontal = 2.dp, vertical = 8.dp), // Отступы внутри,
+                .padding(horizontal = 2.dp, vertical = 8.dp), // Отступы внутри
             decorationBox = { innerTextField ->
                 Box(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     if (searchStr.isEmpty()) {
                         Text(
-                            text = stringResource(R.string.search_hint),
+                            text = placeholder,
                             style = MaterialTheme.typography.bodyMedium,
                             color = InactiveGray
                         )

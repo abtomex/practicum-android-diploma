@@ -52,7 +52,7 @@
     <string name="filter_apply">Применить</string>
     <string name="filter_reset">Сбросить</string>
     <string name="filter_industry_header">Выбор отрасли</string>
-    <string name="filter_industry_apply">Выбор отрасли</string>
+    <string name="filter_industry_apply">Выбрать</string>
     <string name="filter_industry_search">Введите отрасль</string>
 
 </resources>

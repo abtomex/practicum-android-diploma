@@ -154,6 +154,7 @@ fun FilterScreen(
             // Кнопки
             if (hasActiveFilters) {
                 ApplyButton(
+                    text = stringResource(R.string.filter_apply),
                     onClick = {
                         viewModel.applyFilters()
                         navController.navigateUp()

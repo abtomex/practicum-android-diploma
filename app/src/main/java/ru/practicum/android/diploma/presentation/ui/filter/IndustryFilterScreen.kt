@@ -9,14 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +21,6 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,9 +51,9 @@ import ru.practicum.android.diploma.presentation.ui.search.EmptyContent
 import ru.practicum.android.diploma.presentation.ui.search.ErrorContent
 import ru.practicum.android.diploma.presentation.ui.search.LoadingContent
 import ru.practicum.android.diploma.presentation.ui.search.NoInternetContent
+import ru.practicum.android.diploma.presentation.ui.search.SearchField
 import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
-import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
@@ -146,10 +140,9 @@ fun IndustrySelectionScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 20.dp)
                 ) {
-                    Button(
+                    ApplyButton(
+                        text = stringResource(R.string.filter_industry_apply),
                         onClick = {
-//                            viewModel.confirmFilter()
-
                             // Получаем доступ к состоянию предыдущего экрана
                             val navHandle = navController.previousBackStackEntry?.savedStateHandle
 
@@ -157,22 +150,8 @@ fun IndustrySelectionScreen(
                             navHandle?.set("industry_name", selectedIndustry?.name)
 
                             navController.popBackStack()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ActiveBlue,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.filter_industry_apply),
-                            fontFamily = YsDisplayMedium,
-                            fontSize = 16.sp
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
@@ -182,25 +161,19 @@ fun IndustrySelectionScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            // Поле поиска
-            TextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                placeholder = { Text(stringResource(R.string.filter_industry_search), color = Color.Gray) },
-                leadingIcon = { Icon(painter = painterResource(R.drawable.ic_search), contentDescription = null) },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = WhiteUniversal,
-                    unfocusedContainerColor = WhiteUniversal,
-                    disabledContainerColor = WhiteUniversal,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true
-            )
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                SearchField(
+                    searchStr = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    onClear = { searchQuery = "" },
+                    placeholder = stringResource(R.string.filter_industry_search)
+                )
+            }
 
             when (industriesState) {
                 is IndustryFiltersState.Default -> DefaultContent()
@@ -257,7 +230,7 @@ fun IndustryItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
