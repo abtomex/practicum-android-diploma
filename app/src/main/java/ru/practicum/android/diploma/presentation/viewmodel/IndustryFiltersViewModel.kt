@@ -25,7 +25,7 @@ class IndustryFiltersViewModel(
             stateChangeable.value = IndustryFiltersState.Loading
             industryInteractor.getIndustriesList()
                 .collect {
-                    when(it) {
+                    when (it) {
                         is ApiResponse.Success -> stateChangeable.value = IndustryFiltersState.Content(
                             data = it.data ?: emptyList()
                         )

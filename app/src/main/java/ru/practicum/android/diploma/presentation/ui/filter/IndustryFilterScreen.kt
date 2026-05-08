@@ -63,7 +63,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.WhiteUniversal
 import ru.practicum.android.diploma.presentation.viewmodel.IndustryFiltersViewModel
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
-
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable

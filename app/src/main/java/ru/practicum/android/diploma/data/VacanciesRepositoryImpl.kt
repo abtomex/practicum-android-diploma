@@ -29,7 +29,10 @@ class VacanciesRepositoryImpl(
     override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<VacanciesDto?> {
         val response = networkClient.doRequest(request)
         return when (response.resultCode) {
-            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet(Response.NO_INTERNET_MSG, Response.STATUS_NETWORK_ERROR)
+            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet(
+                Response.NO_INTERNET_MSG,
+                Response.STATUS_NETWORK_ERROR
+            )
             Response.SUCCESS_RESPONSE_CODE -> {
                 ApiResponse.Success(
                     (response as Response.VacanciesResponse).body

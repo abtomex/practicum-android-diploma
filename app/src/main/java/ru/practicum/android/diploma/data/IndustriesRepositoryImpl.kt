@@ -18,11 +18,14 @@ class IndustriesRepositoryImpl(
         val resultResponse: ApiResponse<List<Industry>?> = when (resp) {
             is Response.IndustriesResponse -> ApiResponse.Success(resp.body?.map { apiConverter.map(it) })
             is Response.ErrorResponse -> {
-                if (resp.errorCode == Response.STATUS_NETWORK_ERROR) ApiResponse.NoInternet(
-                    Response.NO_INTERNET_MSG,
-                    Response.STATUS_NETWORK_ERROR
-                )
-                else ApiResponse.Error("", resp.errorCode)
+                if (resp.errorCode == Response.STATUS_NETWORK_ERROR) {
+                    ApiResponse.NoInternet(
+                        Response.NO_INTERNET_MSG,
+                        Response.STATUS_NETWORK_ERROR
+                    )
+                } else {
+                    ApiResponse.Error("", resp.errorCode)
+                }
             }
 
             else -> ApiResponse.Success(emptyList())
