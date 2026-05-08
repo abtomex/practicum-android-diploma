@@ -45,7 +45,7 @@ val repositoryModule = module {
     factory { VacancyDetailsApiConverter() }
 
     single<AreasRepository> {
-        AreasRepositoryImpl(get(), get())
+        AreasRepositoryImpl()
     }
 
     single<IndustriesRepository> {
@@ -53,7 +53,7 @@ val repositoryModule = module {
     }
 
     single<VacanciesRepository> {
-        VacanciesRepositoryImpl(get(), get(), get(), get(), get(), get())
+        VacanciesRepositoryImpl(get(), get(), get(), get(), get())
     }
 
 }
