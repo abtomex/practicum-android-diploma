@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.IndustriesInteractor
+import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.viewmodel.state.IndustryFiltersState
 
@@ -20,13 +21,17 @@ class IndustryFiltersViewModel(
     private val listIndustriesChangeable = MutableStateFlow<List<Industry>>(emptyList())
     val listIndustries: StateFlow<List<Industry>> = listIndustriesChangeable.asStateFlow()
     private val industryFilterChangeable = MutableStateFlow<Industry?>(null)
-    val listIndustryFilter: StateFlow<Industry?> = industryFilterChangeable.asStateFlow()
 
     fun getIndustriesList() {
         viewModelScope.launch {
             industryInteractor.getIndustriesList()
                 .collect {
-                    listIndustriesChangeable.value = it ?: emptyList()
+                    when(it) {
+                        is ApiResponse.Success -> listIndustriesChangeable.value = it.data ?: emptyList()
+                        is ApiResponse.Error -> listIndustriesChangeable.value = emptyList()
+                        is ApiResponse.NoInternet -> listIndustriesChangeable.value = emptyList()
+                    }
+
                     Log.d(LOADED_INDUSTRIES, it.toString())
                 }
             stateChangeable.value = IndustryFiltersState.Content(
