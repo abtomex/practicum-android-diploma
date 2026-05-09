@@ -41,7 +41,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
@@ -281,6 +283,7 @@ fun NoSalaryCheckbox(
 // Кнопка "Применить"
 @Composable
 fun ApplyButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
@@ -298,8 +301,9 @@ fun ApplyButton(
         enabled = enabled
     ) {
         Text(
-            text = stringResource(R.string.filter_apply),
-            fontSize = TextSize16,
+            text = text,
+            fontFamily = YsDisplayMedium,
+            fontSize = 16.sp
         )
     }
 }
