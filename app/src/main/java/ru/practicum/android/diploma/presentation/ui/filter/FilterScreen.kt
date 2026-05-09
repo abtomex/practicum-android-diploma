@@ -30,11 +30,10 @@ import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarTopPadding
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 
-
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable
-fun FilterScreenPreview(){
+fun FilterScreenPreview() {
     FilterScreen(navController = rememberNavController(), viewModel = FiltersScreenViewModel())
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,8 +90,8 @@ fun FilterScreen(
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
                     selectedItemText = "",
-                    onClick = {  },
-                    onClearIconClick = {  },
+                    onClick = { },
+                    onClearIconClick = { },
 
                 )
 

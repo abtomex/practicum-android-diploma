@@ -123,7 +123,7 @@ fun FilterFieldRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (selectedItemText.trim().isEmpty())
+        if (selectedItemText.trim().isEmpty()) {
             Text(
                 fontSize = 16.sp,
                 text = placeholder,
@@ -132,11 +132,11 @@ fun FilterFieldRow(
                 color = InactiveGray,
                 modifier = Modifier.weight(1f)
             )
-        else
+        } else {
             Column(
                 modifier = Modifier
-                    .weight(1f)  // Занимает все доступное место, но не заходит под иконку
-                    .padding(end = PaddingSmall)  // Отступ от иконки
+                    .weight(1f)
+                    .padding(end = PaddingSmall)
             ) {
                 Text(
                     fontSize = 12.sp,
@@ -144,49 +144,40 @@ fun FilterFieldRow(
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = YsDisplayRegular,
                     color = BlackPrimary,
-//                    modifier = Modifier.padding(0.dp)
-//                    modifier = Modifier.weight(1f).wrapContentHeight()
                 )
                 Text(
                     text = selectedItemText,
-//                    modifier = Modifier.weight(1f),
                     fontFamily = YsDisplayRegular,
                     fontSize = 16.sp,
                     style = MaterialTheme.typography.bodyMedium,
                     color = BlackPrimary,
                     lineHeight = 20.sp,
-//                    maxLines = Int.MAX_VALUE,
-//                    softWrap = true
 
                 )
 
-
             }
+        }
 
-        if (selectedItemText.trim().isEmpty())
+        if (selectedItemText.trim().isEmpty()) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_forward),
                 contentDescription = null,
                 modifier = Modifier.size(FilterIconSize),
                 tint = BlackPrimary
             )
-        else
+        } else {
             Icon(
                 painter = painterResource(id = R.drawable.ic_clear),
                 contentDescription = null,
                 modifier = Modifier
                     .size(FilterIconSize)
                     .clickable(onClick = onClearIconClick),
-//                    .clickable(onClick = onClearIconClick) {
-//                        Log.d("bazinga", "you clicked clear button")
-//                        onClearIconClick.invoke()
-//                    },
                 tint = BlackPrimary
             )
+        }
     }
 }
 
-// Поле ЗП
 // Поле ЗП
 @Composable
 fun SalaryInputField(
