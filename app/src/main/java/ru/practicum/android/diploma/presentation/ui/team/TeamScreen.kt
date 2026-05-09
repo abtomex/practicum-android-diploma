@@ -21,10 +21,9 @@ import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingSmall
 
-
 @Preview
 @Composable
-fun TeamScreenPreview(){
+fun TeamScreenPreview() {
     TeamScreen()
 }
 
