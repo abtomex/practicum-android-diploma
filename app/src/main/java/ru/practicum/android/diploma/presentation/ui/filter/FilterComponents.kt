@@ -68,11 +68,13 @@ val YsDisplayRegular = FontFamily(
     Font(R.font.ys_display_regular)
 )
 
+const val INDUSTRY_PREV = "Отрасль"
+
 @Preview
 @Composable
 fun FilterFieldRowPreview_1() {
     FilterFieldRow(
-        placeholder = "Отрасль",
+        placeholder = INDUSTRY_PREV,
         selectedItemText = "",
         onClick = {},
         onClearIconClick = {}
@@ -84,7 +86,7 @@ fun FilterFieldRowPreview_1() {
 @Composable
 fun FilterFieldRowPreview_2() {
     FilterFieldRow(
-        placeholder = "Отрасль",
+        placeholder = INDUSTRY_PREV,
         selectedItemText = "Очень длинное название отрасли, которое должно занять несколько строчек",
         onClick = {},
         onClearIconClick = {}
@@ -96,7 +98,7 @@ fun FilterFieldRowPreview_2() {
 @Composable
 fun FilterFieldRowPreview_3() {
     FilterFieldRow(
-        placeholder = "Отрасль",
+        placeholder = INDUSTRY_PREV,
         selectedItemText = "IT",
         onClick = {},
         onClearIconClick = {}
