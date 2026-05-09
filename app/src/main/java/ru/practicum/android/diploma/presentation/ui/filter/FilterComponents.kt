@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +42,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.util.TableInfo
+import com.bumptech.glide.integration.compose.placeholder
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
@@ -64,10 +69,24 @@ val YsDisplayRegular = FontFamily(
     Font(R.font.ys_display_regular)
 )
 
+@Preview
+@Composable
+fun FilterFieldRowPreview() {
+    FilterFieldRow(
+        placeholder = "Отрасль",
+        selectedItemText = "Очень длинное название отрасли, которое должно занять несколько строчек",
+        onClick = {},
+        onClearIconClick = {}
+
+    )
+}
+
 @Composable
 fun FilterFieldRow(
     placeholder: String,
+    selectedItemText: String,
     onClick: () -> Unit,
+    onClearIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -79,20 +98,61 @@ fun FilterFieldRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = placeholder,
-            style = MaterialTheme.typography.bodyMedium,
-            fontFamily = YsDisplayRegular,
-            color = InactiveGray,
-            modifier = Modifier.weight(1f)
-        )
+        if (selectedItemText.trim().isEmpty())
+            Text(
+                fontSize = 16.sp,
+                text = placeholder,
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = YsDisplayRegular,
+                color = InactiveGray,
+                modifier = Modifier.weight(1f)
+            )
+        else
+            Column {
+                Text(
+                    fontSize = 12.sp,
+                    text = placeholder,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = YsDisplayRegular,
+                    color = BlackPrimary,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = selectedItemText,
+                    modifier = Modifier.weight(1f),
+                    fontFamily = YsDisplayRegular,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = BlackPrimary,
+                    lineHeight = 20.sp,
+//                    maxLines = Int.MAX_VALUE,
+//                    softWrap = true
 
-        Icon(
-            painter = painterResource(id = R.drawable.ic_filter_arrow),
-            contentDescription = null,
-            modifier = Modifier.size(FilterIconSize),
-            tint = BlackPrimary
-        )
+                )
+
+
+            }
+
+        if (selectedItemText.trim().isEmpty())
+            Icon(
+                painter = painterResource(id = R.drawable.ic_forward),
+                contentDescription = null,
+                modifier = Modifier.size(FilterIconSize),
+                tint = BlackPrimary
+            )
+        else
+            Icon(
+                painter = painterResource(id = R.drawable.ic_clear),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(FilterIconSize)
+                    .clickable(onClick = onClearIconClick),
+//                    .clickable(onClick = onClearIconClick) {
+//                        Log.d("bazinga", "you clicked clear button")
+//                        onClearIconClick.invoke()
+//                    },
+                tint = BlackPrimary
+            )
     }
 }
 
