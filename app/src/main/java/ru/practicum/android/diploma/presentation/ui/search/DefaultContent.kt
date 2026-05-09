@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +24,7 @@ fun DefaultContent() {
         Image(
             painter = painterResource(R.drawable.finder),
             contentDescription = stringResource(R.string.ready_to_find),
-            modifier = Modifier.size(272.dp)
+            Modifier.size(height = 223.dp, width = 328.dp)
         )
     }
 

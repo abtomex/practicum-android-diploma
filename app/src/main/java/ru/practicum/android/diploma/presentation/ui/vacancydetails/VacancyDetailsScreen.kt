@@ -696,9 +696,9 @@ private fun ErrorPlaceholder(text: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_no_connect),
+            painter = painterResource(id = R.drawable.ic_error_cat),
             contentDescription = null,
-            modifier = Modifier.size(ErrorIconSize),
+            modifier = Modifier.size(328.dp, 223.dp),
             tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.height(16.dp))
