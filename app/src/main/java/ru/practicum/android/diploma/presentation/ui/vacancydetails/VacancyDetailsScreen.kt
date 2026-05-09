@@ -122,7 +122,7 @@ private fun rememberFavoriteState(
     var isFavorite by remember { mutableStateOf(false) }
 
     LaunchedEffect(vacancyId) {
-        viewModel.loadVacancyDetails(vacancyId, fromNetwork = true)
+        viewModel.loadVacancyDetails(vacancyId)
         viewModel.checkIsFavorite(vacancyId) { favorite ->
             isFavorite = favorite
         }
