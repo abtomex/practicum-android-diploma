@@ -70,6 +70,14 @@ fun TeamScreen() {
                 color = BlackPrimary,
                 modifier = Modifier.padding(top = PaddingSmall)
             )
+            Text(
+                text = stringResource(R.string.team_member_alina),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 19.sp,
+                color = BlackPrimary,
+                modifier = Modifier.padding(top = PaddingSmall)
+            )
         }
     }
 }

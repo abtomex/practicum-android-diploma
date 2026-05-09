@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.FavoritesInteractor
 import ru.practicum.android.diploma.domain.models.VacancyCard
-import ru.practicum.android.diploma.domain.usecases.FavoritesInteractor
 
 sealed class FavoritesState {
     object Loading : FavoritesState()
