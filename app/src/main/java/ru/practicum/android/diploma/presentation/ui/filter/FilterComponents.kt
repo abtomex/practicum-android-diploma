@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,8 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,10 +44,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.room.util.TableInfo
-import com.bumptech.glide.integration.compose.placeholder
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.ui.search.YsDisplayMedium
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
@@ -64,6 +62,7 @@ import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingSmall
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize12
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize16
+import ru.practicum.android.diploma.presentation.ui.theme.WhiteBackground
 
 val YsDisplayRegular = FontFamily(
     Font(R.font.ys_display_regular)
@@ -71,10 +70,34 @@ val YsDisplayRegular = FontFamily(
 
 @Preview
 @Composable
-fun FilterFieldRowPreview() {
+fun FilterFieldRowPreview_1() {
+    FilterFieldRow(
+        placeholder = "Отрасль",
+        selectedItemText = "",
+        onClick = {},
+        onClearIconClick = {}
+
+    )
+}
+
+@Preview
+@Composable
+fun FilterFieldRowPreview_2() {
     FilterFieldRow(
         placeholder = "Отрасль",
         selectedItemText = "Очень длинное название отрасли, которое должно занять несколько строчек",
+        onClick = {},
+        onClearIconClick = {}
+
+    )
+}
+
+@Preview
+@Composable
+fun FilterFieldRowPreview_3() {
+    FilterFieldRow(
+        placeholder = "Отрасль",
+        selectedItemText = "IT",
         onClick = {},
         onClearIconClick = {}
 
@@ -91,8 +114,10 @@ fun FilterFieldRow(
 ) {
     Row(
         modifier = modifier
+            .wrapContentHeight()
+            .background(WhiteBackground)
             .fillMaxWidth()
-            .height(FilterFieldHeight)
+            .heightIn(min = FilterFieldHeight)
             .clickable { onClick() }
             .padding(start = FilterHorizontalPadding, end = FilterHorizontalPadding),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,18 +133,23 @@ fun FilterFieldRow(
                 modifier = Modifier.weight(1f)
             )
         else
-            Column {
+            Column(
+                modifier = Modifier
+                    .weight(1f)  // Занимает все доступное место, но не заходит под иконку
+                    .padding(end = PaddingSmall)  // Отступ от иконки
+            ) {
                 Text(
                     fontSize = 12.sp,
                     text = placeholder,
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = YsDisplayRegular,
                     color = BlackPrimary,
-                    modifier = Modifier.weight(1f)
+//                    modifier = Modifier.padding(0.dp)
+//                    modifier = Modifier.weight(1f).wrapContentHeight()
                 )
                 Text(
                     text = selectedItemText,
-                    modifier = Modifier.weight(1f),
+//                    modifier = Modifier.weight(1f),
                     fontFamily = YsDisplayRegular,
                     fontSize = 16.sp,
                     style = MaterialTheme.typography.bodyMedium,
