@@ -54,7 +54,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.CityGray
 import ru.practicum.android.diploma.presentation.ui.theme.CommentGray
 import ru.practicum.android.diploma.presentation.ui.theme.ContactBlue
 import ru.practicum.android.diploma.presentation.ui.theme.CornerRadiusSmall
-import ru.practicum.android.diploma.presentation.ui.theme.ErrorIconSize
 import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
 import ru.practicum.android.diploma.presentation.ui.theme.LineHeight19
 import ru.practicum.android.diploma.presentation.ui.theme.LineHeight26
