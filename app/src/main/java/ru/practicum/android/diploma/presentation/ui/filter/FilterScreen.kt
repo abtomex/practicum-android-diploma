@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +15,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.components.TopAppBarBackButton
 import ru.practicum.android.diploma.presentation.navigation.Destination
@@ -27,6 +30,12 @@ import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarTopPadding
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+fun FilterScreenPreview() {
+    FilterScreen(navController = rememberNavController(), viewModel = FiltersScreenViewModel())
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
@@ -80,19 +89,20 @@ fun FilterScreen(
                 // Поле "Место работы"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
-                    onClick = { // ЗАГЛУШКА
-                    },
+                    selectedItemText = "",
+                    onClick = { },
+                    onClearIconClick = { },
 
                 )
 
                 // Поле "Отрасль"
                 FilterFieldRow(
-                    placeholder = selectedIndustryName.ifEmpty {
-                        stringResource(R.string.filter_industry)
-                    },
+                    placeholder = stringResource(R.string.filter_industry),
+                    selectedItemText = selectedIndustryName,
                     onClick = {
                         navController.navigate(Destination.IndustryFilter.createRoute(selectedIndustryId))
-                    }
+                    },
+                    onClearIconClick = { viewModel.resetIndustry() }
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))

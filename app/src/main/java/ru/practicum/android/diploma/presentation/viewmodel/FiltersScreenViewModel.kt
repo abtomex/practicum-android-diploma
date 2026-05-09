@@ -62,6 +62,12 @@ class FiltersScreenViewModel : ViewModel() {
         _filtersApplied.value = AppliedFilters()
     }
 
+    fun resetIndustry() {
+        _selectedIndustryId.value = 0
+        _selectedIndustryName.value = ""
+        applyFilters()
+    }
+
     fun applyFilters() {
         _filtersApplied.value = AppliedFilters(
             salary = _salaryInput.value.toIntOrNull(),
