@@ -15,7 +15,8 @@
     <string name="team_member_dmitriych">Дмитрий Чечумаев - Лид</string>
     <string name="team_member_dmitriytr">Дмитрий Терещенко - Разработчик</string>
     <string name="team_member_vladimir">Владимир Ульянов - Разработчик(Ленин)</string>
-    <string name="team_member_aleksandr">Александр Рондырев-Ильинский - Куратор</string>
+    <string name="team_member_aleksandr">Александр Рондырев-Ильинский - Наставник</string>
+    <string name="team_member_alina">Алина Михеева - самый любимый куратор</string>
     <string name="favorites_empty">Список пуст</string>
     <string name="back">Назад</string>
     <string name="remove_from_favorites">Удалить из избранного</string>
@@ -52,7 +53,7 @@
     <string name="filter_apply">Применить</string>
     <string name="filter_reset">Сбросить</string>
     <string name="filter_industry_header">Выбор отрасли</string>
-    <string name="filter_industry_apply">Выбор отрасли</string>
+    <string name="filter_industry_apply">Выбрать</string>
     <string name="filter_industry_search">Введите отрасль</string>
 
 </resources>

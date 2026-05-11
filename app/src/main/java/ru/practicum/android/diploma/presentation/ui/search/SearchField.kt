@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,18 +22,29 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.ui.filter.YsDisplayRegular
 import ru.practicum.android.diploma.presentation.ui.theme.ActiveBlue
 import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
 import ru.practicum.android.diploma.presentation.ui.theme.InactiveGray
+
+val searchInputTextStyle = TextStyle(
+    fontFamily = YsDisplayRegular,
+    fontSize = 16.sp,
+    lineHeight = 20.sp,
+    color = BlackPrimary
+)
 
 @Composable
 fun SearchField(
     searchStr: String,
     onValueChange: (String) -> Unit,
     onClear: () -> Unit,
+    placeholder: String
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -51,20 +61,18 @@ fun SearchField(
             value = searchStr,
             onValueChange = onValueChange,
             singleLine = true,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = BlackPrimary
-            ),
+            textStyle = searchInputTextStyle,
             cursorBrush = SolidColor(ActiveBlue),
             modifier = Modifier.weight(1f)
-                .padding(horizontal = 2.dp, vertical = 8.dp), // Отступы внутри,
+                .padding(horizontal = 2.dp, vertical = 8.dp), // Отступы внутри
             decorationBox = { innerTextField ->
                 Box(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     if (searchStr.isEmpty()) {
                         Text(
-                            text = stringResource(R.string.search_hint),
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = placeholder,
+                            style = searchInputTextStyle,
                             color = InactiveGray
                         )
                     }

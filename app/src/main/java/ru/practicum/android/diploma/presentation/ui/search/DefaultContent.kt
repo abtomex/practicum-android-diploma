@@ -23,7 +23,7 @@ fun DefaultContent() {
         Image(
             painter = painterResource(R.drawable.finder),
             contentDescription = stringResource(R.string.ready_to_find),
-            modifier = Modifier.size(272.dp)
+            Modifier.size(height = 223.dp, width = 328.dp)
         )
     }
 

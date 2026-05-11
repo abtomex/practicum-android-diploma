@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.FavoritesInteractor
 import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.VacancyDetails
-import ru.practicum.android.diploma.domain.usecases.FavoritesInteractor
 import ru.practicum.android.diploma.domain.usecases.GetVacancyDetailsUseCase
 
 private const val TAG = "VacancyDetailsVM"
@@ -31,32 +31,32 @@ class VacancyDetailsViewModel(
     private val _state = MutableStateFlow<VacancyDetailsState>(VacancyDetailsState.Loading)
     val state: StateFlow<VacancyDetailsState> = _state.asStateFlow()
 
-    fun loadVacancyDetails(vacancyId: String, fromNetwork: Boolean = true) {
-        Log.d(TAG, "loadVacancyDetails CALLED with id: $vacancyId, fromNetwork: $fromNetwork")
+    fun loadVacancyDetails(vacancyId: String) {
+        var fromNetwork: Boolean
+        Log.d(TAG, "loadVacancyDetails CALLED with id: $vacancyId, trying BD...")
         viewModelScope.launch {
             // Сначала проверяем в БД (избранное)
-            checkFromDb(vacancyId)
+            fromNetwork = checkFromDb(vacancyId).not()
 
             // Если из БД нет и нужна сеть
             if (fromNetwork) {
                 checkFromNetwork(vacancyId)
-
             } else {
                 Log.d(TAG, "fromNetwork=false, not fetching from network")
             }
         }
     }
 
-    private suspend fun checkFromDb(vacancyId: String) {
+    private suspend fun checkFromDb(vacancyId: String): Boolean {
         Log.d(TAG, "Checking DB for vacancy: $vacancyId")
         val dbVacancy = favoritesInteractor.getVacancyDetails(vacancyId).first()
         if (dbVacancy != null) {
             Log.d(TAG, "Found vacancy in DB: ${dbVacancy.name}")
             _state.value = VacancyDetailsState.Content(dbVacancy)
-            return
+            return true
         }
         Log.d(TAG, "Vacancy NOT found in DB, continuing to network...")
-
+        return false
     }
 
     private suspend fun checkFromNetwork(vacancyId: String) {
