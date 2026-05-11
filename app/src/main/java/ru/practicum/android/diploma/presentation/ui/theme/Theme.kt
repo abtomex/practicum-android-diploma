@@ -12,7 +12,6 @@ private val LightColorScheme = lightColorScheme(
     onSurface = md_theme_light_onSurface,
 )
 
-
 @Composable
 fun AppTheme(
     content: @Composable () -> Unit
