@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.models.VacancyCard
-import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.util.Useful.formatNumberWithSpaces
 
 @Composable
@@ -44,7 +43,7 @@ fun VacancyCardContent(
             Text(
                 text = "${vacancy.name}, ${vacancy.city}",
                 style = MaterialTheme.typography.titleSmall,
-                color = BlackPrimary,
+//                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -54,7 +53,7 @@ fun VacancyCardContent(
             Text(
                 text = vacancy.company ?: "",
                 style = MaterialTheme.typography.bodyMedium,
-                color = BlackPrimary,
+//                color = BlackPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -64,7 +63,7 @@ fun VacancyCardContent(
             Text(
                 text = formatSalary(vacancy),
                 style = MaterialTheme.typography.titleSmall,
-                color = BlackPrimary
+//                color = BlackPrimary
             )
         }
     }

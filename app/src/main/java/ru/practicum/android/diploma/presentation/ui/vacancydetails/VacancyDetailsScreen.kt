@@ -67,7 +67,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.TextSize22
 import ru.practicum.android.diploma.presentation.ui.theme.TextSize32
 import ru.practicum.android.diploma.presentation.ui.theme.TitleSize18
 import ru.practicum.android.diploma.presentation.ui.theme.TitleSize22
-import ru.practicum.android.diploma.presentation.ui.theme.WhiteBackground
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsState
 import ru.practicum.android.diploma.presentation.viewmodel.VacancyDetailsViewModel
 
@@ -335,8 +334,8 @@ private fun VacancyEmployerSection(vacancy: VacancyDetails) {
                 contentDescription = null,
                 modifier = Modifier
                     .size(LogoSizeMedium)
-                    .clip(RoundedCornerShape(CornerRadiusSmall))
-                    .background(WhiteBackground),
+                    .clip(RoundedCornerShape(CornerRadiusSmall)),
+//                    .background(WhiteBackground),
                 error = painterResource(id = R.drawable.ic_company_placeholder),
                 placeholder = painterResource(id = R.drawable.ic_company_placeholder)
             )
