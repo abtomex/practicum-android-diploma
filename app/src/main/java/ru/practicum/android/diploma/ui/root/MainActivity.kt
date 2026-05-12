@@ -94,10 +94,15 @@ fun MainScreen() {
 
                 }
             }
-            composable(route = Destination.IndustryFilter.route) {
+            composable(
+                route = Destination.IndustryFilter.route,
+                arguments = listOf(navArgument("industryId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val previousSelectedId = backStackEntry.arguments?.getInt("industryId") ?: 0
                 IndustrySelectionScreen(
                     navController = navController,
-                    viewModel = koinViewModel()
+                    viewModel = koinViewModel(),
+                    previousSelectedId = previousSelectedId
                 )
             }
         }

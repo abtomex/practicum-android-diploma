@@ -41,7 +41,7 @@ val FilterFieldHeight = 56.dp
 val FilterCornerRadius = 12.dp
 val FilterClearIconSize = 14.dp
 val FilterHorizontalPadding = 16.dp
-val FilterIconSize = 24.dp
+val FilterIconSize = 14.dp
 
 val FilterSpacerSmall = 12.dp
 val FilterSpacerMedium = 16.dp

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.presentation.viewmodel.state.SearchState
 
 @Composable
@@ -28,7 +30,8 @@ fun SearchScreenContent(
         SearchField(
             searchStr = searchQuery,
             onValueChange = onQueryChanged,
-            onClear = onClearSearch
+            onClear = onClearSearch,
+            placeholder = stringResource(R.string.search_hint)
         )
 
         Spacer(modifier = Modifier.height(16.dp))

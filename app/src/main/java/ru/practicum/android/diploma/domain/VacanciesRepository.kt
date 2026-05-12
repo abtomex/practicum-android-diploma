@@ -7,7 +7,7 @@ import ru.practicum.android.diploma.domain.api.ApiResponse
 import ru.practicum.android.diploma.domain.models.VacancyCard
 import ru.practicum.android.diploma.domain.models.VacancyDetails
 
-interface VacanciesRepository : ApiRepository<VacancyCard> {
+interface VacanciesRepository {
 
     suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<VacanciesDto?>
     fun getAllVacancyCards(): Flow<List<VacancyCard>>

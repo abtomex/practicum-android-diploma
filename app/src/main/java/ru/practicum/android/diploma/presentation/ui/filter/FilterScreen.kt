@@ -1,46 +1,41 @@
 package ru.practicum.android.diploma.presentation.ui.filter
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.presentation.components.TopAppBarBackButton
 import ru.practicum.android.diploma.presentation.navigation.Destination
-import ru.practicum.android.diploma.presentation.ui.theme.BlackPrimary
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerLarge
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerMedium
 import ru.practicum.android.diploma.presentation.ui.theme.FilterSpacerSmall
-import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarFontSize
 import ru.practicum.android.diploma.presentation.ui.theme.FilterTopBarTopPadding
-import ru.practicum.android.diploma.presentation.ui.theme.IconSizeDefault
 import ru.practicum.android.diploma.presentation.ui.theme.PaddingMedium
 import ru.practicum.android.diploma.presentation.viewmodel.FiltersScreenViewModel
 
-val YsDisplayMediumFilter = FontFamily(
-    Font(R.font.ys_display_medium)
-)
-
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+fun FilterScreenPreview() {
+    FilterScreen(navController = rememberNavController(), viewModel = FiltersScreenViewModel())
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
@@ -49,6 +44,7 @@ fun FilterScreen(
 ) {
     val salaryInput by viewModel.salaryInput.collectAsStateWithLifecycle()
     val selectedIndustryName by viewModel.selectedIndustryName.collectAsStateWithLifecycle()
+    val selectedIndustryId by viewModel.selectedIndustryId.collectAsStateWithLifecycle()
     val hideWithoutSalary by viewModel.hideWithoutSalary.collectAsStateWithLifecycle()
     val hasActiveFilters by viewModel.hasActiveFilters.collectAsStateWithLifecycle()
 
@@ -73,29 +69,9 @@ fun FilterScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.filter_title),
-                        fontSize = FilterTopBarFontSize,
-                        color = BlackPrimary,
-                        fontFamily = YsDisplayMediumFilter
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.navigateUp()
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = stringResource(R.string.back),
-                            modifier = Modifier.size(IconSizeDefault),
-                            tint = BlackPrimary
-                        )
-                    }
-                }
+            TopAppBarBackButton(
+                title = stringResource(R.string.filter_title),
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -113,19 +89,20 @@ fun FilterScreen(
                 // Поле "Место работы"
                 FilterFieldRow(
                     placeholder = stringResource(R.string.filter_place),
-                    onClick = { // ЗАГЛУШКА
-                    },
+                    selectedItemText = "",
+                    onClick = { },
+                    onClearIconClick = { },
 
                 )
 
                 // Поле "Отрасль"
                 FilterFieldRow(
-                    placeholder = selectedIndustryName.ifEmpty {
-                        stringResource(R.string.filter_industry)
-                    },
+                    placeholder = stringResource(R.string.filter_industry),
+                    selectedItemText = selectedIndustryName,
                     onClick = {
-                        navController.navigate(Destination.IndustryFilter.route)
-                    }
+                        navController.navigate(Destination.IndustryFilter.createRoute(selectedIndustryId))
+                    },
+                    onClearIconClick = { viewModel.resetIndustry() }
                 )
 
                 Spacer(modifier = Modifier.height(FilterSpacerMedium))
@@ -153,6 +130,7 @@ fun FilterScreen(
             // Кнопки
             if (hasActiveFilters) {
                 ApplyButton(
+                    text = stringResource(R.string.filter_apply),
                     onClick = {
                         viewModel.applyFilters()
                         navController.navigateUp()

@@ -18,6 +18,7 @@ sealed class Response<T> (val resultCode: Int, val body: T?) {
     class ErrorResponse(val errorCode: Int) : Response<Any>(errorCode, null)
 
     companion object {
+        const val NO_INTERNET_MSG = "Проверьте подключение к интернету"
         const val SUCCESS_RESPONSE_CODE = 200
         const val NO_PAGE = 404
         const val STATUS_SERVER_ERROR = 500

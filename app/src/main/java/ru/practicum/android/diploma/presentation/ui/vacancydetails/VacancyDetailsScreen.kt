@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,7 +54,6 @@ import ru.practicum.android.diploma.presentation.ui.theme.CityGray
 import ru.practicum.android.diploma.presentation.ui.theme.CommentGray
 import ru.practicum.android.diploma.presentation.ui.theme.ContactBlue
 import ru.practicum.android.diploma.presentation.ui.theme.CornerRadiusSmall
-import ru.practicum.android.diploma.presentation.ui.theme.ErrorIconSize
 import ru.practicum.android.diploma.presentation.ui.theme.FieldGray
 import ru.practicum.android.diploma.presentation.ui.theme.LineHeight19
 import ru.practicum.android.diploma.presentation.ui.theme.LineHeight26
@@ -122,7 +122,7 @@ private fun rememberFavoriteState(
     var isFavorite by remember { mutableStateOf(false) }
 
     LaunchedEffect(vacancyId) {
-        viewModel.loadVacancyDetails(vacancyId, fromNetwork = true)
+        viewModel.loadVacancyDetails(vacancyId)
         viewModel.checkIsFavorite(vacancyId) { favorite ->
             isFavorite = favorite
         }
@@ -196,7 +196,8 @@ private fun VacancyDetailsTopBar(
                     onFavoriteClick(vacancy, isFav)
                 }
             )
-        }
+        },
+        windowInsets = WindowInsets(0, 0, 0, 0)
     )
 }
 
@@ -694,9 +695,9 @@ private fun ErrorPlaceholder(text: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_no_connect),
+            painter = painterResource(id = R.drawable.ic_error_cat),
             contentDescription = null,
-            modifier = Modifier.size(ErrorIconSize),
+            modifier = Modifier.size(328.dp, 223.dp),
             tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.height(16.dp))

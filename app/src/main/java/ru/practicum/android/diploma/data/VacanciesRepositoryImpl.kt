@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.practicum.android.diploma.data.converters.api.VacancyCardApiConverter
 import ru.practicum.android.diploma.data.converters.api.VacancyDetailsApiConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyCardDbConverter
 import ru.practicum.android.diploma.data.converters.db.VacancyDetailsDbConverter
@@ -21,22 +20,19 @@ import ru.practicum.android.diploma.domain.models.VacancyDetails
 
 class VacanciesRepositoryImpl(
     val networkClient: NetworkClient,
-    val apiConverter: VacancyCardApiConverter,
     val appDatabase: AppDatabase,
     val vacancyCardDbConverter: VacancyCardDbConverter,
     val vacancyDetailsDbConverter: VacancyDetailsDbConverter,
     val vacancyDetailsApiConverter: VacancyDetailsApiConverter
 ) : VacanciesRepository {
 
-    override suspend fun getAllFromApi(): List<VacancyCard>? {
-        return (networkClient.doRequest(VacanciesRequestDto()) as Response.VacanciesResponse)
-            .body?.items?.map { vacancyCardDto -> apiConverter.map(vacancyCardDto) }
-    }
-
     override suspend fun searchVacancies(request: VacanciesRequestDto): ApiResponse<VacanciesDto?> {
         val response = networkClient.doRequest(request)
         return when (response.resultCode) {
-            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet("Проверьте подключение к интернету", -1)
+            Response.STATUS_NETWORK_ERROR -> ApiResponse.NoInternet(
+                Response.NO_INTERNET_MSG,
+                Response.STATUS_NETWORK_ERROR
+            )
             Response.SUCCESS_RESPONSE_CODE -> {
                 ApiResponse.Success(
                     (response as Response.VacanciesResponse).body
