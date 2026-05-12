@@ -55,6 +55,7 @@ fun TeamScreen() {
             TeamParticipant(stringResource(R.string.team_member_dmitriytr))
             TeamParticipant(stringResource(R.string.team_member_vladimir))
             TeamParticipant(stringResource(R.string.team_member_aleksandr))
+            TeamParticipant(stringResource(R.string.team_member_ilya))
             TeamParticipant(stringResource(R.string.team_member_alina))
         }
     }
